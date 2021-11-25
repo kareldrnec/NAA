@@ -1,0 +1,38 @@
+<nav class="navbar navbar-expand-lg navbar-light" style="background-color: #e3f2fd;">
+  <a class="navbar-brand" href="/">
+    <img src="/images/gantt.png" width="30" height="30" class="d-inline-block align-top"> NAA
+  </a>
+  <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNavAltMarkup"
+    aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
+    <span class="navbar-toggler-icon"></span>
+  </button>
+  <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown"
+          aria-haspopup="true" aria-expanded="false">
+          Project
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+          <a class="dropdown-item" href="/projects/projectsDirectory"><i class="fas fa-folder"></i> Projects</a>
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item" href="#"><i class="fas fa-plus-square"></i> New</a>
+          <a class="dropdown-item" href="#"><i class="fas fa-edit"></i> Edit</a>
+          <a class="dropdown-item" href="#"><i class="fas fa-trash-alt"></i> Delete</a>
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item" href="#">Something else here</a>
+        </div>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/users/myProfile"><i class="far fa-user-circle"></i> {{ username
+          }}</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/about"><i class="far fa-question-circle"></i> About App</a>
+      </li>
+      <li class="nav-item">
+        <a class="nav-link" href="/users/logout"><i class="fas fa-sign-out-alt"></i> Log Out</a>
+      </li>
+    </ul>
+  </div>
+</nav>
