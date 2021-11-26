@@ -1,5 +1,12 @@
 {{> navbar_index}}
 
+{{#if flash}}
+<div style="text-align: center" id="flash" class="alert alert-{{flash.type}}" role="alert">
+  <button type="button" class="close" data-dismiss="alert">&times;</button>
+  <strong>{{flash.text}}</strong>
+</div>
+{{/if}}
+
 <div class="d-flex justify-content-center mt-5">
     <div class="card" style="width: 18rem;">
         <img class="card-img-top" src="/images/user.png" width="60" height="90" alt="Card image cap">
@@ -15,7 +22,8 @@
             {{ created }}
             <hr class="solid">
             <div class="text-center">
-                <button type="button" class="btn btn-primary"><i class="far fa-edit"></i> Update</button>
+                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#updateAccountModal"><i
+                        class="far fa-edit"></i> Update</button>
                 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#deleteAccountModal"><i
                         class="far fa-edit"></i> Delete</button>
             </div>
@@ -23,7 +31,7 @@
     </div>
 </div>
 
-<!-- Modal -->
+<!-- Modal Delete -->
 <div class="modal fade" id="deleteAccountModal" tabindex="-1" role="dialog" aria-labelledby="deleteAccountLabel"
     aria-hidden="true">
     <div class="modal-dialog" role="document">
@@ -41,6 +49,37 @@
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
                     <input type="submit" value="Delete" id="submit" name="submit" class="btn btn-primary">
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Update -->
+<div class="modal fade" id="updateAccountModal" tabindex="-1" role="dialog" aria-labelledby="updateAccountLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="updateAccountLabel">Update</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form method="post" action="/users/updateAccount">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="username">Name</label>
+                        <input type="text" class="form-control" name="username" value="{{ username }}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="surname">Surname</label>
+                        <input type="text" class="form-control" name="surname" value="{{ surname }}" required>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
+                    <input type="submit" value="Update" id="submit" name="submit" class="btn btn-primary">
                 </div>
             </form>
         </div>

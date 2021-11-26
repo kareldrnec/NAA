@@ -30,3 +30,24 @@ exports.helpPage = async(req, res) => {
         username: user.userName
     })
 }
+
+exports.results = async(req, res) => {
+
+    let user = await UserModel.findById(req.session.userId);
+
+    res.render("results", {
+        title: "Results",
+        username: user.userName
+    })
+}
+
+exports.monteCarlo = async(req, res) => {
+
+    let user = await UserModel.findById(req.session.userId);
+
+    res.render("monteCarloAnalysis", {
+        title: "Monte Carlo Analysis",
+        username: user.userName
+    })
+
+}

@@ -1,1 +1,37 @@
 {{> navbar_index}}
+
+
+
+<div class="container-fluid bg">
+    <div class="row">
+        <div class="col-md-4 col-sm-4 col-xs-12"></div>
+        <div class="col-md-4 col-sm-4 col-xs-12">
+            <!--form start-->
+            <form class="form-container" action="/projects/addProject" method="POST">
+                <h2 class="text-center">Login</h2>
+                <div class="form-group">
+                    <label for="projectName">Project Name</label>
+                    <input type="text" class="form-control" name="projectName" required>
+                </div>
+                <div class="form-group">
+                    <label for="typeOfProject">Type of Project</label>
+                    <select name="types" class="form-control">
+                        <option value="cpm">CPM</option>
+                        <option value="pert">PERT</option>
+                        <option value="gantt">GANTT</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="projectInfo">Information</label>
+                    <textarea name="projectInfo" class="form-control"></textarea>
+                </div>
+                <div class="text-center">
+                    <button type="submit" class="btn btn-primary">Add Project</button>
+                    <button type="button" class="btn btn-primary">Back</button>
+                </div>
+            </form>
+            <!--form end-->
+        </div>
+        <div class="col-md-4 col-sm-4 col-xs-12"></div>
+    </div>
+</div>

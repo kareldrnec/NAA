@@ -15,5 +15,7 @@ router.get("/editProject", auth.requiresLogin, project_controller.editProject);
 // GET - router Delete Project
 router.get("/deleteProject", auth.requiresLogin, project_controller.deleteProject);
 
+// POST - router Post Project
+router.post("/addProject", auth.requiresLogin, project_controller.addProject);
 
 module.exports = router;

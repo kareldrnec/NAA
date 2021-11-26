@@ -96,3 +96,15 @@ exports.deleteAccount = async (req, res) => {
     await UserModel.findByIdAndRemove(userId);
     return res.redirect("/");
 }
+
+exports.updateAccount = async (req, res) => {
+    const { username, surname } = req.body;
+
+    await UserModel.findByIdAndUpdate(req.session.userId, {
+        userName: username,
+        userSurname: surname
+    });
+    req.session.flash = { type: 'success', text: 'Your account was successfully updated!' };
+    res.redirect("/users/myProfile");
+
+}
