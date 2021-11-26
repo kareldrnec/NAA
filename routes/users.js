@@ -28,6 +28,9 @@ router.post("/login", user_controller.loginUser);
 router.post("/register", user_controller.registerNewUser);
 
 // GET - router Logout
-router.get("/logout", user_controller.logout);
+router.get("/logout", auth.requiresLogin, user_controller.logout);
+
+// GET - delete Account
+router.post("/deleteAccount", auth.requiresLogin, user_controller.deleteAccount);
 
 module.exports = router;

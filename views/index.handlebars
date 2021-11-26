@@ -1,1 +1,8 @@
 {{> navbar_index}}
+
+{{#if flash}}
+<div style="text-align: center" id="flash" class="alert alert-{{flash.type}}" role="alert">
+  <button type="button" class="close" data-dismiss="alert">&times;</button>
+  <strong>{{flash.text}}</strong>
+</div>
+{{/if}}

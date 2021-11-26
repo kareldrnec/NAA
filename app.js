@@ -53,7 +53,14 @@ app.use(session({
 
 
 // TODO express flash messages
-//
+//express-flash-message
+app.use((req, res, next) => {
+    if(req.session.flash){
+        res.locals.flash = req.session.flash;
+        delete req.session.flash;
+    }
+    next();
+});
 
 
 // routing 
