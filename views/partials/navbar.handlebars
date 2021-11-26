@@ -6,4 +6,21 @@
     aria-controls="navbarNavAltMarkup" aria-expanded="false" aria-label="Toggle navigation">
     <span class="navbar-toggler-icon"></span>
   </button>
+
+  <div class="collapse navbar-collapse" id="navbarNavAltMarkup">
+    <ul class="navbar-nav mr-auto">
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown"
+          aria-haspopup="true" aria-expanded="false">
+          <i class="far fa-user-circle"></i> {{ username }}
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+          <a class="dropdown-item" href="/users/myProfile"><i class="far fa-user-circle"></i> My Profile</a>
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item" href="/users/logout"><i class="fas fa-sign-out-alt"></i> Log Out</a>
+        </div>
+      </li>
+    </ul>
+  </div>
+  
 </nav>
