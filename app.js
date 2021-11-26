@@ -4,7 +4,7 @@ const app = express();
 
 // handlebars
 const { engine } = require('express-handlebars');
-console.log(typeof(engine));
+
 // setting port
 const port = process.env.PORT || 3000;
 
@@ -25,7 +25,9 @@ app.engine('handlebars', engine({
 }));
 app.set('view engine', 'handlebars');
 
-
+var bodyParser = require('body-parser');
+app.use(bodyParser.urlencoded({ extended: false }));
+app.use(bodyParser.json());
 
 // express - serving static files
 app.use(express.static(path.join(__dirname, '/public')));
@@ -33,8 +35,25 @@ app.use(express.static(path.join(__dirname, '/public')));
 //mongo
 //
 //
+const InitiateMongoServer = require('./config/db');
+InitiateMongoServer();
+
+// session store
+const store = new MongoStore({
+    uri: "mongodb+srv://admin:admin@cluster0.gr9ky.mongodb.net/NAA?retryWrites=true&w=majority",
+    collection: "mySession"
+});
+
+app.use(session({
+    secret: 'SECRET KEY',
+    resave: false,
+    saveUninitialized: false,
+    store: store
+}));
 
 
+// TODO express flash messages
+//
 
 
 // routing 

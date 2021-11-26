@@ -3,15 +3,15 @@
 var express = require("express");
 var router = express.Router();
 var auth = require('../auth');
+const view_controller = require('../controllers/viewController');
 
-router.get('/', function(req, res) {
-    res.render('index');
-});
 
-router.get('/about', function(req, res) {
-    res.render('about', {
-        title: "About app"
-    });
-});
+router.get('/', auth.requiresLogin, view_controller.getIndexPage);
+
+router.get('/about', auth.requiresLogin, view_controller.aboutApp);
+
+router.get('/help', auth.requiresLogin, view_controller.helpPage);
+
+
 
 module.exports = router;

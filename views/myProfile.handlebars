@@ -1,0 +1,22 @@
+{{> navbar_index}}
+
+<div class="d-flex justify-content-center mt-5">
+    <div class="card" style="width: 18rem;">
+        <img class="card-img-top" src="/images/user.png" width="60" height="90" alt="Card image cap">
+        <div class="card-body">
+            <div class="text-center">
+                <h5 class="card-title">{{ username }} {{ surname }}</h5>
+            </div>
+            <hr class="solid">
+            <small>Email</small><br>
+            {{ email }}
+            <hr class="solid">
+            <small>On NAA since</small><br>
+            {{ created }}
+            <hr class="solid">
+            <div class="text-center">
+                <button type="button" class="btn btn-primary"><i class="far fa-edit"></i> Update Name</button>
+            </div>
+        </div>
+    </div>
+</div>

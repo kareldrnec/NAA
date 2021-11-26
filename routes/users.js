@@ -19,17 +19,13 @@ router.get("/register", function(req, res){
 });
 
 // GET - router MyProfile
-router.get("/myProfile", function(req, res) {
-    res.render("user", {
-        title: "My Profile"
-    });
-})
+router.get("/myProfile", auth.requiresLogin, user_controller.myProfile);
 
 // POST - router Login
 router.post("/login", user_controller.loginUser);
 
 // POST - router Register
-router.post("register", user_controller.registerNewUser);
+router.post("/register", user_controller.registerNewUser);
 
 // GET - router Logout
 router.get("/logout", user_controller.logout);
