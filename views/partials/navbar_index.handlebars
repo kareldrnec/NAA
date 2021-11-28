@@ -17,10 +17,13 @@
           <a class="dropdown-item" href="/projects/projectsDirectory"><i class="fas fa-folder"></i> Projects</a>
           <div class="dropdown-divider"></div>
           <a class="dropdown-item" href="/projects/newProject"><i class="fas fa-plus-square"></i> New</a>
-          <a class="dropdown-item" href="/projects/editProject"><i class="fas fa-edit"></i> Edit</a>
-          <a class="dropdown-item" href="/projects/deleteProject"><i class="fas fa-trash-alt"></i> Delete</a>
+          {{#if projectID}}
+          <a class="dropdown-item" href="/projects/edit/{{projectID}}"><i class="fas fa-edit"></i> Edit</a>
+          <a class="dropdown-item" data-toggle="modal" data-target="#deleteProjectModal" style="cursor: pointer;"><i
+              class="fas fa-trash-alt"></i> Delete</a>
           <div class="dropdown-divider"></div>
           <a class="dropdown-item" href="#"><i class="fas fa-save"></i> Save</a>
+          {{/if}}
         </div>
       </li>
       <li class="nav-item dropdown">
@@ -30,7 +33,8 @@
         </a>
         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
           <h6 class="dropdown-header">Analysis</h6>
-          <a class="dropdown-item" data-toggle="modal" data-target="#calculationModal" style="cursor: pointer;"><i class="fas fa-chart-line"></i> Calculate</a>
+          <a class="dropdown-item" data-toggle="modal" data-target="#calculationModal" style="cursor: pointer;"><i
+              class="fas fa-chart-line"></i> Calculate</a>
           <a class="dropdown-item" href="/calculations/monteCarlo"><i class="fas fa-chart-bar"></i> Monte Carlo</a>
           <div class="dropdown-divider"></div>
           <a class="dropdown-item" href="/calculations/results"><i class="fas fa-poll-h"></i> Results</a>

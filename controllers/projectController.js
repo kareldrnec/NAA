@@ -2,12 +2,14 @@
 const UserModel = require('../models/user');
 const ProjectModel = require('../models/project');
 
+
+//gets project directory
 exports.getProjectsDirectory = async(req, res) => {
     let user = await UserModel.findById(req.session.userId);
     let projects = await ProjectModel.find({ userId: req.session.userId });
     let projectsToSend = {};
     var projectsPrep = [];
-    for(var i in projects) {
+    for (var i in projects) {
         var item = projects[i];
         projectsPrep.push({
             "projectName": item.projectName,
@@ -23,6 +25,7 @@ exports.getProjectsDirectory = async(req, res) => {
     })
 };
 
+//redirects to new project page
 exports.newProject = async(req, res) => {
     let user = await UserModel.findById(req.session.userId);
     res.render('newProject', {
@@ -31,6 +34,7 @@ exports.newProject = async(req, res) => {
     })
 }
 
+//add new project
 exports.addProject = async(req, res) => {
     const { projectName, types, projectInfo } = req.body;
     let project = new ProjectModel({
@@ -41,9 +45,10 @@ exports.addProject = async(req, res) => {
     });
     await project.save();
     req.session.flash = { type: 'success', text: 'Project was successfully added!' };
-    return res.redirect('/');
+    return res.redirect('/projects/projectsDirectory');
 }
 
+//update of project
 exports.editProject = async(req, res) => {
     const projectName = req.body.projectName;
     const projectInfo = req.body.projectInfo;
@@ -55,6 +60,7 @@ exports.editProject = async(req, res) => {
     return res.redirect("/projects/edit/" + req.params.id);
 }
 
+//select project for edit and redirection
 exports.getProjectForEdit = async(req, res) => {
     let project = await ProjectModel.findById(req.params.id);
     let date = project.createdAt;
@@ -69,9 +75,22 @@ exports.getProjectForEdit = async(req, res) => {
     })
 }
 
+//project selection
+exports.selectProject = async(req, res) => {
+    res.redirect("/projects/" + encodeURIComponent(req.params.id));
+}
 
+//load project after selection
+exports.loadProject = async(req, res) => {
+    // load projektu - dodelat
+    let project = await ProjectModel.findById(req.params.id);
+    res.render("project", {
+        title: project.projectName,
+        projectID: project._id
+    })
+}
 
-
+//delete project
 exports.deleteProject = async(req, res) => {
     await ProjectModel.findByIdAndDelete(req.params.id);
     req.session.flash = { type: 'success', text: 'Selected Project was successfully deleted!' };

@@ -18,8 +18,15 @@ router.get("/edit/:id", auth.requiresLogin, project_controller.getProjectForEdit
 // POST - router Edit Project
 router.post("/edit/:id", auth.requiresLogin, project_controller.editProject);
 
-
 // DELETE
 router.get("/delete/:id", auth.requiresLogin, project_controller.deleteProject);
+router.post("/delete/:id", auth.requiresLogin, project_controller.deleteProject);
+
+
+// GET - choose project
+router.get("/select/:id", auth.requiresLogin, project_controller.selectProject);
+
+
+router.get("/:id", auth.requiresLogin, project_controller.loadProject);
 
 module.exports = router;
