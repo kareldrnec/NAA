@@ -86,7 +86,8 @@ exports.loadProject = async(req, res) => {
     let project = await ProjectModel.findById(req.params.id);
     res.render("project", {
         title: project.projectName,
-        projectID: project._id
+        projectID: project._id,
+        projectType: project.projectType
     })
 }
 
