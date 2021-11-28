@@ -45,13 +45,35 @@ exports.addProject = async(req, res) => {
 }
 
 exports.editProject = async(req, res) => {
-    let user = await UserModel.findById(req.session.userId);
+    const projectName = req.body.projectName;
+    const projectInfo = req.body.projectInfo;
+    await ProjectModel.findByIdAndUpdate(req.params.id, {
+        projectName: projectName,
+        projectInfo: projectInfo
+    });
+    req.session.flash = { type: 'success', text: 'Project was successfully updated!' };
+    return res.redirect("/projects/edit/" + req.params.id);
+}
+
+exports.getProjectForEdit = async(req, res) => {
+    let project = await ProjectModel.findById(req.params.id);
+    let date = project.createdAt;
+    let stringDate = date.getDate() + "/" + (date.getMonth() + 1) + "/" + date.getFullYear();
     res.render('editProject', {
         title: "Edit Project",
-        username: user.userName
+        projectID: project._id,
+        projectName: project.projectName,
+        projectType: project.projectType,
+        projectInfo: project.projectInfo,
+        createdAt: stringDate
     })
 }
 
-exports.deleteProject = async(req, res) => {
 
+
+
+exports.deleteProject = async(req, res) => {
+    await ProjectModel.findByIdAndDelete(req.params.id);
+    req.session.flash = { type: 'success', text: 'Selected Project was successfully deleted!' };
+    return res.redirect("/projects/projectsDirectory");
 }

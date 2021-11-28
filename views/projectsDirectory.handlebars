@@ -1,18 +1,42 @@
 {{> navbar}}
-<div class="container-fluid" style="background-color: aqua; padding-top: 100px;">
-    <ul class="list-group" id="listProjects">
-        {{#each projects}}
-            {{#each this}}
-                <a href="{{this.ID}}"><li class="list-group-item">{{this.projectName}} {{this.projectType}}</li></a>
-            {{/each}}
-        {{/each}}
-    </ul>
+
+{{#if flash}}
+<div style="text-align: center" id="flash" class="alert alert-{{flash.type}}" role="alert">
+    <button type="button" class="close" data-dismiss="alert">&times;</button>
+    <strong>{{flash.text}}</strong>
+</div>
+{{/if}}
+
+<div class="text-center pt-2">
+    <a href="/projects/newProject"><button type="button" class="btn btn-primary"><i class="fas fa-plus-square"></i>
+            Add</button></a>
 </div>
 
-
-<script>
-    //console.log("{{{projects}}}");
-   // var projects = JSON.parse("{{{projects}}}");
-    
-
-</script>
+<div class="pt-2" style="text-align: center;">
+    <table class="table table-hover">
+        <thead>
+            <tr style="background-color: lightskyblue;">
+                <th scope="col">#</th>
+                <th scope="col">Project Name</th>
+                <th scope="col">Type of Project</th>
+                <th scope="col">Action</th>
+            </tr>
+        </thead>
+        <tbody>
+            {{#each projects}}
+            {{#each this}}
+            <tr>
+                <th scope="row">{{inc @index}}</th>
+                <td>{{this.projectName}}</td>
+                <td>{{upper this.projectType}}</td>
+                <td>
+                    <a href="/projects/select/{{this.ID}}"><i class="fas fa-check-square"></i></a>
+                    <a href="/projects/edit/{{this.ID}}"><i class="fas fa-edit"></i></a>
+                    <a href="/projects/delete/{{this.ID}}"><i class="fas fa-trash-alt"></i></a>
+                </td>
+            </tr>
+            {{/each}}
+            {{/each}}
+        </tbody>
+    </table>
+</div>

@@ -9,13 +9,17 @@ router.get("/projectsDirectory", auth.requiresLogin, project_controller.getProje
 // GET - router New Project
 router.get("/newProject", auth.requiresLogin, project_controller.newProject);
 
-// GET - router Edit Project
-router.get("/editProject", auth.requiresLogin, project_controller.editProject);
-
-// GET - router Delete Project
-router.get("/deleteProject", auth.requiresLogin, project_controller.deleteProject);
-
 // POST - router Post Project
 router.post("/addProject", auth.requiresLogin, project_controller.addProject);
+
+// GET - router Edit Project
+router.get("/edit/:id", auth.requiresLogin, project_controller.getProjectForEdit);
+
+// POST - router Edit Project
+router.post("/edit/:id", auth.requiresLogin, project_controller.editProject);
+
+
+// DELETE
+router.get("/delete/:id", auth.requiresLogin, project_controller.deleteProject);
 
 module.exports = router;

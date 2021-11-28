@@ -18,11 +18,19 @@ const session = require('express-session');
 const MongoStore = require('connect-mongodb-session')(session);
 
 //setting handlebars engine
-
 app.engine('handlebars', engine({
     defaultLayout: 'main',
-    extname: '.handlebars'
+    extname: '.handlebars',
+    helpers: {
+        inc: function(value, options) {
+            return parseInt(value) + 1;
+        },
+        upper: function(value, options) {
+            return value.toUpperCase();
+        }
+    }
 }));
+
 app.set('view engine', 'handlebars');
 
 var bodyParser = require('body-parser');
@@ -55,7 +63,7 @@ app.use(session({
 // TODO express flash messages
 //express-flash-message
 app.use((req, res, next) => {
-    if(req.session.flash){
+    if (req.session.flash) {
         res.locals.flash = req.session.flash;
         delete req.session.flash;
     }
