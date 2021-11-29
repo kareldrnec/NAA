@@ -19,7 +19,6 @@ exports.getProjectsDirectory = async(req, res) => {
         });
     }
     projectsToSend.projects = projectsPrep;
-    console.log(projectsToSend)
     res.render('projectsDirectory', {
         title: "Directory",
         projects: projectsToSend,
@@ -112,7 +111,6 @@ exports.loadProject = async(req, res) => {
         });
     }
     statesToSend.states = statesPrep;
-    console.log(statesToSend)
     res.render("project", {
         title: project.projectName,
         projectID: project._id,
