@@ -1,6 +1,7 @@
 // Project Controller
 const UserModel = require('../models/user');
 const ProjectModel = require('../models/project');
+const StateModel = require('../models/state');
 
 
 //gets project directory
@@ -18,6 +19,7 @@ exports.getProjectsDirectory = async(req, res) => {
         });
     }
     projectsToSend.projects = projectsPrep;
+    console.log(projectsToSend)
     res.render('projectsDirectory', {
         title: "Directory",
         projects: projectsToSend,
@@ -44,6 +46,21 @@ exports.addProject = async(req, res) => {
         userId: req.session.userId
     });
     await project.save();
+
+    let startState = new StateModel({
+        stateName: "Start",
+        projectID: project._id
+    });
+
+    await startState.save();
+
+    let finishState = new StateModel({
+        stateName: "Finish",
+        projectID: project._id
+    });
+
+    await finishState.save();
+
     req.session.flash = { type: 'success', text: 'Project was successfully added!' };
     return res.redirect('/projects/projectsDirectory');
 }
@@ -82,12 +99,25 @@ exports.selectProject = async(req, res) => {
 
 //load project after selection
 exports.loadProject = async(req, res) => {
-    // load projektu - dodelat
     let project = await ProjectModel.findById(req.params.id);
+    let states = await StateModel.find({ projectID: project._id });
+    let statesToSend = {};
+    let statesPrep = [];
+    for (var i in states) {
+        var item = states[i];
+        statesPrep.push({
+            "stateName": item.stateName,
+            "projectID": item.projectID,
+            "ID": item._id
+        });
+    }
+    statesToSend.states = statesPrep;
+    console.log(statesToSend)
     res.render("project", {
         title: project.projectName,
         projectID: project._id,
-        projectType: project.projectType
+        projectType: project.projectType,
+        states: JSON.stringify(statesToSend)
     })
 }
 
