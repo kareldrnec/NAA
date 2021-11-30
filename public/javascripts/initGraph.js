@@ -60,7 +60,9 @@ function graphInit() {
             ), {
                 contextMenu: $(go.Adornment, "Vertical",
                     $("ContextMenuButton",
-                        $(go.TextBlock, "Add Activity"), { click: addSuccessor })
+                        $(go.TextBlock, "Add Activity"), { click: addSuccessor }),
+                    $("ContextMenuButton",
+                        $(go.TextBlock, "Add State"), { click: addState })
                 )
             }
             // dodelat contextmenu pro stavy
@@ -112,4 +114,10 @@ function getLinkDataArray(activities) {
 
 function addSuccessor() {
 
+}
+
+function addState(e, obj) {
+    var selectedNode = obj.part;
+    var nodeData = selectedNode.data;
+    window.location.href = "/states/addState/" + nodeData.key;
 }

@@ -78,7 +78,21 @@ app.use((req, res, next) => {
 app.use('/', require('./routes/index'));
 app.use('/users', require('./routes/users'));
 app.use('/projects', require('./routes/projects'));
+app.use('/states', require('./routes/states'));
+app.use('/activities', require('./routes/activities'));
+// idk jeste
 app.use('/calculations', require('./routes/calculations'));
+
+
+// handle error pages 400, 500
+// 404
+app.use(function(req, res) {
+    res.status(404).render("error", {
+        code: "404"
+    });
+});
+
+
 
 // app listen
 app.listen(port, () => {
