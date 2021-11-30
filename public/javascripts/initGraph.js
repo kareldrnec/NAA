@@ -57,7 +57,13 @@ function graphInit() {
                     new go.Binding("text", "slack"), { row: 2, column: 1, margin: 5, textAlign: "center" }),
                 $(go.TextBlock, // lateFinish
                     new go.Binding("text", "lateFinish"), { row: 2, column: 2, margin: 5, textAlign: "center" }),
-            )
+            ), {
+                contextMenu: $(go.Adornment, "Vertical",
+                    $("ContextMenuButton",
+                        $(go.TextBlock, "Add Activity"), { click: addSuccessor })
+                )
+            }
+            // dodelat contextmenu pro stavy
         ); // end Node
 
 
@@ -102,4 +108,8 @@ function getLinkDataArray(activities) {
     // dodelat
     var linkDataArray = [];
     return linkDataArray;
+}
+
+function addSuccessor() {
+
 }

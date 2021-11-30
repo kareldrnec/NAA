@@ -1,8 +1,14 @@
 {{> navbar_index}}
 
+<div class="row">
+    <div class="col-4">
+        
+    </div>
+    <div class="col-8">
+        <canvas id="myChart" width="800px" height="300px"></canvas>
+    </div>
+</div>
 
-
-<canvas id="myChart" width="800px" height="300px"></canvas>
 <script>
     const ctx = document.getElementById('myChart').getContext('2d');
     const myChart = new Chart(ctx, {
