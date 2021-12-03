@@ -73,7 +73,7 @@ exports.editProject = async(req, res) => {
         projectInfo: projectInfo
     });
     req.session.flash = { type: 'success', text: 'Project was successfully updated!' };
-    return res.redirect("/projects/edit/" + req.params.id);
+    return res.redirect("/projects/projectsDirectory");
 }
 
 //select project for edit and redirection
