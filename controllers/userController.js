@@ -50,11 +50,10 @@ exports.loginUser = async (req, res) => {
     const isPasswordMatch = await bcrypt.compare(password, user.password);
 
     if (!isPasswordMatch) {
-        return res.status(400).json({
-            msg: req.__("wrong password")
-        });
+        return res.render('login', {
+            errMsg: req.__("wrong password")
+        })
     }
-    
     req.session.userId = user._id;
     req.session.flash = { type: 'success', text: req.__("logged in") + " " + user.userName + '! :)' };
     return res.redirect("/")

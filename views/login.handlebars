@@ -1,11 +1,14 @@
 {{> navbar_login}}
 
-{{#if flash}}
-<div style="text-align: center" id="flash" class="alert alert-{{flash.type}}" role="alert">
-    <button type="button" class="close" data-dismiss="alert">&times;</button>
-    <strong>{{flash.text}}</strong>
+
+{{#if errMsg}}
+<div style="text-align: center" id="flash" class="alert alert-danger" role="alert">
+  <button type="button" class="close" data-dismiss="alert">&times;</button>
+  <strong>{{ errMsg }}</strong>
 </div>
 {{/if}}
+
+
 
 <div class="container-fluid bg pt-5 animate__animated animate__bounceInUp" id="loginForm">
     <div class="row">
@@ -36,9 +39,4 @@
         </div>
         <div class="col-md-4 col-sm-4 col-xs-12"></div>
     </div>
-</div>
-
-<div class="animation-area">
-
-
 </div>
