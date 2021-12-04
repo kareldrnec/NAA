@@ -12,13 +12,13 @@ exports.registerNewUser = async (req, res) => {
     try {
         if (password != confirmPassword) {
             return res.status(400).json({
-                msg: "Passwords are not equal!"
+                msg: req.__("passwords not same")
             });
         }
         let user = await UserModel.findOne({ email });
         if (user) {
             return res.status(400).json({
-                msg: "User already exists!"
+                msg: req.__("user exists")
             });
         }
         const hashedPsw = await bcrypt.hash(password, salt);
@@ -29,7 +29,7 @@ exports.registerNewUser = async (req, res) => {
             password: hashedPsw
         })
         await user.save();
-        req.session.flash = { type: 'success', text: 'Your account was successfully created! You can log in now! :)' };
+        req.session.flash = { type: 'success', text: req.__("account created") };
         res.redirect("/users/login");
     } catch (err) {
         console.log(err.message);
@@ -43,7 +43,7 @@ exports.loginUser = async (req, res) => {
 
     if (!user) {
         return res.status(400).json({
-            msg: "User was not found!"
+            msg: req.__("user not found")
         });
     }
 
@@ -51,12 +51,12 @@ exports.loginUser = async (req, res) => {
 
     if (!isPasswordMatch) {
         return res.status(400).json({
-            msg: "Wrong password!"
+            msg: req.__("wrong password")
         });
     }
-
+    
     req.session.userId = user._id;
-    req.session.flash = { type: 'success', text: 'You successfully logged in! Welcome ' + user.userName + '! :)' };
+    req.session.flash = { type: 'success', text: req.__("logged in") + " " + user.userName + '! :)' };
     return res.redirect("/")
 };
 
@@ -77,7 +77,7 @@ exports.myProfile = async (req, res) => {
     let date = user.createdAt;
     let stringDate = date.getDate() + "/" + (date.getMonth() + 1) + "/" + date.getFullYear();
     res.render("myProfile", {
-        title: "My Profile",
+        title: req.__("my profile"),
         username: user.userName,
         surname: user.userSurname,
         email: user.email,
@@ -104,7 +104,7 @@ exports.updateAccount = async (req, res) => {
         userName: username,
         userSurname: surname
     });
-    req.session.flash = { type: 'success', text: 'Your account was successfully updated!' };
+    req.session.flash = { type: 'success', text: req.__("account updated") };
     res.redirect("/users/myProfile");
 
 }

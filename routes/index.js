@@ -12,10 +12,10 @@ router.get('/about', auth.requiresLogin, view_controller.aboutApp);
 
 router.get('/help', auth.requiresLogin, view_controller.helpPage);
 
-router.get('/settings', auth.requiresLogin, function(req, res) {
-    res.render("settings", {
-        title: "Settings"
-    })
-})
+// GET - settings
+router.get('/settings', auth.requiresLogin, view_controller.renderSettings);
+
+// POST - settings
+router.post('/applySettings', auth.requiresLogin, view_controller.applySettings);
 
 module.exports = router;

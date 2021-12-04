@@ -17,14 +17,14 @@
             <small>Email</small><br>
             {{ email }}
             <hr class="solid">
-            <small>On NAA since</small><br>
+            <small>{{__ "on naa since"}}</small><br>
             {{ created }}
             <hr class="solid">
             <div class="text-center">
                 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#updateAccountModal"><i
-                        class="far fa-edit"></i> Update</button>
+                        class="far fa-edit"></i> {{__ "update"}}</button>
                 <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#deleteAccountModal"><i
-                        class="far fa-edit"></i> Delete</button>
+                        class="far fa-edit"></i> {{__ "delete"}}</button>
             </div>
         </div>
     </div>
@@ -36,18 +36,18 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="deleteAccountLabel">Delete your account</h5>
+                <h5 class="modal-title" id="deleteAccountLabel">{{__ "delete account title"}}</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <form method="post" action="/users/deleteAccount">
                 <div class="modal-body">
-                    Do you want to delete your account?
+                    {{__ "delete account"}}
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <input type="submit" value="Delete" id="submit" name="submit" class="btn btn-primary">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{{__ "close"}}</button>
+                    <input type="submit" value="{{__ "delete"}}" id="submit" name="submit" class="btn btn-primary">
                 </div>
             </form>
         </div>
@@ -60,7 +60,7 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="updateAccountLabel">Update</h5>
+                <h5 class="modal-title" id="updateAccountLabel">{{__ "update"}}</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -68,19 +68,25 @@
             <form method="post" action="/users/updateAccount">
                 <div class="modal-body">
                     <div class="form-group">
-                        <label for="username">Name</label>
+                        <label for="username">{{__ "name"}}</label>
                         <input type="text" class="form-control" name="username" value="{{ username }}" required>
                     </div>
                     <div class="form-group">
-                        <label for="surname">Surname</label>
+                        <label for="surname">{{__ "surname"}}</label>
                         <input type="text" class="form-control" name="surname" value="{{ surname }}" required>
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <input type="submit" value="Update" id="submit" name="submit" class="btn btn-primary">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{{__ "close"}}</button>
+                    <input type="submit" value="{{__ "update"}}" id="submit" name="submit" class="btn btn-primary">
                 </div>
             </form>
         </div>
     </div>
 </div>
+
+<script>
+    setTimeout(function() {
+        jQuery('#flash').fadeOut('fast');
+    }, 3000);
+</script>

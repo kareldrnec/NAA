@@ -15,7 +15,7 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="deleteProjectModalLabel">Delete</h5>
+                <h5 class="modal-title" id="deleteProjectModalLabel">{{__ "delete"}}</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -23,12 +23,12 @@
             <form method="post" action="/projects/delete/{{projectID}}">
                 <div class="modal-body">
                     <div class="text-center">
-                        Do you want to delete this project?
+                        {{__ "delete project"}}
                     </div>
                 </div>
                 <div class="modal-footer">
-                    <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                    <input type="submit" value="Delete" id="submit" name="submit" class="btn btn-primary">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{{__ "close"}}</button>
+                    <input type="submit" value="{{__ "delete"}}" id="submit" name="submit" class="btn btn-primary">
                 </div>
             </form>
         </div>
@@ -41,7 +41,7 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="calculationModalLabel">Calculation</h5>
+                <h5 class="modal-title" id="calculationModalLabel">{{__ "calculate"}}</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -55,8 +55,8 @@
                 {{/ifEquals}}
             </div>
             <div class="modal-footer">
-                <button type="button" class="btn btn-secondary" data-dismiss="modal">Close</button>
-                <input type="submit" value="Calculate" id="submit" name="submit" class="btn btn-primary">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">{{__ "close"}}</button>
+                <input type="submit" value="{{__ "calculate"}}" id="submit" name="submit" class="btn btn-primary">
             </div>
         </div>
     </div>

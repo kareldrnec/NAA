@@ -8,14 +8,39 @@ const { engine } = require('express-handlebars');
 // setting port
 const port = process.env.PORT || 3000;
 
+// const morgan = require('morgan');
 
-
+// i18n - languages
+const i18n = require('i18n');
+// body parser ?? 
+var bodyParser = require('body-parser');
 // path
 const path = require('path');
+
+// cookieParser
+const cookieParser = require('cookie-parser');
+
 
 // session
 const session = require('express-session');
 const MongoStore = require('connect-mongodb-session')(session);
+
+
+
+i18n.configure({
+    locales: ['en', 'cz'],
+    cookie: 'locale',
+    directory: path.join(__dirname, '/locales'),
+    defaultLocale: 'en'
+});
+
+app.set('view engine', 'handlebars');
+
+// cookie parser
+app.use(cookieParser());
+
+//i18n init
+app.use(i18n.init);
 
 //setting handlebars engine
 app.engine('handlebars', engine({
@@ -30,18 +55,22 @@ app.engine('handlebars', engine({
         },
         ifEquals: function(value1, value2, options) {
             return (value1 == value2) ? options.fn(this) : options.inverse(this);
+        },
+        __: function(){
+            return i18n.__.apply(this, arguments);
         }
     }
 }));
 
-app.set('view engine', 'handlebars');
 
-var bodyParser = require('body-parser');
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
 // express - serving static files
 app.use(express.static(path.join(__dirname, '/public')));
+
+
+// app.use(morgan('tiny'));
 
 //mongo
 //

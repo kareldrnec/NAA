@@ -6,10 +6,10 @@
         <div class="col-md-4 col-sm-4 col-xs-12"></div>
         <div class="col-md-4 col-sm-4 col-xs-12">
             <!--form start-->
-            <form class="form-container" action="/users/login" method="POST">
-                <h2 class="text-center">Settings</h2>
+            <form class="form-container" action="/applySettings" method="POST">
+                <h2 class="text-center">{{__ "settings"}}</h2>
                 <div class="form-group">
-                    <label for="labelForColors">Nav Color</label>
+                    <label for="labelForColors">{{__ "nav color"}}</label>
                     <select name="colors" class="form-control">
                         <option value="default">Default</option>
                         <option value="blue" style="background-color: lightskyblue;">Blue</option>
@@ -18,15 +18,15 @@
                     </select>
                 </div>
                 <div class="form-group">
-                    <label for="labelForLanguages">Language</label>
-                    <select name="languages" class="form-control">
+                    <label for="labelForLanguages">{{__ "language"}}</label>
+                    <select name="languages" id="languages" class="form-control">
                         <option value="en">ENG (Default)</option>
                         <option value="cz">CZ</option>
                     </select>
                 </div>
                 <div class="text-center">
-                    <button type="submit" class="btn btn-primary">Save Settings</button>
-                    <button type="button" class="btn btn-primary">Back</button>
+                    <button type="submit" class="btn btn-primary">{{__ "save settings"}}</button>
+                    <button type="button" class="btn btn-primary">{{__ "back"}}</button>
                 </div>
             </form>
             <!--form end-->
@@ -34,3 +34,8 @@
         <div class="col-md-4 col-sm-4 col-xs-12"></div>
     </div>
 </div>
+
+<script>
+    let element = document.getElementById("languages");
+    element.value = "{{language_value}}";
+</script>

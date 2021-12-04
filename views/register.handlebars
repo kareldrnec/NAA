@@ -9,48 +9,45 @@
                 <div class="text-center">
                     <img src="/images/user.png" width="90" height="90">
                 </div>
-                <h2 class="text-center">Register</h2>
+                <h2 class="text-center">{{__ "register"}}</h2>
                 <div class="form-group">
-                    <label for="userName">Name</label>
+                    <label for="userName">{{__ "name"}}</label>
                     <input type="text" class="form-control" id="userName" name="userName" aria-describedby="nameHelp"
-                        placeholder="Enter name" required>
+                        placeholder="{{__ "enter name"}}" required>
                 </div>
                 <div class="form-group">
-                    <label for="userSurname">Surname</label>
+                    <label for="userSurname">{{__ "surname"}}</label>
                     <input type="text" class="form-control" id="userSurname" name="userSurname"
-                        aria-describedby="surnameHelp" placeholder="Enter surname" required>
+                        aria-describedby="surnameHelp" placeholder="{{__ "enter surname"}}" required>
                 </div>
                 <div class="form-group">
-                    <label for="email">Email address</label>
+                    <label for="email">{{__ "email address"}}</label>
                     <input type="email" class="form-control" id="email" name="email" aria-describedby="emailHelp"
-                        placeholder="Enter email" required>
+                        placeholder="{{__ "enter email"}}" required>
                 </div>
-                <small id="emailHelp" class="form-text text-muted text-center">We'll never share your email with anyone
-                    else.</small>
+                <small id="emailHelp" class="form-text text-muted text-center">{{__ "email share"}}</small>
                 <div class="form-group">
-                    <label for="passwordInput">Password</label>
+                    <label for="passwordInput">{{__ "password"}}</label>
                     <div class="input-group" id="show_hide_password">
-                        <input type="password" class="form-control" id="password" name="password" placeholder="Password"
-                            required>
+                        <input type="password" class="form-control" id="password" name="password" placeholder="{{__ "password"}}" required>
                         <i class="far fa-eye" id="togglePassword"
                             style="cursor: pointer; margin-left: -30px; margin-top: 10px; z-index: 100;"></i>
                     </div>
                 </div>
                 <div class="form-group">
-                    <label for="confirmInput">Confirm password</label>
+                    <label for="confirmInput">{{__ "confirm password"}}</label>
                     <div class="input-group" id="show_hide_confirm">
                         <input type="password" class="form-control" id="confirmPassword" name="confirmPassword"
-                            placeholder="Password" required>
+                            placeholder="{{__ "password"}}" required>
                         <i class="far fa-eye" id="toggleConfirm"
                             style="cursor: pointer; margin-left: -30px; margin-top: 10px; z-index: 100;"></i>
                     </div>
                 </div>
                 <div class="text-center">
-                    <button class="btn btn-primary">Register</button>
-                    <button class="btn btn-primary">Back</button>
+                    <button class="btn btn-primary">{{__ "register in"}}</button>
+                    <button class="btn btn-primary">{{__ "back"}}</button>
                 </div>
-                <small id="loginHelp" class="form-text text-muted text-center"><a href="/users/login">Already have an
-                        account? Log in here.</a></small>
+                <small id="loginHelp" class="form-text text-muted text-center"><a href="/users/login">{{__ "have account"}}</a></small>
             </form>
             <!--form end-->
         </div>

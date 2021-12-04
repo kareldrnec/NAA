@@ -8,13 +8,13 @@
         <div class="col-md-4 col-sm-4 col-xs-12">
             <!--form start-->
             <form class="form-container" action="/projects/addProject" method="POST">
-                <h2 class="text-center">Add Project</h2>
+                <h2 class="text-center">{{__ "add project"}}</h2>
                 <div class="form-group">
-                    <label for="projectName">Project Name</label>
+                    <label for="projectName">{{__ "project name"}}</label>
                     <input type="text" class="form-control" name="projectName" required>
                 </div>
                 <div class="form-group">
-                    <label for="typeOfProject">Type of Project</label>
+                    <label for="typeOfProject">{{__ "type of project"}}</label>
                     <select name="types" class="form-control">
                         <option value="cpm">CPM</option>
                         <option value="pert">PERT</option>
@@ -22,12 +22,12 @@
                     </select>
                 </div>
                 <div class="form-group">
-                    <label for="projectInfo">Information</label>
+                    <label for="projectInfo">{{__ "information"}}</label>
                     <textarea name="projectInfo" class="form-control"></textarea>
                 </div>
                 <div class="text-center">
-                    <button type="submit" class="btn btn-primary">Add Project</button>
-                    <button type="button" class="btn btn-primary">Back</button>
+                    <button type="submit" class="btn btn-primary">{{__ "add project"}}</button>
+                    <button type="button" class="btn btn-primary">{{__ "back"}}</button>
                 </div>
             </form>
             <!--form end-->
