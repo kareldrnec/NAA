@@ -13,25 +13,25 @@
         <div class="col-md-4 col-sm-4 col-xs-12">
             <!--form start-->
             <form class="form-container" action="/states/addState/{{fromStateID}}" method="POST">
-                <h2 class="text-center">New State</h2>
+                <h2 class="text-center">{{__ "new state"}}</h2>
                 <div class="form-group">
-                    <label for="stateName">State Name</label>
+                    <label for="stateName">{{__ "state name"}}</label>
                     <input type="text" class="form-control" id="stateNameInput" name="stateNameInput"
-                        aria-describedby="stateNameHelp" placeholder="State Name" required>
+                        aria-describedby="stateNameHelp" placeholder="{{__ "enter state name"}}" required>
                 </div>
                 <div class="form-group">
-                    <label for="stateInfo">Information</label>
+                    <label for="stateInfo">{{__ "information"}}</label>
                     <textarea name="stateInfo" class="form-control"></textarea>
                 </div>
                 <div class="form-group">
                     <div class="text-center">
-                        <label for="addActivityCheck">Add Activity</label>
+                        <label for="addActivityCheck">{{__ "add activity"}}</label>
                         <input type="checkbox" name="addActivityCheck">
                     </div>
                 </div>
                 <div class="text-center">
-                    <button type="submit" class="btn btn-primary">Add</button>
-                    <button type="button" class="btn btn-primary">Back</button>
+                    <button type="submit" class="btn btn-primary">{{__ "add"}}</button>
+                    <button type="button" class="btn btn-primary">{{__ "back"}}</button>
                 </div>
             </form>
             <!--form end-->

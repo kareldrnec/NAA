@@ -3,7 +3,7 @@ const StateModel = require('../models/state');
 
 exports.addState = function (req, res) {
     res.render('addState', {
-        title: "Add State",
+        title: req.__('add state'),
         fromStateID: req.params.id
     });
 };
@@ -12,7 +12,7 @@ exports.postNewState = async (req, res) => {
     const name = req.body.stateNameInput;
     const info = req.body.stateInfo;
     const fromStateID = req.params.id;
-
+    const addActivityCheck = req.body.addActivityCheck;
     let fromState = await StateModel.findById(fromStateID);
 
     let state = new StateModel({
@@ -20,11 +20,14 @@ exports.postNewState = async (req, res) => {
         projectID: fromState.projectID,
         description: info
     });
-
     await state.save();
-
     req.session.flash = { type: "success", text: req.__("state created") };
-    res.redirect('/projects/' + fromState.projectID);
+    if (addActivityCheck) {
+        let toState = await StateModel.findOne({ stateName: name });
+        return res.redirect('/activities/add' + "?from=" + encodeURIComponent(fromStateID) + "&to=" + encodeURIComponent(toState._id));
+    } else {
+        return res.redirect('/projects/' + fromState.projectID);
+    }
 
 };
 

@@ -114,6 +114,7 @@ exports.loadProject = async (req, res) => {
         }
         statesToSend.states = statesPrep;
         res.cookie("activeProject", project._id);
+        res.cookie("projectType", project.projectType);
         res.render("project", {
             title: project.projectName,
             projectID: project._id,
