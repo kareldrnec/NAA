@@ -113,11 +113,14 @@ exports.loadProject = async (req, res) => {
             });
         }
         statesToSend.states = statesPrep;
+        res.cookie("activeProject", project._id);
         res.render("project", {
             title: project.projectName,
             projectID: project._id,
             projectType: project.projectType,
-            states: JSON.stringify(statesToSend)
+            states: JSON.stringify(statesToSend),
+            // mozna predelat ?
+            username: req.cookies.username
         })
     } else {
         // vyresit

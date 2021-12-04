@@ -62,7 +62,11 @@ function graphInit() {
                     $("ContextMenuButton",
                         $(go.TextBlock, "Add Activity"), { click: addSuccessor }),
                     $("ContextMenuButton",
-                        $(go.TextBlock, "Add State"), { click: addState })
+                        $(go.TextBlock, "Add State"), { click: addState }),
+                    $("ContextMenuButton",
+                        $(go.TextBlock, "Edit"), { click: editState }),
+                    $("ContextMenuButton",
+                        $(go.TextBlock, "Delete"), { click: deleteState })
                 )
             }
             // dodelat contextmenu pro stavy
@@ -120,4 +124,17 @@ function addState(e, obj) {
     var selectedNode = obj.part;
     var nodeData = selectedNode.data;
     window.location.href = "/states/addState/" + nodeData.key;
+}
+
+function editState(e, obj){
+    var selectedNode = obj.part;
+    var nodeData = selectedNode.data;
+    window.location.href = "/states/editState/" + nodeData.key;
+}
+
+function deleteState(e, obj){
+    var selectedNode = obj.part;
+    var nodeData = selectedNode.data;
+    window.location.href = "/states/deleteState/" + nodeData.key;
+    //Dodelat
 }

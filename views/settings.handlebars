@@ -37,5 +37,9 @@
 
 <script>
     let element = document.getElementById("languages");
-    element.value = "{{language_value}}";
+    if("{{language_value}}") {
+        element.value = "{{language_value}}";
+    } else {
+        element.value = "en";
+    }
 </script>
