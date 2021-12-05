@@ -26,7 +26,6 @@ const session = require('express-session');
 const MongoStore = require('connect-mongodb-session')(session);
 
 
-
 i18n.configure({
     locales: ['en', 'cz'],
     cookie: 'locale',
