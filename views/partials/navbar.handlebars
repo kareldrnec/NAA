@@ -12,6 +12,19 @@
       <li class="nav-item dropdown">
         <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown"
           aria-haspopup="true" aria-expanded="false">
+          <i class="fas fa-cogs"></i> {{__ "settings"}}
+        </a>
+        <div class="dropdown-menu" aria-labelledby="navbarDropdown">
+          <a class="dropdown-item" href="/settings"><i class="fas fa-sliders-h"></i> {{__ "change"}}</a>
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item" href="/help"><i class="far fa-question-circle"></i> {{__ "help"}}</a>
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item" href="/about"><i class="far fa-question-circle"></i> {{__ "about app"}}</a>
+        </div>
+      </li>
+      <li class="nav-item dropdown">
+        <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown"
+          aria-haspopup="true" aria-expanded="false">
           <i class="far fa-user-circle"></i> {{ username }}
         </a>
         <div class="dropdown-menu" aria-labelledby="navbarDropdown">

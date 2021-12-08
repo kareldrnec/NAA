@@ -36,12 +36,14 @@
 	"enter pessimistic value": "Zadejte pesimistický odhad",
 	"enter state name": "Zadejte název stavu",
 	"enter surname": "Zadejte příjmení",
+	"generate": "Generovat",
 	"have account": "Máte již účet? Přihlaste se zde.",
 	"help": "Nápověda",
 	"home": "Domů",
 	"information": "Informace",
 	"language": "Jazyk",
 	"length of activity": "Délka aktivity",
+	"load": "Načíst",
 	"login": "Přihlášení",
 	"log in": "Přihlásit",
 	"logged in": "Úspěšně jste se přihlásil/a! Vítejte ",
@@ -55,6 +57,7 @@
 	"new project": "Nový projekt",
 	"new state": "Nový stav",
 	"no account": "Nemáte účet? Registrujte se zde.",
+	"number of states": "Počet stavů",
 	"on naa since": "V NAA od",
 	"optimistic value": "Optimistický odhad",
 	"password": "Heslo",
@@ -86,5 +89,7 @@
 	"user not found": "Uživatel s tou emailovou adresou nebyl nalezen",
 	"wrong password": "Špatně zadané heslo!",
 	" delete": " delete",
-	" calculate": " calculate"
+	" calculate": " calculate",
+	" generate": " generate",
+	" load": " load"
 }

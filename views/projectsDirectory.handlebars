@@ -37,12 +37,87 @@
 </div>
 
 <div class="text-center pb-2">
-    <a href="/projects/newProject"><button type="button" class="btn btn-primary"><i class="fas fa-plus-square"></i>
-            {{__ "add"}}</button></a>
+    <a href="/projects/new"><button type="button" class="btn btn-primary"><i class="fas fa-plus-square"></i>
+        {{__ "add"}}</button></a>
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#generateProjectModal"><i
+            class="fas fa-random"></i> {{__ "generate"}}</button>
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#loadProjectModal"><i
+            class="far fa-file-alt"></i> {{__ "load"}}</button>
 </div>
 
+<!-- Modal Generator -->
+<div class="modal fade" id="generateProjectModal" tabindex="-1" role="dialog"
+    aria-labelledby="generateProjectModalLabel" aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="generateProjectModalLabel">{{__ "generate"}}</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form method="post" action="/projects/generate">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="projectName">{{__ "project name"}}</label>
+                        <input type="text" class="form-control" name="projectName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="typeOfProject">{{__ "type of project"}}</label>
+                        <select name="types" class="form-control">
+                            <option value="cpm">CPM</option>
+                            <option value="pert">PERT</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="numberOfStates">{{__ "number of states"}}</label>
+                        <input type="number" class="form-control" name="numberOfStates" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="projectInfo">{{__ "information"}}</label>
+                        <textarea name="projectInfo" class="form-control"></textarea>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{{__ "close"}}</button>
+                    <input type="submit" value="{{__ " generate"}}" id="submit" name="submit" class="btn btn-primary">
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Modal Load File -->
+<div class="modal fade" id="loadProjectModal" tabindex="-1" role="dialog" aria-labelledby="loadProjectModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="loadProjectModalLabel">Load from File</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form method="post" action="/projects/loadFile">
+                <div class="modal-body">
+                    <div class="text-center">
+                        a
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{{__ "close"}}</button>
+                    <input type="submit" value="{{__ " load"}}" id="submit" name="submit" class="btn btn-primary">
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
+
 <script>
-    setTimeout(function() {
+    setTimeout(function () {
         jQuery('#flash').fadeOut('fast');
     }, 3000);
 </script>

@@ -30,7 +30,7 @@ exports.getProjectsDirectory = async(req, res) => {
 //redirects to new project page
 exports.newProject = async(req, res) => {
     let user = await UserModel.findById(req.session.userId);
-    res.render('newProject', {
+    res.render('addProject', {
         title: req.__('new project'),
         username: user.userName
     })
@@ -151,4 +151,11 @@ exports.deleteProject = async(req, res) => {
     await ProjectModel.findByIdAndDelete(req.params.id);
     req.session.flash = { type: 'success', text: req.__("project deleted") };
     return res.redirect("/projects/projectsDirectory");
+}
+
+//generate project
+exports.generate = async(req, res) => {
+    //TODO
+    console.log("generating...")
+
 }
