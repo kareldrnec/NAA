@@ -5,10 +5,7 @@ exports.getIndexPage = async(req, res) => {
 
     let user = await UserModel.findById(req.session.userId);
     res.cookie("username", user.userName)
-    res.render('index', {
-        title: req.__("home"),
-        username: user.userName
-    });
+    res.redirect("/projects/projectsDirectory")
 }
 
 exports.aboutApp = async(req, res) => {

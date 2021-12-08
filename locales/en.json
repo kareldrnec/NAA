@@ -3,6 +3,7 @@
 	"about app": "About App",
 	"account created": "Your account was successfully created! You can log in now.",
 	"account updated": "Your account was successfully updated!",
+	"activity addded": "Activity was successfully created!",
 	"activity name": "Activity Name",
 	"add": "Add",
 	"add activity": "Add Activity",
@@ -83,5 +84,8 @@
 	"update": "Update",
 	"user exists": "User already exists!",
 	"user not found": "User with this email address was not found!",
-	"wrong password": "Wrong password!"
+	"wrong password": "Wrong password!",
+	"activity added": "activity added",
+	" delete": " delete",
+	" calculate": " calculate"
 }

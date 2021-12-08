@@ -1,9 +1,11 @@
 var _statesData, _activitiesData, projectType;
 
 
-function init(states, projectT) {
+function init(states, activities, projectT) {
     _statesData = states.replace(/&quot;/g, '"');
     _statesData = JSON.parse(_statesData);
+    _activitiesData = activities.replace(/&quot;/g, '"');
+    _activitiesData = JSON.parse(_activitiesData);
     projectType = projectT;
     graphInit();
 }
@@ -87,17 +89,29 @@ function graphInit() {
                 new go.Binding("text", "text")),
             $(go.Shape, // arrowhead
                 { toArrow: "Triangle", stroke: null, scale: 1.5 },
-                new go.Binding("fill", "color", function(c) { return linkColors[c] || "blue"; }))
+                new go.Binding("fill", "color", function(c) { return linkColors[c] || "blue"; })), {
+                contextMenu: $(go.Adornment, "Vertical",
+                    $("ContextMenuButton",
+                        $(go.TextBlock, "Edit Activity"), { click: editActivity }
+                    ),
+                    $("ContextMenuButton",
+                        $(go.TextBlock, "Delete Activity"), { click: deleteActivity })
+                )
+            }
         );
 
     // nacteni stavu do nodeArray pro graf
-    var stateArray = getNodeDataArray(_statesData);
+    var statesArray = getNodeDataArray(_statesData);
 
     // nacteni aktivit do linkArray pro graf
-    var activitiesArray = [];
+    var activitiesArray = getLinkDataArray(_activitiesData);
+
+    myDiagram.commandHandler.deleteSelection = function() { window.location.href = "/states/delete/" + myDiagram.selection.iterator.first().key; }
+    myDiagram.commandHandler.copySelection = function() {}
+    myDiagram.commandHandler.selectAll = function() {}
 
     // pridani stavu (vrcholu) a aktivit (hran) do modelu grafu
-    myDiagram.model = new go.GraphLinksModel(stateArray, activitiesArray);
+    myDiagram.model = new go.GraphLinksModel(statesArray, activitiesArray);
 }
 
 function getNodeDataArray(states) {
@@ -114,6 +128,13 @@ function getNodeDataArray(states) {
 function getLinkDataArray(activities) {
     // dodelat
     var linkDataArray = [];
+    var activitiesData = activities.activities;
+    for (var i = 0; i < activitiesData.length; i++) {
+        linkDataArray.push({
+            "from": activitiesData[i].fromState,
+            "to": activitiesData[i].toState
+        })
+    }
     return linkDataArray;
 }
 
@@ -124,18 +145,32 @@ function addSuccessor() {
 function addState(e, obj) {
     var selectedNode = obj.part;
     var nodeData = selectedNode.data;
-    window.location.href = "/states/addState/" + nodeData.key;
+    window.location.href = "/states/add/" + nodeData.key;
+}
+
+function editActivity(e, obj) {
+    var selectedLink = obj.part;
+    var linkData = selectedLink.data;
+    console.log(linkData.from)
+    console.log(linkData.to)
+        //  window.location.href = "/activities/edit/" + linkData.key;
 }
 
 function editState(e, obj) {
     var selectedNode = obj.part;
     var nodeData = selectedNode.data;
-    window.location.href = "/states/editState/" + nodeData.key;
+    window.location.href = "/states/edit/" + nodeData.key;
+}
+
+function deleteActivity(e, obj) {
+    var selectedLink = obj.part;
+    var linkData = selectedLink.data;
+    window.location.href = "/activities/delete/" + linkData.key;
 }
 
 function deleteState(e, obj) {
     var selectedNode = obj.part;
     var nodeData = selectedNode.data;
-    window.location.href = "/states/deleteState/" + nodeData.key;
+    window.location.href = "/states/delete/" + nodeData.key;
     //Dodelat
 }

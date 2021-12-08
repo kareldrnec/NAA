@@ -11,11 +11,6 @@ exports.getNewActivity = function(req, res) {
 }
 
 exports.postNewActivity = async(req, res) => {
-    console.log("TU")
-        // activityNameInput, projectTypeInput, lengthOfACtivity, optimisticValue, 
-        // mostExpecetedValue, pessimisticValu
-        // activityInfo
-
 
     let activity = new ActivityModel({
         activityName: req.body.activityNameInput,
@@ -27,7 +22,7 @@ exports.postNewActivity = async(req, res) => {
         projectID: req.cookies.activeProject
     });
     await activity.save();
-    req.session.flash = { type: 'success', text: "Success!" };
+    req.session.flash = { type: 'success', text: req.__("activity added") };
     res.redirect('/projects/' + req.cookies.activeProject);
 }
 
