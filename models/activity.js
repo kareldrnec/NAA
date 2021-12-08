@@ -22,9 +22,6 @@ const activitySchema = new Schema({
         type: Array,
         default: []
     },
-    timeUnit: {
-        type: String
-    },
     description: {
         type: String
     },

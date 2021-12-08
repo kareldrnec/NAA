@@ -1,5 +1,6 @@
 var _statesData, _activitiesData, projectType;
 
+
 function init(states, projectT) {
     _statesData = states.replace(/&quot;/g, '"');
     _statesData = JSON.parse(_statesData);
@@ -126,13 +127,13 @@ function addState(e, obj) {
     window.location.href = "/states/addState/" + nodeData.key;
 }
 
-function editState(e, obj){
+function editState(e, obj) {
     var selectedNode = obj.part;
     var nodeData = selectedNode.data;
     window.location.href = "/states/editState/" + nodeData.key;
 }
 
-function deleteState(e, obj){
+function deleteState(e, obj) {
     var selectedNode = obj.part;
     var nodeData = selectedNode.data;
     window.location.href = "/states/deleteState/" + nodeData.key;

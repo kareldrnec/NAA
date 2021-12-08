@@ -4,13 +4,31 @@ const ActivityModel = require('../models/activity');
 exports.getNewActivity = function(req, res) {
     res.render("addActivity", {
         title: req.__("add activity"),
+        from: req.query.from,
+        to: req.query.to,
         projectType: req.cookies.projectType
     })
 }
 
 exports.postNewActivity = async(req, res) => {
+    console.log("TU")
+        // activityNameInput, projectTypeInput, lengthOfACtivity, optimisticValue, 
+        // mostExpecetedValue, pessimisticValu
+        // activityInfo
 
 
+    let activity = new ActivityModel({
+        activityName: req.body.activityNameInput,
+        activityType: "normal",
+        fromState: req.query.from,
+        toState: req.query.to,
+        values: [req.body.optimisticValue, req.body.mostExpectedValue, req.body.pessimisticValue],
+        description: req.body.activityInfo,
+        projectID: req.cookies.activeProject
+    });
+    await activity.save();
+    req.session.flash = { type: 'success', text: "Success!" };
+    res.redirect('/projects/' + req.cookies.activeProject);
 }
 
 exports.getEditActivity = async(req, res) => {
