@@ -27,15 +27,32 @@ exports.postNewActivity = async(req, res) => {
 }
 
 exports.getEditActivity = async(req, res) => {
-
-
+    let activity = await ActivityModel.findById(req.params.id);
+    return res.render("editActivity", {
+        title: req.__("edit activity"),
+        activityID: activity._id,
+        activityName: activity.activityName,
+        activityInfo: activity.description,
+        values: activity.values,
+        projectType: req.cookies.projectType
+    })
 }
 
 exports.updateActivity = async(req, res) => {
-
+    let activityName = req.body.activityNameInput,
+        activityDescription = req.body.activityInfo,
+        values = [req.body.optimisticValue, req.body.mostExpectedValue, req.body.pessimisticValue];
+    await ActivityModel.findByIdAndUpdate(req.params.id, {
+        activityName: activityName,
+        description: activityDescription,
+        values: values
+    })
+    req.session.flash = { type: 'success', text: req.__("activity updated") };
+    res.redirect("/projects/" + req.cookies.activeProject);
 }
 
 exports.deleteActivity = async(req, res) => {
-
-
+    await ActivityModel.findByIdAndDelete(req.params.id);
+    req.session.flash = { type: 'success', text: req.__("activity deleted") };
+    res.redirect("/projects/" + req.cookies.activeProject);
 }

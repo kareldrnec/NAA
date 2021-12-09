@@ -8,6 +8,8 @@ function init(states, activities, projectT) {
     _activitiesData = JSON.parse(_activitiesData);
     projectType = projectT;
     graphInit();
+
+    document.getElementById("exportButton").addEventListener("click", exportDiagram);
 }
 
 function graphInit() {
@@ -138,6 +140,12 @@ function getLinkDataArray(activities) {
     return linkDataArray;
 }
 
+function getActivityID(linkData) {
+    var activities = _activitiesData.activities;
+    var selectedActivity = activities.find(item => item.fromState == linkData.from && item.toState == linkData.to);
+    return selectedActivity.ID;
+}
+
 function addSuccessor() {
 
 }
@@ -151,9 +159,7 @@ function addState(e, obj) {
 function editActivity(e, obj) {
     var selectedLink = obj.part;
     var linkData = selectedLink.data;
-    console.log(linkData.from)
-    console.log(linkData.to)
-        //  window.location.href = "/activities/edit/" + linkData.key;
+    window.location.href = "/activities/edit/" + getActivityID(linkData);
 }
 
 function editState(e, obj) {
@@ -165,12 +171,51 @@ function editState(e, obj) {
 function deleteActivity(e, obj) {
     var selectedLink = obj.part;
     var linkData = selectedLink.data;
-    window.location.href = "/activities/delete/" + linkData.key;
+    window.location.href = "/activities/delete/" + getActivityID(linkData);
 }
 
 function deleteState(e, obj) {
     var selectedNode = obj.part;
     var nodeData = selectedNode.data;
     window.location.href = "/states/delete/" + nodeData.key;
-    //Dodelat
+}
+
+function exportDiagram() {
+    // Export diagramu
+    var blob;
+    var selectedFormat = document.getElementById("typeOfFile").value
+    if (selectedFormat == "svg") {
+        var svg = myDiagram.makeSvg({ scale: 1, background: "white" });
+        var svgstr = new XMLSerializer().serializeToString(svg);
+        blob = new Blob([svgstr], { type: "image/svg+xml" });
+        downloadBlob(blob);
+    } else {
+        blob = myDiagram.makeImageData({ background: "white", returnType: "blob", callback: downloadBlob });
+    }
+}
+
+function downloadBlob(blob) {
+    var filename, a;
+    var url = window.URL.createObjectURL(blob);
+    var selectedFormat = document.getElementById("typeOfFile").value;
+    var inputName = document.getElementById("nameOfFile").value;
+    if (inputName == "") {
+        filename = "myDiagram." + selectedFormat;
+    } else {
+        filename = inputName + "." + selectedFormat;
+    }
+    a = document.createElement("a");
+    a.style = "display: none";
+    a.href = url;
+    a.download = filename;
+    if (window.navigator.msSaveBlob != undefined) {
+        window.navigator.msSaveBlob(blob, filename);
+        return;
+    }
+    document.body.appendChild(a);
+    requestAnimationFrame(function() {
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+    })
 }

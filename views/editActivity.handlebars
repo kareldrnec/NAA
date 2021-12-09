@@ -1,1 +1,53 @@
 {{> navbar_index}}
+
+{{#if flash}}
+<div style="text-align: center" id="flash" class="alert alert-{{flash.type}}" role="alert">
+    <button type="button" class="close" data-dismiss="alert">&times;</button>
+    <strong>{{flash.text}}</strong>
+</div>
+{{/if}}
+
+<div class="container-fluid bg pt-5">
+    <div class="row">
+        <div class="col-md-4 col-sm-4 col-xs-12"></div>
+        <div class="col-md-4 col-sm-4 col-xs-12">
+            <!--activity form-->
+            <form class="form-container" method="POST" action="/activities/edit/{{activityID}}">
+                <h2 class="text-center">{{__ "edit activity"}}</h2>
+                <div class="form-group">
+                    <label for="activityNameInput">{{__ "activity name"}}</label>
+                    <input type="text" name="activityNameInput" value="{{activityName}}" class="form-control" placeholder="{{__ "enter activity name"}}" required>
+                </div>
+                <div class="form-group">
+                    <label for="projectTypeInput">{{__ "type of project"}}</label>
+                    <input type="text" name="projectTypeInput" class="form-control" value="{{upper projectType }}"
+                        disabled>
+                </div>
+                <div class="form-group">
+                    {{#ifEquals projectType "cpm"}}
+                    <label for="lengthOfActivity">{{__ "length of activity"}}</label>
+                    <input type="number" name="lengthOfActivity" value="{{values.[0]}}" placeholder="{{__ "enter length of activity"}}" class="form-control">
+                    {{/ifEquals}}
+                    {{#ifEquals projectType "pert"}}
+                    <label for="optimisticValue">{{__ "optimistic value"}}</label>
+                    <input type="number" name="optimisticValue" value="{{values.[0]}}" placeholder="{{__ "enter optimistic value"}}" class="form-control">
+                    <label for="mostExpectedValue">{{__ "most expected value"}}</label>
+                    <input type="number" name="mostExpectedValue" value="{{values.[1]}}" placeholder="{{__ "enter most expected value"}}" class="form-control">
+                    <label for="pessimisticValue">{{__ "pessimistic value"}}</label>
+                    <input type="number" name="pessimisticValue" value="{{values.[2]}}" placeholder="{{__ "enter pessimistic value"}}" class="form-control">
+                    {{/ifEquals}}
+                </div>
+                <div class="form-group">
+                    <label for="activityInfo">{{__ "information"}}</label>
+                    <textarea name="activityInfo" class="form-control">{{activityInfo}}</textarea>
+                </div>
+                <div class="text-center">
+                    <button type="submit" class="btn btn-primary">{{__ "edit"}}</button>
+                    <button type="button" class="btn btn-primary">{{__ "back"}}</button>
+                </div>
+            </form>
+            <!--form end-->
+        </div>
+        <div class="col-md-4 col-sm-4 col-xs-12"></div>
+    </div>
+</div>

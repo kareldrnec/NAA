@@ -38,7 +38,7 @@
 
 <div class="text-center pb-2">
     <a href="/projects/new"><button type="button" class="btn btn-primary"><i class="fas fa-plus-square"></i>
-        {{__ "add"}}</button></a>
+            {{__ "add"}}</button></a>
     <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#generateProjectModal"><i
             class="fas fa-random"></i> {{__ "generate"}}</button>
     <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#loadProjectModal"><i
@@ -80,7 +80,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">{{__ "close"}}</button>
-                    <input type="submit" value="{{__ " generate"}}" id="submit" name="submit" class="btn btn-primary">
+                    <input type="submit" value="{{__ "generate"}}" id="submit" name="submit" class="btn btn-primary">
                 </div>
             </form>
         </div>
@@ -100,13 +100,25 @@
             </div>
             <form method="post" action="/projects/loadFile">
                 <div class="modal-body">
-                    <div class="text-center">
-                        a
+                    <div class="form-group">
+                        <label for="projectName">{{__ "project name"}}</label>
+                        <input type="text" name="projectName" class="form-control" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="typeOfProject">{{__ "type of project"}}</label>
+                        <select name="typeOfProject" class="form-control">
+                            <option value="CPM">CPM</option>
+                            <option value="PERT">PERT</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="myFile">{{__ "select a file"}}</label><br>
+                        <input type="file" id="myFile" name="myFile">
                     </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">{{__ "close"}}</button>
-                    <input type="submit" value="{{__ " load"}}" id="submit" name="submit" class="btn btn-primary">
+                    <input type="submit" value="{{__ "load"}}" id="submit" name="submit" class="btn btn-primary">
                 </div>
             </form>
         </div>
