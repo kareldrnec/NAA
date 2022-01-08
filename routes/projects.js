@@ -7,10 +7,10 @@ const project_controller = require('../controllers/projectController');
 router.get("/projectsDirectory", auth.requiresLogin, project_controller.getProjectsDirectory);
 
 // GET - router New Project
-router.get("/newProject", auth.requiresLogin, project_controller.newProject);
+router.get("/new", auth.requiresLogin, project_controller.newProject);
 
 // POST - router Post Project
-router.post("/addProject", auth.requiresLogin, project_controller.addProject);
+router.post("/add", auth.requiresLogin, project_controller.addProject);
 
 // GET - router Edit Project
 router.get("/edit/:id", auth.requiresLogin, project_controller.getProjectForEdit);
@@ -28,5 +28,9 @@ router.get("/select/:id", auth.requiresLogin, project_controller.selectProject);
 
 
 router.get("/:id", auth.requiresLogin, project_controller.loadProject);
+
+
+router.post("/generate", auth.requiresLogin, project_controller.generate);
+
 
 module.exports = router;

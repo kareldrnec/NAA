@@ -3,12 +3,17 @@ var statesArray = [];
 var activitiesArray = [];
 var myDiagram;
 
-function init(states, projectT) {
+
+function init(states, activities, projectT) {
     _statesData = states.replace(/&quot;/g, '"');
     _statesData = JSON.parse(_statesData);
+    _activitiesData = activities.replace(/&quot;/g, '"');
+    _activitiesData = JSON.parse(_activitiesData);
     projectType = projectT;
     console.log(_statesData)
     graphInit();
+
+    document.getElementById("exportButton").addEventListener("click", exportDiagram);
 }
 
 function graphInit() {
@@ -90,14 +95,33 @@ function graphInit() {
                 new go.Binding("text", "text")),
             $(go.Shape, // arrowhead
                 { toArrow: "Triangle", stroke: null, scale: 1.5 },
-                new go.Binding("fill", "color", function(c) { return linkColors[c] || "blue"; }))
+                new go.Binding("fill", "color", function(c) { return linkColors[c] || "blue"; })), {
+                contextMenu: $(go.Adornment, "Vertical",
+                    $("ContextMenuButton",
+                        $(go.TextBlock, "Edit Activity"), { click: editActivity }
+                    ),
+                    $("ContextMenuButton",
+                        $(go.TextBlock, "Delete Activity"), { click: deleteActivity })
+                )
+            }
         );
 
     // nacteni stavu do nodeArray pro graf
+<<<<<<< HEAD
     statesArray = getNodeDataArray(_statesData);
 
     // nacteni aktivit do linkArray pro graf
     activitiesArray = [];
+=======
+    var statesArray = getNodeDataArray(_statesData);
+
+    // nacteni aktivit do linkArray pro graf
+    var activitiesArray = getLinkDataArray(_activitiesData);
+
+    myDiagram.commandHandler.deleteSelection = function() { window.location.href = "/states/delete/" + myDiagram.selection.iterator.first().key; }
+    myDiagram.commandHandler.copySelection = function() {}
+    myDiagram.commandHandler.selectAll = function() {}
+>>>>>>> 497c2153673148ce275e4e6c570b5b0ba35bcd9e
 
     // pridani stavu (vrcholu) a aktivit (hran) do modelu grafu
     myDiagram.model = new go.GraphLinksModel(statesArray, activitiesArray);
@@ -117,7 +141,20 @@ function getNodeDataArray(states) {
 function getLinkDataArray(activities) {
     // dodelat
     var linkDataArray = [];
+    var activitiesData = activities.activities;
+    for (var i = 0; i < activitiesData.length; i++) {
+        linkDataArray.push({
+            "from": activitiesData[i].fromState,
+            "to": activitiesData[i].toState
+        })
+    }
     return linkDataArray;
+}
+
+function getActivityID(linkData) {
+    var activities = _activitiesData.activities;
+    var selectedActivity = activities.find(item => item.fromState == linkData.from && item.toState == linkData.to);
+    return selectedActivity.ID;
 }
 
 function addSuccessor() {
@@ -127,6 +164,7 @@ function addSuccessor() {
 function addState(e, obj) {
     var selectedNode = obj.part;
     var nodeData = selectedNode.data;
+<<<<<<< HEAD
 
     $('#addStateModal').modal('show');
     // addStateModal
@@ -147,11 +185,21 @@ function editState(e, obj){
     //window.location.href = "/states/editState/" + nodeData.key;
 
     // editStateModal
+=======
+    window.location.href = "/states/add/" + nodeData.key;
 }
 
-function deleteState(e, obj){
+function editActivity(e, obj) {
+    var selectedLink = obj.part;
+    var linkData = selectedLink.data;
+    window.location.href = "/activities/edit/" + getActivityID(linkData);
+>>>>>>> 497c2153673148ce275e4e6c570b5b0ba35bcd9e
+}
+
+function editState(e, obj) {
     var selectedNode = obj.part;
     var nodeData = selectedNode.data;
+<<<<<<< HEAD
     document.getElementById('deleteStateForm').setAttribute('name', nodeData.key);
     $('#deleteStateModal').modal('show');
 }
@@ -211,4 +259,59 @@ function addCreatedActivity(activity) {
 
 function reload() {
     
+=======
+    window.location.href = "/states/edit/" + nodeData.key;
+}
+
+function deleteActivity(e, obj) {
+    var selectedLink = obj.part;
+    var linkData = selectedLink.data;
+    window.location.href = "/activities/delete/" + getActivityID(linkData);
+}
+
+function deleteState(e, obj) {
+    var selectedNode = obj.part;
+    var nodeData = selectedNode.data;
+    window.location.href = "/states/delete/" + nodeData.key;
+}
+
+function exportDiagram() {
+    // Export diagramu
+    var blob;
+    var selectedFormat = document.getElementById("typeOfFile").value
+    if (selectedFormat == "svg") {
+        var svg = myDiagram.makeSvg({ scale: 1, background: "white" });
+        var svgstr = new XMLSerializer().serializeToString(svg);
+        blob = new Blob([svgstr], { type: "image/svg+xml" });
+        downloadBlob(blob);
+    } else {
+        blob = myDiagram.makeImageData({ background: "white", returnType: "blob", callback: downloadBlob });
+    }
+}
+
+function downloadBlob(blob) {
+    var filename, a;
+    var url = window.URL.createObjectURL(blob);
+    var selectedFormat = document.getElementById("typeOfFile").value;
+    var inputName = document.getElementById("nameOfFile").value;
+    if (inputName == "") {
+        filename = "myDiagram." + selectedFormat;
+    } else {
+        filename = inputName + "." + selectedFormat;
+    }
+    a = document.createElement("a");
+    a.style = "display: none";
+    a.href = url;
+    a.download = filename;
+    if (window.navigator.msSaveBlob != undefined) {
+        window.navigator.msSaveBlob(blob, filename);
+        return;
+    }
+    document.body.appendChild(a);
+    requestAnimationFrame(function() {
+        a.click();
+        window.URL.revokeObjectURL(url);
+        document.body.removeChild(a);
+    })
+>>>>>>> 497c2153673148ce275e4e6c570b5b0ba35bcd9e
 }

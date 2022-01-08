@@ -12,25 +12,19 @@
         <div class="col-md-4 col-sm-4 col-xs-12"></div>
         <div class="col-md-4 col-sm-4 col-xs-12">
             <!--form start-->
-            <form class="form-container" action="/states/add/{{fromStateID}}" method="POST">
-                <h2 class="text-center">{{__ "new state"}}</h2>
+            <form class="form-container" action="/states/edit/{{stateID}}" method="POST">
+                <h2 class="text-center">{{__ "edit state"}}</h2>
                 <div class="form-group">
                     <label for="stateName">{{__ "state name"}}</label>
                     <input type="text" class="form-control" id="stateNameInput" name="stateNameInput"
-                        aria-describedby="stateNameHelp" placeholder="{{__ "enter state name"}}" required>
+                        aria-describedby="stateNameHelp" placeholder="State Name" value="{{stateName}}" required>
                 </div>
                 <div class="form-group">
                     <label for="stateInfo">{{__ "information"}}</label>
-                    <textarea name="stateInfo" class="form-control"></textarea>
-                </div>
-                <div class="form-group">
-                    <div class="text-center">
-                        <label for="addActivityCheck">{{__ "add activity"}}</label>
-                        <input type="checkbox" name="addActivityCheck">
-                    </div>
+                    <textarea name="stateInfo" class="form-control">{{ stateInfo }}</textarea>
                 </div>
                 <div class="text-center">
-                    <button type="submit" class="btn btn-primary">{{__ "add"}}</button>
+                    <button type="submit" class="btn btn-primary">{{__ "edit"}}</button>
                     <button type="button" class="btn btn-primary">{{__ "back"}}</button>
                 </div>
             </form>

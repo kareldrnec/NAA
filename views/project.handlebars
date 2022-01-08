@@ -2,12 +2,44 @@
 
 {{#if flash}}
 <div style="text-align: center" id="flash" class="alert alert-{{flash.type}}" role="alert">
-  <button type="button" class="close" data-dismiss="alert">&times;</button>
-  <strong>{{flash.text}}</strong>
+    <button type="button" class="close" data-dismiss="alert">&times;</button>
+    <strong>{{flash.text}}</strong>
 </div>
 {{/if}}
 
 <div id="myDiagramDiv" style="width: 99%; height: 50vw;"></div>
+
+<!-- Modal Export -->
+<div class="modal fade" id="exportProjectModal" tabindex="-1" role="dialog" aria-labelledby="exportProjectModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="exportProjectModalLabel">{{__ "export"}}</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="nameOfFile">Filename</label>
+                    <input type="text" class="form-control" id="nameOfFile">
+                </div>
+                <div class="form-group">
+                    <label for="typeOfFile">Type of File</label>
+                    <select id="typeOfFile" class="form-control">
+                        <option value="svg">SVG</option>
+                        <option value="png">PNG</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">{{__ "close"}}</button>
+                <button type="submit" class="btn btn-primary"  id="exportButton">{{__ "export"}}</button>
+            </div>
+        </div>
+    </div>
+</div>
 
 <!-- Modal Delete -->
 <div class="modal fade" id="deleteProjectModal" tabindex="-1" role="dialog" aria-labelledby="deleteProjectModalLabel"
@@ -182,6 +214,7 @@
 <script src="/javascripts/initGraph.js"></script>
 <script src="/socket.io/socket.io.js"></script>
 <script>
+<<<<<<< HEAD
     init("{{states}}", "{{projectType}}");
 
     //
@@ -254,3 +287,10 @@
 </script>
 
 
+=======
+    setTimeout(function () {
+        jQuery('#flash').fadeOut('fast');
+    }, 3000);
+    init("{{states}}", "{{activities}}", "{{projectType}}");
+</script>
+>>>>>>> 497c2153673148ce275e4e6c570b5b0ba35bcd9e

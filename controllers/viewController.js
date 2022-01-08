@@ -1,5 +1,6 @@
 const UserModel = require('../models/user');
 
+<<<<<<< HEAD
 exports.aboutApp = async(req, res, next) => {
     try {
         let user = await UserModel.findById(req.session.userId);
@@ -10,6 +11,14 @@ exports.aboutApp = async(req, res, next) => {
     } catch (err) {
         return next(err);
     }
+=======
+
+exports.getIndexPage = async(req, res) => {
+
+    let user = await UserModel.findById(req.session.userId);
+    res.cookie("username", user.userName)
+    res.redirect("/projects/projectsDirectory")
+>>>>>>> 497c2153673148ce275e4e6c570b5b0ba35bcd9e
 }
 
 exports.helpPage = async(req, res, next) => {
