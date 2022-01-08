@@ -6,8 +6,15 @@
         <div class="col-md-4 col-sm-4 col-xs-12"></div>
         <div class="col-md-4 col-sm-4 col-xs-12">
             <!--form start-->
-            <form class="form-container" action="/applySettings" method="POST">
+            <form class="form-container" id="settingsForm" action="/applySettings" method="POST">
                 <h2 class="text-center">{{__ "settings"}}</h2>
+                <div class="form-group">
+                    <label>Day/Night Mode</label>
+                    <select name="mode" class="form-control">
+                        <option value="day">Day</option>
+                        <option value="night">Night</option>
+                    </select>
+                </div>
                 <div class="form-group">
                     <label for="labelForColors">{{__ "nav color"}}</label>
                     <select name="colors" class="form-control">
@@ -41,5 +48,12 @@
         element.value = "{{language_value}}";
     } else {
         element.value = "en";
+    }
+
+    document.getElementById("settingsForm").addEventListener("submit", formSubmit);
+
+    function formSubmit(){ 
+        console.log("Submitnuto")
+        // sessionStorage na nastaveni zobrazeni
     }
 </script>

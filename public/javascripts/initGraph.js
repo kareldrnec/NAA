@@ -1,9 +1,13 @@
 var _statesData, _activitiesData, projectType;
+var statesArray = [];
+var activitiesArray = [];
+var myDiagram;
 
 function init(states, projectT) {
     _statesData = states.replace(/&quot;/g, '"');
     _statesData = JSON.parse(_statesData);
     projectType = projectT;
+    console.log(_statesData)
     graphInit();
 }
 
@@ -20,7 +24,7 @@ function graphInit() {
 
     myDiagram =
         $(go.Diagram, "myDiagramDiv", {
-            initialAutoScale: go.Diagram.Uniform,
+            //initialAutoScale: go.Diagram.Uniform,
             layout: $(go.LayeredDigraphLayout)
         });
 
@@ -90,13 +94,13 @@ function graphInit() {
         );
 
     // nacteni stavu do nodeArray pro graf
-    var stateArray = getNodeDataArray(_statesData);
+    statesArray = getNodeDataArray(_statesData);
 
     // nacteni aktivit do linkArray pro graf
-    var activitiesArray = [];
+    activitiesArray = [];
 
     // pridani stavu (vrcholu) a aktivit (hran) do modelu grafu
-    myDiagram.model = new go.GraphLinksModel(stateArray, activitiesArray);
+    myDiagram.model = new go.GraphLinksModel(statesArray, activitiesArray);
 }
 
 function getNodeDataArray(states) {
@@ -123,18 +127,88 @@ function addSuccessor() {
 function addState(e, obj) {
     var selectedNode = obj.part;
     var nodeData = selectedNode.data;
-    window.location.href = "/states/addState/" + nodeData.key;
+
+    $('#addStateModal').modal('show');
+    // addStateModal
 }
 
 function editState(e, obj){
     var selectedNode = obj.part;
     var nodeData = selectedNode.data;
-    window.location.href = "/states/editState/" + nodeData.key;
+    console.log(nodeData)
+    document.getElementById('editStateForm').setAttribute('name', nodeData.key);
+    var states = _statesData.states;
+    var item = states.find(element => element.ID == nodeData.key);
+
+    document.getElementById("editStateName").value = item.stateName;
+    document.getElementById("editStateInfo").value= item.description;
+    $('#editStateModal').modal('show');
+    //editStateName editStateInfo
+    //window.location.href = "/states/editState/" + nodeData.key;
+
+    // editStateModal
 }
 
 function deleteState(e, obj){
     var selectedNode = obj.part;
     var nodeData = selectedNode.data;
-    window.location.href = "/states/deleteState/" + nodeData.key;
-    //Dodelat
+    document.getElementById('deleteStateForm').setAttribute('name', nodeData.key);
+    $('#deleteStateModal').modal('show');
+}
+
+//
+//
+//
+//
+//
+// TODO
+function addActivity(e, obj) {
+
+}
+
+function editActivity(e, obj) {
+
+}
+
+function deleteActivity(e, obj) {
+
+}
+
+
+function addCreatedState(state) {
+    // add created state to diagram
+    _statesData.states.push({
+        ID: state._id,
+        stateName: state.stateName,
+        description: state.description
+    })
+    console.log(_statesData)
+    init(_statesData, projectType)
+}
+
+function editSelectedState(stateID, stateName, stateInfo) {
+    var item = statesArray.find(element => element.key == stateID);
+    // TODO
+
+}
+
+function deleteSelectedState(stateID) { 
+    var item = statesArray.find(element => element.key == stateID);
+    var index = statesArray.indexOf(item)
+    if(index > -1) {
+        statesArray.splice(index, 1)
+        reload();
+    }
+    // smazat activity napojene na stavy
+}
+
+
+
+function addCreatedActivity(activity) {
+    // add created activity to diagram
+    // TO DO
+}
+
+function reload() {
+    
 }

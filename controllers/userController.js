@@ -3,13 +3,11 @@
 const UserModel = require('../models/user');
 const bcrypt = require('bcrypt');
 
-exports.registerNewUser = async (req, res) => {
+exports.registerNewUser = async (req, res, next) => {
     //generating salt
-    const salt = await bcrypt.genSalt(10);
-    console.log(req.body.userName)
     const { userName, userSurname, email, password, confirmPassword } = req.body;
-
     try {
+        const salt = await bcrypt.genSalt(10);
         if (password != confirmPassword) {
             return res.status(400).json({
                 msg: req.__("passwords not same")
@@ -32,7 +30,7 @@ exports.registerNewUser = async (req, res) => {
         req.session.flash = { type: 'success', text: req.__("account created") };
         res.redirect("/users/login");
     } catch (err) {
-        console.log(err.message);
+        return next(err);
     }
 };
 
@@ -71,21 +69,25 @@ exports.logout = function (req, res, next) {
     }
 };
 
-exports.myProfile = async (req, res) => {
-    let user = await UserModel.findById(req.session.userId);
-    let date = user.createdAt;
-    let stringDate = date.getDate() + "/" + (date.getMonth() + 1) + "/" + date.getFullYear();
-    res.render("myProfile", {
-        title: req.__("my profile"),
-        username: user.userName,
-        surname: user.userSurname,
-        email: user.email,
-        created: stringDate
-    });
-
+exports.myProfile = async (req, res, next) => {
+    try {
+        let user = await UserModel.findById(req.session.userId);
+        let date = user.createdAt;
+        let stringDate = date.getDate() + "/" + (date.getMonth() + 1) + "/" + date.getFullYear();
+        return res.render("myProfile", {
+            title: req.__("my profile"),
+            username: user.userName,
+            surname: user.userSurname,
+            email: user.email,
+            created: stringDate
+        });
+    } catch (err) {
+        return next(err);
+    }
 };
 
-exports.deleteAccount = async (req, res) => {
+exports.deleteAccount = async (req, res, next) => {
+    //Dodelat
     let userId = req.session.userId;
     req.session.destroy(function (err) {
         if (err) {
@@ -96,14 +98,16 @@ exports.deleteAccount = async (req, res) => {
     return res.redirect("/");
 }
 
-exports.updateAccount = async (req, res) => {
+exports.updateAccount = async (req, res, next) => {
     const { username, surname } = req.body;
-
-    await UserModel.findByIdAndUpdate(req.session.userId, {
-        userName: username,
-        userSurname: surname
-    });
-    req.session.flash = { type: 'success', text: req.__("account updated") };
-    res.redirect("/users/myProfile");
-
+    try {
+        await UserModel.findByIdAndUpdate(req.session.userId, {
+            userName: username,
+            userSurname: surname
+        });
+        req.session.flash = { type: 'success', text: req.__("account updated") };
+        return res.redirect("/users/myProfile");
+    } catch (err) {
+        return next(err);
+    }
 }

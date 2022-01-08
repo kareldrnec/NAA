@@ -62,9 +62,195 @@
     </div>
 </div>
 
+<!-- Add State Modal -->
+<div class="modal fade" id="addStateModal" tabindex="-1" role="dialog" aria-labelledby="addStateModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addStateModalLabel">{{__ "new state"}}</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form class="form-container" id="addStateForm">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="stateName">{{__ "state name"}}</label>
+                        <input type="text" class="form-control" id="stateNameInput" name="stateNameInput"
+                            aria-describedby="stateNameHelp" placeholder="{{__ "enter state name"}}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="stateInfo">{{__ "information"}}</label>
+                        <input type="text" class="form-control" id="stateInfoInput" name="stateInfoInput">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{{__ "close"}}</button>
+                    <input type="submit" value="{{__ "add"}}" id="submit" name="submit" class="btn btn-primary">
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Edit State Modal -->
+<div class="modal fade" id="editStateModal" tabindex="-1" role="dialog" aria-labelledby="editStateModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editStateModalLabel">{{__ "edit state"}}</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form class="form-container" id="editStateForm">
+                <div class="modal-body">
+                    <div class="form-group">
+                        <label for="editStateName">{{__ "state name"}}</label>
+                        <input type="text" class="form-control" id="editStateName" name="editStateName" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="editStateInfo">{{__ "information"}}</label>
+                        <input type="text" class="form-control" id="editStateInfo" name="editStateInfo">
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{{__ "close"}}</button>
+                    <input type="submit" value="{{__ "edit"}}" id="submit" name="submit" class="btn btn-primary">
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+
+
+
+<!-- Delete State Modal -->
+<div class="modal fade" id="deleteStateModal" tabindex="-1" role="dialog" aria-labelledby="deleteStateModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteStateModalLabel">{{__ "delete state"}}</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form class="form-container" id="deleteStateForm">
+                <div class="modal-body">
+                    Do you want to delete this state?
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{{__ "close"}}</button>
+                    <input type="submit" value="{{__ "delete"}}" id="submit" name="submit" class="btn btn-primary">
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
+<!-- Add Activity Modal -->
+<div class="modal fade" id="addActivityModal" tabindex="-1" role="dialog" aria-labelledby="addActivityModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="addActivityModalLabel">{{__ "calculate"}}</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form class="form-container" id="addActivityForm" action="" method="POST">
+                <div class="modal-body">
+
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{{__ "close"}}</button>
+                    <input type="submit" value="{{__ "add"}}" id="submit" name="submit" class="btn btn-primary">
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+
 <script src="/javascripts/initGraph.js"></script>
+<script src="/socket.io/socket.io.js"></script>
 <script>
-  init("{{states}}", "{{projectType}}");
+    init("{{states}}", "{{projectType}}");
+
+    //
+    //SOCKET.IO - pridani/edit/smazani stavu/aktivity
+    //
+    var socket = io();
+
+    document.getElementById('addStateForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        var stateName = document.getElementById('stateNameInput');
+        var stateInfo = document.getElementById('stateInfoInput');
+        
+        socket.emit("new state", stateName.value, "{{projectID}}", stateInfo.value); 
+
+        stateName.value = '';
+        stateInfo.value = '';
+
+        $('#addStateModal').modal('toggle');
+    })
+
+    document.getElementById('editStateForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        var stateName = document.getElementById('editStateName');
+        var stateInfo = document.getElementById('editStateInfo');
+        var stateID = this.getAttribute("name");
+
+        socket.emit("edit state", stateID, stateName.value, stateInfo.value);
+
+        stateName.value = '';
+        stateInfo.value = '';
+
+        $('#editStateModal').modal('toggle');
+    })
+
+    document.getElementById('deleteStateForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        var stateID = this.getAttribute("name");
+        socket.emit("delete state", stateID);
+        $('#deleteStateModal').modal('toggle');
+    })
+
+    socket.on('new state', function(state) {
+        // idk jestli osetrit aby nechodilo vsem
+        addCreatedState(state);
+    });
+
+    // TODO
+    socket.on('edit state', function(stateID, stateName, stateInfo) {
+        //edit
+        editSelectedState(stateID, stateName, stateInfo);
+    });
+
+    socket.on('delete state', function(stateID) {
+        deleteSelectedState(stateID);
+    });
+
+    // TODO - activity pres socket.io
+    socket.on('new activity', function(activity) {
+
+    })
+
+    socket.on('edit activity', function(activity) {
+
+    })
+
+    socket.on('delete activity', function(activity) {
+
+    })
+
 </script>
 
 

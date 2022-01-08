@@ -7,7 +7,8 @@ const { engine } = require('express-handlebars');
 
 // setting port
 const port = process.env.PORT || 3000;
-
+const http = require('http');
+const dotenv = require('dotenv').config();
 // const morgan = require('morgan');
 
 // i18n - languages
@@ -16,6 +17,33 @@ const i18n = require('i18n');
 var bodyParser = require('body-parser');
 // path
 const path = require('path');
+
+const state_controller = require('./controllers/stateController');
+const activity_controller = require('./controllers/activityController');
+
+const server = http.createServer(app);
+const { Server } = require('socket.io');
+
+
+// app listen
+server.listen(port, () => {
+    console.log("NAA listening...");
+})
+
+var io = new Server(server);
+exports.io = io;
+
+io.on("connection", (socket) => {
+    //states
+    socket.on('new state', state_controller.addState);
+    socket.on('edit state', state_controller.editState);
+    socket.on('delete state', state_controller.deleteState);
+
+    //activities
+    socket.on('new activity', activity_controller.addActivity);
+    socket.on('edit activity', activity_controller.editActivity);
+    socket.on('delete activity', activity_controller.deleteActivity);
+});
 
 // cookieParser
 const cookieParser = require('cookie-parser');
@@ -106,10 +134,21 @@ app.use((req, res, next) => {
 app.use('/', require('./routes/index'));
 app.use('/users', require('./routes/users'));
 app.use('/projects', require('./routes/projects'));
-app.use('/states', require('./routes/states'));
 app.use('/activities', require('./routes/activities'));
 // idk jeste
 app.use('/calculations', require('./routes/calculations'));
+
+
+
+// Dodelat !! :)
+app.use((err, req, res, next) => {
+    return res.status(500).render('error', {
+        title: req.__("error"),
+        code: "500",
+        text: req.__("500 response")
+    })
+})
+
 
 
 // handle error pages 400, 500
@@ -120,9 +159,3 @@ app.use(function(req, res) {
     });
 });
 
-
-
-// app listen
-app.listen(port, () => {
-    console.log("NAA listening...");
-})

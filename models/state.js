@@ -6,12 +6,17 @@ const stateSchema = new Schema({
         type: String,
         required: true
     },
+    stateType: {
+        type: String,
+        required: true
+    },
     projectID: {
         type: String,
         required: true
     },
     description: {
-        type: String
+        type: String,
+        default: ""
     }
 });
 
