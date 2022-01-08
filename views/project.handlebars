@@ -214,7 +214,6 @@
 <script src="/javascripts/initGraph.js"></script>
 <script src="/socket.io/socket.io.js"></script>
 <script>
-<<<<<<< HEAD
     init("{{states}}", "{{projectType}}");
 
     //
@@ -241,7 +240,7 @@
         var stateInfo = document.getElementById('editStateInfo');
         var stateID = this.getAttribute("name");
 
-        socket.emit("edit state", stateID, stateName.value, stateInfo.value);
+        socket.emit("edit state", stateID, stateName.value, stateInfo.value, "{{projectID}}");
 
         stateName.value = '';
         stateInfo.value = '';
@@ -262,9 +261,9 @@
     });
 
     // TODO
-    socket.on('edit state', function(stateID, stateName, stateInfo) {
+    socket.on('edit state', function(stateID, stateName, stateInfo, projectID) {
         //edit
-        editSelectedState(stateID, stateName, stateInfo);
+        editSelectedState(stateID, projectID, stateName, stateInfo);
     });
 
     socket.on('delete state', function(stateID) {
@@ -287,10 +286,3 @@
 </script>
 
 
-=======
-    setTimeout(function () {
-        jQuery('#flash').fadeOut('fast');
-    }, 3000);
-    init("{{states}}", "{{activities}}", "{{projectType}}");
-</script>
->>>>>>> 497c2153673148ce275e4e6c570b5b0ba35bcd9e

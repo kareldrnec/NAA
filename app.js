@@ -15,6 +15,7 @@ const dotenv = require('dotenv').config();
 const i18n = require('i18n');
 // body parser ?? 
 var bodyParser = require('body-parser');
+
 // path
 const path = require('path');
 
@@ -134,7 +135,7 @@ app.use((req, res, next) => {
 app.use('/', require('./routes/index'));
 app.use('/users', require('./routes/users'));
 app.use('/projects', require('./routes/projects'));
-app.use('/activities', require('./routes/activities'));
+//app.use('/activities', require('./routes/activities'));
 // idk jeste
 app.use('/calculations', require('./routes/calculations'));
 
