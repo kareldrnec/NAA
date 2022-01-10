@@ -58,7 +58,6 @@ exports.addProject = async (req, res, next) => {
     
         let startState = new StateModel({
             stateName: "Start",
-            stateType: "start",
             projectID: project._id
         });
     
@@ -66,7 +65,6 @@ exports.addProject = async (req, res, next) => {
     
         let finishState = new StateModel({
             stateName: "Finish",
-            stateType: "finish",
             projectID: project._id
         });
     

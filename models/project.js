@@ -6,7 +6,8 @@ var Schema = mongoose.Schema;
 var projectSchema = new Schema({
     projectName: {
         type: String,
-        required: true
+        required: true,
+        unique: true
     },
     projectType: {
         type: String,

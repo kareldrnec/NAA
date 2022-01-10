@@ -5,7 +5,7 @@ exports.aboutApp = async(req, res, next) => {
         let user = await UserModel.findById(req.session.userId);
         return res.render("about", {
             title: req.__("about app"),
-            username: user.userName
+            username: user.userName + " " + user.userSurname
         })
     } catch (err) {
         return next(err);
@@ -17,7 +17,7 @@ exports.helpPage = async(req, res, next) => {
         let user = await UserModel.findById(req.session.userId);
         return res.render("help", {
             title: req.__("help"),
-            username: user.userName
+            username: user.userName + " " + user.userSurname
         })
     } catch (err) {
         return next(err);
@@ -29,7 +29,7 @@ exports.results = async(req, res, next) => {
         let user = await UserModel.findById(req.session.userId);
         return res.render("results", {
             title: req.__("results"),
-            username: user.userName
+            username: user.userName + " " + user.userSurname
         })
     } catch (err) {
         return next(err);

@@ -9,7 +9,6 @@ exports.addState = async(stateName, projectID, stateInfo) => {
     try {
         let state = new StateModel({
             stateName: stateName,
-            stateType: "normal",
             projectID: projectID,
             description: stateInfo
         });

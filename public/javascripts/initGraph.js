@@ -69,18 +69,38 @@ function graphInit() {
             ), {
                 contextMenu: $(go.Adornment, "Vertical",
                     $("ContextMenuButton",
-                        $(go.TextBlock, "Add Activity"), { click: addSuccessor }),
+                        $(go.TextBlock, "Add Activity"), { click: addActivity }),
                     $("ContextMenuButton",
-                        $(go.TextBlock, "Add State"), { click: addState }),
+                        $(go.TextBlock, "Add State"), { click: function() {
+                            jQuery('#addStateModal').modal('show');
+                        }}),
                     $("ContextMenuButton",
                         $(go.TextBlock, "Edit"), { click: editState }),
                     $("ContextMenuButton",
-                        $(go.TextBlock, "Delete"), { click: deleteState })
+                        $(go.TextBlock, "Delete",
+                            { click: deleteState },
+                            new go.Binding("text", "Delete"),
+                            new go.Binding("visible", "text", function(textValue) {
+                                if(textValue == "Start" || textValue == "Finish") {
+                                    return false;
+                                }
+                                return true;
+                            }),
+                            )
+                    )
                 )
             }
-            // dodelat contextmenu pro stavy
+            // TODO
+            // dodelat preklad pro context menu
         ); // end Node
 
+    myDiagram.contextMenu = 
+        $(go.Adornment, "Vertical", 
+            $("ContextMenuButton",
+                $(go.TextBlock, "Add State"),
+                { click: function(){
+                    jQuery('#addStateModal').modal('show');
+                }}))
 
     // link (activities) colors
     var linkColors = { "R": pink, "B": blue };
@@ -114,6 +134,18 @@ function graphInit() {
 
     // pridani stavu (vrcholu) a aktivit (hran) do modelu grafu
     myDiagram.model = new go.GraphLinksModel(statesArray, activitiesArray);
+
+    myDiagram.commandHandler.doKeyDown = function() {
+        var e = myDiagram.lastInput;
+        if (e.key == "Del") {
+            const object = myDiagram.selection.first();
+            //tb
+            //TODO
+            console.log(e.key)
+            console.log(e)
+            console.log(object)
+        }
+    }
 }
 
 function getNodeDataArray(states) {
@@ -140,23 +172,6 @@ function getLinkDataArray(activities) {
     return linkDataArray;
 }
 
-function getActivityID(linkData) {
-    var activities = _activitiesData.activities;
-    var selectedActivity = activities.find(item => item.fromState == linkData.from && item.toState == linkData.to);
-    return selectedActivity.ID;
-}
-
-function addSuccessor() {
-
-}
-
-function addState(e, obj) {
-    var selectedNode = obj.part;
-    var nodeData = selectedNode.data;
-
-    $('#addStateModal').modal('show');
-    // addStateModal
-}
 
 function editState(e, obj){
     var selectedNode = obj.part;
@@ -189,7 +204,14 @@ function deleteState(e, obj) {
 //
 // TODO
 function addActivity(e, obj) {
-
+    var data = e.diagram.selection.toArray();
+    if (data.length == 2) {
+        var first_state = data[0].data;
+        var second_state = data[1].data;
+        console.log(first_state)
+        console.log(second_state)
+        $('#addActivityModal').modal('show');
+    }
 }
 
 function editActivity(e, obj) {

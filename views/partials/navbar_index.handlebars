@@ -14,7 +14,9 @@
           <i class="fas fa-project-diagram"></i> {{__ "project"}}
         </a>
         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-          <a class="dropdown-item" href="/projects/projectsDirectory"><i class="fas fa-folder"></i> {{__ "projects"}}</a>
+          <h6 class="dropdown-header">{{__ "project"}}</h6>
+          <div class="dropdown-divider"></div>
+          <a class="dropdown-item" href="/projects/projectsDirectory"><i class="fas fa-folder"></i> {{__ "directory"}}</a>
           <div class="dropdown-divider"></div>
           <a class="dropdown-item" href="/projects/new"><i class="fas fa-plus-square"></i> {{__ "new"}}</a>
           {{#if projectID}}
@@ -23,8 +25,12 @@
               class="fas fa-trash-alt"></i> {{__ "delete"}}</a>
           <div class="dropdown-divider"></div>
           <a class="dropdown-item" data-toggle="modal" data-target="#exportProjectModal" style="cursor: pointer;"><i class="fas fa-file-export"></i> {{__ "export"}}</a>
-
           {{/if}}
+          <div class="dropdown-divider"></div>
+          <h6 class="dropdown-header">{{__ "add to project"}}</h6>
+          <div class="dropdown-divider"></div>
+          <button class="dropdown-item" onclick="$('#addStateModal').modal('show')"><i class="fas fa-plus-square"></i> {{__ "state"}}</button>
+          <button class="dropdown-item"><i class="fas fa-plus-square"></i> {{__ "activity"}}</button>
         </div>
       </li>
       <li class="nav-item dropdown">

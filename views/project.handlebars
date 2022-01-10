@@ -157,10 +157,6 @@
     </div>
 </div>
 
-
-
-
-
 <!-- Delete State Modal -->
 <div class="modal fade" id="deleteStateModal" tabindex="-1" role="dialog" aria-labelledby="deleteStateModalLabel"
     aria-hidden="true">
@@ -174,7 +170,7 @@
             </div>
             <form class="form-container" id="deleteStateForm">
                 <div class="modal-body">
-                    Do you want to delete this state?
+                    {{__ "delete state question"}}
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">{{__ "close"}}</button>
@@ -192,14 +188,57 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="addActivityModalLabel">{{__ "calculate"}}</h5>
+                <div class="text-center">
+                    <h5 class="modal-title" id="addActivityModalLabel">{{__ "add activity"}}</h5>
+                </div>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
             <form class="form-container" id="addActivityForm" action="" method="POST">
                 <div class="modal-body">
-
+                    <div class="form-group">
+                        <label for="activityNameInput">{{__ "activity name"}}</label>
+                        <input type="text" class="form-control" id="activityNameInput" name="activityNameInput"
+                            placeholder="{{__ "enter activity name"}}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="analysisType">{{__ "analysis type"}}</label>
+                        <input type="text" class="form-control" value="{{upper projectType}}" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="activityTypeSelect">{{__ "activity type"}}</label>
+                        <select class="form-control" id="activityTypeSelect" name="activityTypeSelect">
+                            <option value="normal">{{__ "normal"}}</option>
+                            <option value="dummy">{{__ "dummy"}}</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="activityDescription">{{__ "description"}}</label>
+                        <input type="text" class="form-control" name="activityDescription" id="activityDescription" placeholder="{{__ "enter activity description"}}">
+                    </div>
+                    <div id="activityValues">
+                        <hr class="solid">
+                        <div class="text-center">
+                            <h6>{{__ "activity values"}}</h6>
+                        </div>
+                        {{#ifEquals projectType "cpm"}}
+                            <div class="form-group">
+                                <label for="lengthOfActivity">{{__ "length of activity"}}</label>
+                                <input type="number" class="form-control" name="lengthOfActivity">
+                            </div>                            
+                        {{/ifEquals}}
+                        {{#ifEquals projectType "pert"}}
+                            <div class="form-group">
+                                <label for="optimisticValue">{{__ "optimistic value"}}</label>
+                                <input type="number" class="form-control" name="optimisticValue" id="optimisticValue" min="0" value="0" step="0.1">
+                                <label for="mostExpectedValue">{{__ "most expected value"}}</label>
+                                <input type="number" class="form-control" name="mostExpectedValue" id="mostExpectedValue" min="0" value="0">
+                                <label for="pessimisticValue">{{__ "pessimistic value"}}</label>
+                                <input type="number" class="form-control" name="pessimisticValue" id="pessimisticValue" min="0" value="0">
+                            </div>
+                        {{/ifEquals}}
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">{{__ "close"}}</button>
@@ -210,17 +249,63 @@
     </div>
 </div>
 
+<!-- Edit Activity Modal -->
+<div class="modal fade" id="editActivityModal" tabindex="-1" role="dialog" aria-labelledby="editActivityModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="editActivityModalLabel">{{__ "edit activity"}}</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form class="form-container" id="editActivityForm">
+                <div class="modal-body">
+                    
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{{__ "close"}}</button>
+                    <input type="submit" value="{{__ "edit"}}" id="submit" name="submit" class="btn btn-primary">
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
+
+<!-- Delete Activity Modal -->
+<div class="modal fade" id="deleteActivityModal" tabindex="-1" role="dialog" aria-labelledby="deleteActivityModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="deleteActivityModalLabel">{{__ "delete activity"}}</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <form class="form-container" id="deleteActivityForm">
+                <div class="modal-body">
+                    {{__ "delete state question"}}
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-secondary" data-dismiss="modal">{{__ "close"}}</button>
+                    <input type="submit" value="{{__ "delete"}}" id="submit" name="submit" class="btn btn-primary">
+                </div>
+            </form>
+        </div>
+    </div>
+</div>
 
 <script src="/javascripts/initGraph.js"></script>
 <script src="/socket.io/socket.io.js"></script>
 <script>
+    // pridat aktivity z db do init
     init("{{states}}", "{{projectType}}");
 
-    //
-    //SOCKET.IO - pridani/edit/smazani stavu/aktivity
-    //
     var socket = io();
 
+    // addStateForm - submit - add state
     document.getElementById('addStateForm').addEventListener('submit', function(event) {
         event.preventDefault();
         var stateName = document.getElementById('stateNameInput');
@@ -234,6 +319,7 @@
         $('#addStateModal').modal('toggle');
     })
 
+    // editStateForm - submit - edit state
     document.getElementById('editStateForm').addEventListener('submit', function(event) {
         event.preventDefault();
         var stateName = document.getElementById('editStateName');
@@ -248,41 +334,77 @@
         $('#editStateModal').modal('toggle');
     })
 
+    // deleteStateForm - submit - delete state
     document.getElementById('deleteStateForm').addEventListener('submit', function(event) {
         event.preventDefault();
         var stateID = this.getAttribute("name");
+
         socket.emit("delete state", stateID);
+
         $('#deleteStateModal').modal('toggle');
     })
 
+    // activityTypeSelect - onchange display/hide values of activity
+    document.getElementById('activityTypeSelect').addEventListener('change', function() {
+        if(this.value == "normal") {
+            document.getElementById('activityValues').style.visibility = "visible";
+        } else {
+            document.getElementById('activityValues').style.visibility = "hidden";
+        }
+    })
+
+    document.getElementById('addActivityForm').addEventListener('submit', function(event) {
+        event.preventDefault();
+        // alert("probiha submit")
+        var valuesArr = []; 
+        if ("{{projectType}}" == "cpm") {
+            // TODO
+
+        } else {
+            var optimisticValue = document.getElementById("optimisticValue").value;
+            var mostExpectedValue = document.getElementById("mostExpectedValue").value;
+            var pessimisticValue = document.getElementById("pessimisticValue").value;
+            valuesArr.push(optimisticValue, mostExpectedValue, pessimisticValue);
+            console.log(valuesArr)
+        }
+        // TODO
+
+
+        $('#addActivityModal').modal('toggle');
+    })
+
+    // add state to diagram
     socket.on('new state', function(state) {
         // idk jestli osetrit aby nechodilo vsem
         addCreatedState(state);
     });
 
-    // TODO
+    // edit state in diagram
     socket.on('edit state', function(stateID, stateName, stateInfo, projectID) {
         //edit
         editSelectedState(stateID, projectID, stateName, stateInfo);
     });
 
+    // delete state from diagram
     socket.on('delete state', function(stateID) {
         deleteSelectedState(stateID);
     });
 
     // TODO - activity pres socket.io
+    // add activity to diagram
     socket.on('new activity', function(activity) {
 
     })
 
+    // edit activity in diagram
     socket.on('edit activity', function(activity) {
 
     })
 
+    // delete activity from diagram
     socket.on('delete activity', function(activity) {
 
     })
-
 </script>
 
 
