@@ -24,7 +24,7 @@ const activity_controller = require('./controllers/activityController');
 
 const server = http.createServer(app);
 const { Server } = require('socket.io');
-
+const methodOverride = require('method-override');
 
 // app listen
 server.listen(port, () => {
@@ -84,15 +84,18 @@ app.engine('handlebars', engine({
         ifEquals: function(value1, value2, options) {
             return (value1 == value2) ? options.fn(this) : options.inverse(this);
         },
-        __: function(){
+        __: function() {
             return i18n.__.apply(this, arguments);
         }
     }
 }));
 
-
+// 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
+
+// method override
+app.use(methodOverride('_method'));
 
 // express - serving static files
 app.use(express.static(path.join(__dirname, '/public')));
@@ -159,4 +162,3 @@ app.use(function(req, res) {
         code: "404"
     });
 });
-

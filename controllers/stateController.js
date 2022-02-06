@@ -15,7 +15,7 @@ exports.addState = async(stateName, projectID, stateInfo) => {
         await state.save();
         app.io.emit('new state', state);
     } catch (err) {
-        // emit chyby
+        app.io.emit('error state');
     }
 }
 
@@ -29,7 +29,7 @@ exports.editState = async(stateID, stateName, stateInfo, projectID) => {
         })
         app.io.emit('edit state', stateID, stateName, stateInfo, projectID);
     } catch (err) {
-        // emit chyby
+        app.io.emit('error state');
     }
     // socket.emit("edit state", stateID, stateName.value, stateInfo.value);
 }
@@ -41,8 +41,7 @@ exports.deleteState = async(stateID) => {
         await StateModel.findByIdAndDelete(stateID)
         app.io.emit('delete state', stateID);
     } catch (err) {
-        // emit chyby
+        app.io.emit("error state");
     }
     // dodelat mazani aktivit
 }
-

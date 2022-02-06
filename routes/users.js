@@ -12,7 +12,7 @@ router.get("/login", function(req, res) {
 });
 
 // GET - router Register
-router.get("/register", function(req, res){
+router.get("/register", function(req, res) {
     res.render("register", {
         title: req.__("register")
     });
@@ -31,9 +31,9 @@ router.post("/register", user_controller.registerNewUser);
 router.get("/logout", auth.requiresLogin, user_controller.logout);
 
 // GET - delete Account
-router.post("/deleteAccount", auth.requiresLogin, user_controller.deleteAccount);
+router.delete("/deleteAccount", auth.requiresLogin, user_controller.deleteAccount);
 
 // POST - update Account
-router.post("/updateAccount", auth.requiresLogin, user_controller.updateAccount);
+router.put("/updateAccount", auth.requiresLogin, user_controller.updateAccount);
 
 module.exports = router;

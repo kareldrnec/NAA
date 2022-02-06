@@ -15,12 +15,13 @@ router.post("/add", auth.requiresLogin, project_controller.addProject);
 // GET - router Edit Project
 router.get("/edit/:id", auth.requiresLogin, project_controller.getProjectForEdit);
 
-// POST - router Edit Project
-router.post("/edit/:id", auth.requiresLogin, project_controller.editProject);
 
-// DELETE
-router.get("/delete/:id", auth.requiresLogin, project_controller.deleteProject);
-router.post("/delete/:id", auth.requiresLogin, project_controller.deleteProject);
+
+// PUT - router Edit Project
+router.put("/edit/:id", auth.requiresLogin, project_controller.editProject);
+
+// DELETE - router Delete Project
+router.delete("/delete/:id", auth.requiresLogin, project_controller.deleteProject);
 
 
 // GET - choose project
