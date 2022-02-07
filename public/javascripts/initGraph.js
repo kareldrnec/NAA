@@ -15,7 +15,7 @@ function init(states, activities, projectT) {
     console.log("Vypis")
     console.log(_activitiesData)
     console.log("ende")
-    //console.log(_statesData)
+        //console.log(_statesData)
     graphInit();
 
     document.getElementById("exportButton").addEventListener("click", exportDiagram);
@@ -76,22 +76,23 @@ function graphInit() {
                     $("ContextMenuButton",
                         $(go.TextBlock, "Add Activity"), { click: addActivity }),
                     $("ContextMenuButton",
-                        $(go.TextBlock, "Add State"), { click: function() {
-                            jQuery('#addStateModal').modal('show');
-                        }}),
+                        $(go.TextBlock, "Add State"), {
+                            click: function() {
+                                jQuery('#addStateModal').modal('show');
+                            }
+                        }),
                     $("ContextMenuButton",
                         $(go.TextBlock, "Edit"), { click: editState }),
                     $("ContextMenuButton",
-                        $(go.TextBlock, "Delete",
-                            { click: deleteState },
+                        $(go.TextBlock, "Delete", { click: deleteState },
                             new go.Binding("text", "Delete"),
                             new go.Binding("visible", "text", function(textValue) {
-                                if(textValue == "Start" || textValue == "Finish") {
+                                if (textValue == "Start" || textValue == "Finish") {
                                     return false;
                                 }
                                 return true;
                             }),
-                            )
+                        )
                     )
                 )
             }
@@ -99,13 +100,14 @@ function graphInit() {
             // dodelat preklad pro context menu
         ); // end Node
 
-    myDiagram.contextMenu = 
-        $(go.Adornment, "Vertical", 
+    myDiagram.contextMenu =
+        $(go.Adornment, "Vertical",
             $("ContextMenuButton",
-                $(go.TextBlock, "Add State"),
-                { click: function(){
-                    jQuery('#addStateModal').modal('show');
-                }}))
+                $(go.TextBlock, "Add State"), {
+                    click: function() {
+                        jQuery('#addStateModal').modal('show');
+                    }
+                }))
 
     // link (activities) colors
     var linkColors = { "R": pink, "B": blue };
@@ -178,7 +180,7 @@ function getLinkDataArray(activities) {
 }
 
 
-function editState(e, obj){
+function editState(e, obj) {
     var selectedNode = obj.part;
     var nodeData = selectedNode.data;
     console.log(nodeData)
@@ -187,7 +189,7 @@ function editState(e, obj){
     var item = states.find(element => element.ID == nodeData.key);
 
     document.getElementById("editStateName").value = item.stateName;
-    document.getElementById("editStateInfo").value= item.description;
+    document.getElementById("editStateInfo").value = item.description;
     $('#editStateModal').modal('show');
     //editStateName editStateInfo
     //window.location.href = "/states/editState/" + nodeData.key;
@@ -213,10 +215,10 @@ function addActivity(e, obj) {
 
     selectedStates.push(selectedNode.data)
 
-    if(selectedStates.length == 2) {
+    if (selectedStates.length == 2) {
 
         // TODO jestli mohu takhle spojit
-        
+
         $('#addActivityForm').attr('action', selectedStates[0].key + "&" + selectedStates[1].key);
         selectedStates = [];
         $('#addActivityModal').modal('show');
@@ -233,11 +235,17 @@ function addActivity(e, obj) {
         $('#addActivityModal').modal('show');
     }
      */
-    
+
 }
 
 function editActivity(e, obj) {
+    // TO DO
+    var selectedLink = obj.part;
+    var linkData = selectedLink.data;
 
+    var activities = _activitiesData.activities;
+    var activity = activities.find(element => element.fromState == linkData.from && element.toState == linkData.to);
+    console.log(activity)
 }
 
 function deleteActivity(e, obj) {
@@ -269,10 +277,10 @@ function editSelectedState(stateID, projectID, stateName, stateInfo) {
 }
 
 function deleteSelectedState(stateID) {
-    var states = _statesData.states; 
+    var states = _statesData.states;
     var foundIndex = states.findIndex(element => element.ID == stateID);
     console.log(foundIndex)
-    if(foundIndex > -1) {
+    if (foundIndex > -1) {
         states.splice(foundIndex, 1)
         reload();
     }
@@ -283,7 +291,7 @@ function deleteSelectedState(stateID) {
 
 function addCreatedActivity(activity) {
     // add created activity to diagram
-    
+
     // TO DO
 
     _activitiesData.activities.push({
@@ -310,7 +318,7 @@ function exportDiagram() {
     // Export diagramu
     var blob;
     var selectedFormat = document.getElementById("typeOfFile").value;
-    if(selectedFormat == "svg") {
+    if (selectedFormat == "svg") {
         var svg = myDiagram.makeSvg({ scale: 1, background: "white" });
         var svgstr = new XMLSerializer().serializeToString(svg);
         blob = new Blob([svgstr], {
@@ -341,7 +349,7 @@ function downloadBlob(blob) {
     a.style = "display: none";
     a.href = url;
     a.download = filename;
-    if(window.navigator.msSaveBlob != undefined) {
+    if (window.navigator.msSaveBlob != undefined) {
         window.navigator.msSaveBlob(blob, filename);
         return;
     }
