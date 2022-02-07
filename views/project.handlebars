@@ -225,7 +225,7 @@
                         {{#ifEquals projectType "cpm"}}
                             <div class="form-group">
                                 <label for="lengthOfActivity">{{__ "length of activity"}}</label>
-                                <input type="number" class="form-control" name="lengthOfActivity">
+                                <input type="number" class="form-control" name="lengthOfActivity" id="lengthOfActivity">
                             </div>                            
                         {{/ifEquals}}
                         {{#ifEquals projectType "pert"}}
@@ -301,7 +301,7 @@
 <script src="/socket.io/socket.io.js"></script>
 <script>
     // pridat aktivity z db do init
-    init("{{states}}", "{{projectType}}");
+    init("{{states}}", "{{activities}}", "{{projectType}}");
 
     var socket = io();
 
@@ -354,21 +354,28 @@
     })
 
     document.getElementById('addActivityForm').addEventListener('submit', function(event) {
+        // TODO
         event.preventDefault();
-        // alert("probiha submit")
-        var valuesArr = []; 
-        if ("{{projectType}}" == "cpm") {
-            // TODO
 
+        var activityName = document.getElementById('activityNameInput').value;
+        var activityType = document.getElementById('activityTypeSelect').value;
+        var activityDescription = document.getElementById('activityDescription').value;
+
+        var valuesArr = []; 
+        
+        var formAction = ($('#addActivityForm').attr('action')).split('&');
+
+        if ("{{projectType}}" == "cpm") {
+            var length = document.getElementById("lengthOfActivity").value;
+            valuesArr.push(length);
         } else {
             var optimisticValue = document.getElementById("optimisticValue").value;
             var mostExpectedValue = document.getElementById("mostExpectedValue").value;
             var pessimisticValue = document.getElementById("pessimisticValue").value;
-            valuesArr.push(optimisticValue, mostExpectedValue, pessimisticValue);
-            console.log(valuesArr)
+            valuesArr.push(optimisticValue, mostExpectedValue, pessimisticValue);       
         }
-        // TODO
 
+        socket.emit("new activity", activityName, activityType, formAction[0], formAction[1], valuesArr, activityDescription, "{{projectID}}");
 
         $('#addActivityModal').modal('toggle');
     })
@@ -393,7 +400,8 @@
     // TODO - activity pres socket.io
     // add activity to diagram
     socket.on('new activity', function(activity) {
-
+        console.log("Dostavam echo zpet")
+        addCreatedActivity(activity);
     })
 
     // edit activity in diagram

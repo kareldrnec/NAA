@@ -121,7 +121,7 @@ app.use(session({
     saveUninitialized: false,
     store: store
 }));
-
+// schovat promenny do env
 
 // TODO express flash messages
 //express-flash-message

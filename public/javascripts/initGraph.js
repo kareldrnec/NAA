@@ -2,15 +2,20 @@ var _statesData, _activitiesData, projectType;
 var statesArray = [];
 var activitiesArray = [];
 var myDiagram;
+var selectedStates = [];
 
 
-function init(states, projectT) {
+function init(states, activities, projectT) {
     _statesData = states.replace(/&quot;/g, '"');
     _statesData = JSON.parse(_statesData);
-    //_activitiesData = activities.replace(/&quot;/g, '"');
-    //_activitiesData = JSON.parse(_activitiesData);
+    _activitiesData = activities.replace(/&quot;/g, '"');
+    _activitiesData = JSON.parse(_activitiesData);
     projectType = projectT;
-    console.log(_statesData)
+
+    console.log("Vypis")
+    console.log(_activitiesData)
+    console.log("ende")
+    //console.log(_statesData)
     graphInit();
 
     document.getElementById("exportButton").addEventListener("click", exportDiagram);
@@ -130,7 +135,7 @@ function graphInit() {
     statesArray = getNodeDataArray(_statesData);
 
     // nacteni aktivit do linkArray pro graf
-    activitiesArray = [];
+    activitiesArray = getLinkDataArray(_activitiesData);
 
     // pridani stavu (vrcholu) a aktivit (hran) do modelu grafu
     myDiagram.model = new go.GraphLinksModel(statesArray, activitiesArray);
@@ -204,14 +209,31 @@ function deleteState(e, obj) {
 //
 // TODO
 function addActivity(e, obj) {
-    var data = e.diagram.selection.toArray();
-    if (data.length == 2) {
+    var selectedNode = obj.part;
+
+    selectedStates.push(selectedNode.data)
+
+    if(selectedStates.length == 2) {
+
+        // TODO jestli mohu takhle spojit
+        
+        $('#addActivityForm').attr('action', selectedStates[0].key + "&" + selectedStates[1].key);
+        selectedStates = [];
+        $('#addActivityModal').modal('show');
+    }
+
+
+    /**
+     * var data = e.diagram.selection.toArray();
+        if (data.length == 2) {
         var first_state = data[0].data;
         var second_state = data[1].data;
         console.log(first_state)
         console.log(second_state)
         $('#addActivityModal').modal('show');
     }
+     */
+    
 }
 
 function editActivity(e, obj) {
@@ -261,11 +283,26 @@ function deleteSelectedState(stateID) {
 
 function addCreatedActivity(activity) {
     // add created activity to diagram
+    
     // TO DO
+
+    _activitiesData.activities.push({
+        "ID": activity._id,
+        "activityName": activity.activityName,
+        "activityType": activity.activityType,
+        "fromState": activity.fromState,
+        "toState": activity.toState,
+        "values": activity.values,
+        "description": activity.description,
+        "projectID": activity.projectID
+    })
+    reload();
+
 }
 
 function reload() {
     statesArray = getNodeDataArray(_statesData);
+    activitiesArray = getLinkDataArray(_activitiesData);
     myDiagram.model = new go.GraphLinksModel(statesArray, activitiesArray);
 }
 

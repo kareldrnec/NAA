@@ -1,6 +1,11 @@
 // user controller
 
 const UserModel = require('../models/user');
+const ActivityModel = require('../models/activity');
+const StateModel = require('../models/state');
+const ProjectModel = require('../models/project');
+
+
 const bcrypt = require('bcrypt');
 
 exports.registerNewUser = async (req, res, next) => {
@@ -87,15 +92,34 @@ exports.myProfile = async (req, res, next) => {
 };
 
 exports.deleteAccount = async (req, res, next) => {
-    //Dodelat
-    let userId = req.session.userId;
+    // Dodelat !!
+    let userID = req.session.userId;
+
+    // nalezeni vsech projektu
+    try {
+        let projects = await ProjectModel.find({ userId: userID });
+
+        for(var i = 0; i < projects.length; i++) {
+            await StateModel.deleteMany({ projectID: projects[i]._id });
+            await ActivityModel.deleteMany({ projectID: projects[i]._id });
+        }
+        //mazani projektu
+        await ProjectModel.deleteMany({ userId: userID });
+
+        console.log("smazano")
+        return res.redirect("/");
+    } catch (err) {
+        return next(err);
+    }
+
+    /**let userId = req.session.userId;
     req.session.destroy(function (err) {
         if (err) {
             return next(err);
         }
     })
-    await UserModel.findByIdAndRemove(userId);
-    return res.redirect("/");
+    //await UserModel.findByIdAndRemove(userId);
+    return res.redirect("/"); */
 }
 
 exports.updateAccount = async (req, res, next) => {

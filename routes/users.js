@@ -31,9 +31,9 @@ router.post("/register", user_controller.registerNewUser);
 router.get("/logout", auth.requiresLogin, user_controller.logout);
 
 // GET - delete Account
-router.delete("/deleteAccount", auth.requiresLogin, user_controller.deleteAccount);
+router.delete("/myProfile", auth.requiresLogin, user_controller.deleteAccount);
 
 // POST - update Account
-router.put("/updateAccount", auth.requiresLogin, user_controller.updateAccount);
+router.put("/myProfile", auth.requiresLogin, user_controller.updateAccount);
 
 module.exports = router;

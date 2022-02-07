@@ -21,10 +21,8 @@
             {{ created }}
             <hr class="solid">
             <div class="text-center">
-                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#updateAccountModal"><i
-                        class="far fa-edit"></i> {{__ "update"}}</button>
-                <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#deleteAccountModal"><i
-                        class="far fa-edit"></i> {{__ "delete"}}</button>
+                <button type="button" class="btn btn-primary" onclick="updateAccount()"><i class="far fa-edit"></i> {{__ "update"}}</button>
+                <button type="button" class="btn btn-primary" onclick="deleteAccount()"><i class="far fa-edit"></i> {{__ "delete"}}</button>
             </div>
         </div>
     </div>
@@ -41,9 +39,10 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <form method="post" action="/users/deleteAccount">
+            <form method="post" action="/users/deleteAccount" id="deleteAccountForm">
                 <div class="modal-body">
-                    {{__ "delete account"}}
+                    {{__ "delete account"}}<br>
+                    {{__ "it will delete projects"}}
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">{{__ "close"}}</button>
@@ -65,7 +64,7 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <form method="post" action="/users/updateAccount">
+            <form method="POST" action="/users/updateAccount" id="updateAccountForm">
                 <div class="modal-body">
                     <div class="form-group">
                         <label for="username">{{__ "name"}}</label>
@@ -89,4 +88,16 @@
     setTimeout(function() {
         jQuery('#flash').fadeOut('fast');
     }, 3000);
+
+    function deleteAccount() {
+        // hotovo
+        $("#deleteAccountForm").attr("action", "/users/myProfile" + "/?_method=DELETE");
+        $("#deleteAccountModal").modal('show');
+    }
+
+    function updateAccount() {
+        // hotovo
+        $('#updateAccountForm').attr("action", "/users/myProfile" + "/?_method=PUT");
+        $('#updateAccountModal').modal('show');
+    }
 </script>

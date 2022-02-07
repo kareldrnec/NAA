@@ -129,13 +129,32 @@ exports.loadProject = async (req, res, next) => {
             for (var i in states) {
                 var item = states[i];
                 statesPrep.push({
+                    "ID": item._id,
                     "stateName": item.stateName,
                     "projectID": item.projectID,
-                    "ID": item._id,
                     "description": item.description
                 });
             }
             statesToSend.states = statesPrep;
+
+            let activities = await ActivityModel.find({ projectID: project._id });
+            let activitiesToSend = {};
+            let activitiesPrep = [];
+            for (var i in activities) {
+                var item = activities[i];
+                activitiesPrep.push({
+                    "ID": item._id,
+                    "activityName": item.activityName,
+                    "activityType": item.activityType,
+                    "fromState": item.fromState,
+                    "toState": item.toState,
+                    "values": item.values,
+                    "description": item.description,
+                    "projectID": item.projectID
+                });
+            }
+            activitiesToSend.activities = activitiesPrep;
+
             res.cookie("activeProject", project._id);
             res.cookie("projectType", project.projectType);
             res.render("project", {
@@ -143,7 +162,7 @@ exports.loadProject = async (req, res, next) => {
                 projectID: project._id,
                 projectType: project.projectType,
                 states: JSON.stringify(statesToSend),
-                // mozna predelat ?
+                activities: JSON.stringify(activitiesToSend),
                 username: user.userName + " " + user.userSurname
             })
         } else {

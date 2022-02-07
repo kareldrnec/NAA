@@ -51,6 +51,7 @@
 	"help": "Help",
 	"home": "Home",
 	"information": "Information",
+	"it will delete projects": "This operation will also delete all your projects!",
 	"language": "Language",
 	"length of activity": "Length of Activity",
 	"load file": "Load File",
