@@ -30,8 +30,8 @@ router.get("/select/:id", auth.requiresLogin, project_controller.selectProject);
 
 router.get("/:id", auth.requiresLogin, project_controller.loadProject);
 
-
-//router.post("/generate", auth.requiresLogin, project_controller.generate);
+// POST - generate project
+router.post("/generate", auth.requiresLogin, project_controller.generateProject);
 
 
 module.exports = router;

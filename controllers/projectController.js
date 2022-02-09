@@ -37,7 +37,7 @@ exports.newProject = async (req, res, next) => {
         let user = await UserModel.findById(req.session.userId);
         return res.render('addProject', {
             title: req.__('new project'),
-            username: user.userName
+            username: user.userName + " " + user.userSurname
         })
     } catch (err) {
         return next(err);
@@ -47,6 +47,7 @@ exports.newProject = async (req, res, next) => {
 //add new project
 exports.addProject = async (req, res, next) => {
     const { projectName, types, projectInfo } = req.body;
+    var statesArr = [];
     try {
         let project = new ProjectModel({
             projectName: projectName,
@@ -55,21 +56,12 @@ exports.addProject = async (req, res, next) => {
             userId: req.session.userId
         });
         await project.save();
-    
-        let startState = new StateModel({
-            stateName: "Start",
-            projectID: project._id
-        });
-    
-        await startState.save();
-    
-        let finishState = new StateModel({
-            stateName: "Finish",
-            projectID: project._id
-        });
-    
-        await finishState.save();
-    
+
+        statesArr.push(createState("Start", project._id));
+        statesArr.push(createState("Finish", project._id));
+        
+        await StateModel.insertMany(statesArr);
+
         req.session.flash = { type: 'success', text: req.__("project added") };
         return res.redirect('/projects/projectsDirectory');
     } catch (err) {
@@ -86,7 +78,7 @@ exports.editProject = async (req, res, next) => {
             projectName: projectName,
             projectInfo: projectInfo
         });
-        req.session.flash = { type: 'success', text:  req.__('project updated')};
+        req.session.flash = { type: 'success', text: req.__('project updated') };
         return res.redirect("/projects/projectsDirectory");
     } catch (err) {
         return next(err);
@@ -113,7 +105,7 @@ exports.getProjectForEdit = async (req, res, next) => {
 }
 
 //project selection
-exports.selectProject = async(req, res) => {
+exports.selectProject = async (req, res) => {
     res.redirect("/projects/" + encodeURIComponent(req.params.id));
 }
 
@@ -178,20 +170,71 @@ exports.loadProject = async (req, res, next) => {
 // dodelat smazani stavu a udalosti, ktere dany projekt obsahuje
 exports.deleteProject = async (req, res, next) => {
     try {
-        // smazani vsech stavu
         await StateModel.deleteMany({
             projectID: req.params.id
         });
-        // smazani vsech aktivit
-        // TODO
-        //
-        //
 
-        //smazani projektu
+        await ActivityModel.deleteMany({
+            projectID: req.params.id
+        });
+
         await ProjectModel.findByIdAndDelete(req.params.id);
+        
         req.session.flash = { type: 'success', text: req.__("project deleted") };
+        
         return res.redirect("/projects/projectsDirectory");
     } catch (err) {
         return next(err);
     }
 }
+
+// generator 
+exports.generateProject = async (req, res, next) => {
+    const projectName = req.body.projectName;
+    const projectType = req.body.types;
+    const projectInfo = req.body.projectInfo;
+    var numberOfStates = req.body.numberOfStates;
+    var statesArr = [];
+    var activitiesArr = [];
+    try {
+
+        let project = ProjectModel({
+            projectName: projectName,
+            projectType: projectType,
+            projectInfo: projectInfo,
+            userId: req.session.userId
+        });
+
+        statesArr.push(createState("Start", project._id));
+        statesArr.push(createState("Finish", project._id));
+
+        numberOfStates -= 2;
+
+        console.log("Project");
+        console.log(project);
+        console.log("Stavy");
+        console.log(statesArr);
+
+        // await project.save();
+        // await StateModel.insertMany(statesArr)
+
+
+
+        return res.redirect("/")
+    } catch (err) {
+        return next(err);
+    }
+}
+
+function createState(name, projectID) {
+    return StateModel({
+        stateName: name,
+        projectID: projectID
+    });
+}
+
+function createActivity(name) {
+
+}
+
+

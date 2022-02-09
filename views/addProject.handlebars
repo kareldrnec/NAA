@@ -1,4 +1,4 @@
-{{> navbar_index}}
+{{> navbar}}
 
 {{#if flash}}
 <div style="text-align: center" id="flash" class="alert alert-{{flash.type}}" role="alert">
@@ -7,7 +7,7 @@
 </div>
 {{/if}}
 
-<div class="container-fluid bg">
+<div class="container-fluid bg pt-5">
     <div class="row">
         <div class="col-md-4 col-sm-4 col-xs-12"></div>
         <div class="col-md-4 col-sm-4 col-xs-12">
@@ -30,8 +30,8 @@
                     <textarea name="projectInfo" class="form-control"></textarea>
                 </div>
                 <div class="text-center">
-                    <button type="submit" class="btn btn-primary">{{__ "add project"}}</button>
-                    <button type="button" class="btn btn-primary">{{__ "back"}}</button>
+                    <button type="submit" class="btn btn-primary btn-block">{{__ "add project"}}</button>
+                    <button type="button" class="btn btn-secondary btn-block" onclick="history.back()">{{__ "back"}}</button>
                 </div>
             </form>
             <!--form end-->

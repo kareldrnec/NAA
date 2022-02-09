@@ -1,4 +1,4 @@
-{{> navbar_index}}
+{{> navbar}}
 
 {{#if flash}}
 <div style="text-align: center" id="flash" class="alert alert-{{flash.type}}" role="alert">
@@ -7,20 +7,20 @@
 </div>
 {{/if}}
 
-<div class="container-fluid bg">
+<div class="container-fluid bg pt-5">
     <div class="row">
         <div class="col-md-4 col-sm-4 col-xs-12"></div>
         <div class="col-md-4 col-sm-4 col-xs-12">
             <!--form start-->
             <form class="form-container" action="/projects/edit/{{projectID}}" method="post">
-                <h2 class="text-center">Edit Project</h2>
+                <h2 class="text-center">{{__ "edit project"}}</h2>
                 <div class="form-group">
                     <label for="projectName">{{__ "project name"}}</label>
                     <input type="text" class="form-control" name="projectName" value="{{projectName}}" required>
                 </div>
                 <div class="form-group">
                     <label for="typeOfProject">{{__ "type of project"}}</label>
-                    <input type="text" class="form-control" value="{{projectType}}" readonly>
+                    <input type="text" class="form-control" value="{{upper projectType}}" readonly>
                 </div>
                 <div class="form-group">
                     <label for="createdAt">{{__ "created"}}</label>
@@ -31,8 +31,8 @@
                     <textarea name="projectInfo" class="form-control">{{projectInfo}}</textarea>
                 </div>
                 <div class="text-center">
-                    <button type="submit" class="btn btn-primary">{{__ "edit project"}}</button>
-                    <button type="button" class="btn btn-primary">{{__ "back"}}</button>
+                    <button type="submit" class="btn btn-primary btn-block">{{__ "edit project"}}</button>
+                    <button type="button" class="btn btn-secondary btn-block" onclick="history.back()">{{__ "back"}}</button>
                 </div>
             </form>
             <!--form end-->

@@ -75,6 +75,9 @@ app.engine('handlebars', engine({
     defaultLayout: 'main',
     extname: '.handlebars',
     helpers: {
+        json: function(value) {
+            return JSON.stringify(value);
+        },
         inc: function(value, options) {
             return parseInt(value) + 1;
         },

@@ -81,7 +81,8 @@ exports.myProfile = async (req, res, next) => {
         let stringDate = date.getDate() + "/" + (date.getMonth() + 1) + "/" + date.getFullYear();
         return res.render("myProfile", {
             title: req.__("my profile"),
-            username: user.userName,
+            username: user.userName + " " + user.userSurname,
+            name: user.userName,
             surname: user.userSurname,
             email: user.email,
             created: stringDate

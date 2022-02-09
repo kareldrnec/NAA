@@ -1,15 +1,14 @@
 {{> navbar}}
 
-
 <div class="d-flex pt-5 justify-content-center align-items-center">
     <h1 class="mr-3 pr-3 align-top border-right inline-block align-content-center">{{code}}</h1>
     <div class="inline-block">
-        <h2>Not Found.</h2>
+        <h2>{{__ "not found"}}</h2>
         <div class="text-center">
             <a href="/">
                 <h4>
                     {{#ifEquals code "404"}}
-                    Go Back.
+                    {{__ "go back"}}
                     {{/ifEquals}}
                 </h4>
             </a>

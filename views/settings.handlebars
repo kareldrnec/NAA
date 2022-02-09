@@ -18,22 +18,22 @@
                 <div class="form-group">
                     <label for="labelForColors">{{__ "nav color"}}</label>
                     <select name="colors" class="form-control">
-                        <option value="default">Default</option>
-                        <option value="blue" style="background-color: lightskyblue;">Blue</option>
-                        <option value="red" style="background-color: lightcoral;">Red</option>
-                        <option value="gray" style="background-color: lightgray;">Gray</option>
+                        <option value="default">{{__ "default"}}</option>
+                        <option value="blue" style="background-color: lightskyblue;">{{__ "blue"}}</option>
+                        <option value="red" style="background-color: lightcoral;">{{__ "red"}}</option>
+                        <option value="gray" style="background-color: lightgray;">{{__ "gray"}}</option>
                     </select>
                 </div>
                 <div class="form-group">
                     <label for="labelForLanguages">{{__ "language"}}</label>
                     <select name="languages" id="languages" class="form-control">
-                        <option value="en">ENG (Default)</option>
+                        <option value="en">ENG ({{__ "default"}})</option>
                         <option value="cz">CZ</option>
                     </select>
                 </div>
                 <div class="text-center">
-                    <button type="submit" class="btn btn-primary">{{__ "save settings"}}</button>
-                    <button type="button" class="btn btn-primary" onclick="history.back()">{{__ "back"}}</button>
+                    <button type="submit" class="btn btn-primary btn-block">{{__ "save settings"}}</button>
+                    <button type="button" class="btn btn-secondary btn-block" onclick="history.back()">{{__ "back"}}</button>
                 </div>
             </form>
             <!--form end-->
