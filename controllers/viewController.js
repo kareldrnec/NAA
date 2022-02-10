@@ -63,6 +63,10 @@ exports.renderSettings = async(req, res, next) => {
 
 exports.applySettings = function(req, res) {
     // DODELAT, mozna zmena barvy
+
+    console.log("Vypis barvy")
+
     res.cookie("locale", req.body.languages);
+    
     res.redirect("/settings")
 };

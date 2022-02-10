@@ -167,7 +167,6 @@ exports.loadProject = async (req, res, next) => {
 }
 
 // delete project
-// dodelat smazani stavu a udalosti, ktere dany projekt obsahuje
 exports.deleteProject = async (req, res, next) => {
     try {
         await StateModel.deleteMany({
@@ -194,10 +193,10 @@ exports.generateProject = async (req, res, next) => {
     const projectType = req.body.types;
     const projectInfo = req.body.projectInfo;
     var numberOfStates = req.body.numberOfStates;
+    var fromState, toState;
     var statesArr = [];
     var activitiesArr = [];
     try {
-
         let project = ProjectModel({
             projectName: projectName,
             projectType: projectType,
@@ -205,20 +204,32 @@ exports.generateProject = async (req, res, next) => {
             userId: req.session.userId
         });
 
-        statesArr.push(createState("Start", project._id));
-        statesArr.push(createState("Finish", project._id));
+        fromState = createState("Start", project._id);
+        toState = createState("Finish", project._id);
+
+        statesArr.push(fromState);
+        statesArr.push(toState);
 
         numberOfStates -= 2;
 
-        console.log("Project");
-        console.log(project);
-        console.log("Stavy");
-        console.log(statesArr);
+        if (numberOfStates == 0) {
+            activitiesArr.push(createActivity("A1", "normal", projectType, project._id, fromState._id, toState._id));
+        } else {
 
+        }
+
+        console.log("Project")
+        console.log(project)
+        console.log("Stavy")
+        console.log(statesArr)
+        console.log("Aktivity")
+        console.log(activitiesArr)
+
+
+        // ulozeni do databaze
         // await project.save();
         // await StateModel.insertMany(statesArr)
-
-
+        // await ActivityModel.insertMany(activitiesArr);
 
         return res.redirect("/")
     } catch (err) {
@@ -233,8 +244,17 @@ function createState(name, projectID) {
     });
 }
 
-function createActivity(name) {
+function createActivity(name, activityType, projectType, projectID, fromState, toState) {
+    // TODO
+    return ActivityModel({
+        activityName: name,
+        activityType: activityType,
+        fromState: fromState,
+        toState: toState,
+        values: [1, 2, 3],
+        projectID: projectID
 
+    });
 }
 
 
