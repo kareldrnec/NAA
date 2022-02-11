@@ -34,9 +34,11 @@ exports.editActivity = async() => {
 }
 
 // TODO 
-exports.deleteActivity = async() => {
+exports.deleteActivity = async(activityID) => {
     try {
-
+        console.log("Jsem tu a budu mazat")
+        await ActivityModel.findByIdAndDelete(activityID);
+        app.io.emit('delete activity', activityID);
     } catch (err) {
         app.io.emit('error activity');
     }

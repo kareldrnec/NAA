@@ -35,13 +35,23 @@ exports.editState = async(stateID, stateName, stateInfo, projectID) => {
 }
 
 
+
+// TODO -- zkontrolovat, zda funguje spravne i pro vice aktivit
 exports.deleteState = async(stateID) => {
     // mazani podle id
+    //
     try {
+        // mazani aktivit
+        await ActivityModel.deleteMany({
+            $or: [
+                {fromState: stateID},
+                {toState: stateID}
+            ]
+        })
+        // mazani stavu
         await StateModel.findByIdAndDelete(stateID)
         app.io.emit('delete state', stateID);
     } catch (err) {
         app.io.emit("error state");
     }
-    // dodelat mazani aktivit
 }

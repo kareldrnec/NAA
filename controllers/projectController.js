@@ -14,10 +14,12 @@ exports.getProjectsDirectory = async (req, res, next) => {
         var projectsPrep = [];
         for (var i in projects) {
             var item = projects[i];
+            let date = item.createdAt;
             projectsPrep.push({
                 "projectName": item.projectName,
                 "projectType": item.projectType,
-                "ID": item._id
+                "ID": item._id,
+                "created": date.getDate() + "/" + (date.getMonth() + 1) + "/" + date.getFullYear()
             });
         }
         projectsToSend.projects = projectsPrep;
@@ -140,6 +142,7 @@ exports.loadProject = async (req, res, next) => {
                     "activityType": item.activityType,
                     "fromState": item.fromState,
                     "toState": item.toState,
+                    "critical": false,
                     "values": item.values,
                     "description": item.description,
                     "projectID": item.projectID
@@ -192,10 +195,12 @@ exports.generateProject = async (req, res, next) => {
     const projectName = req.body.projectName;
     const projectType = req.body.types;
     const projectInfo = req.body.projectInfo;
+    const maxLengthOfActivity = req.body.maxLengthOfActivity;
     var numberOfStates = req.body.numberOfStates;
     var fromState, toState;
     var statesArr = [];
     var activitiesArr = [];
+    var previousStates, nextStates = [];
     try {
         let project = ProjectModel({
             projectName: projectName,
@@ -213,7 +218,7 @@ exports.generateProject = async (req, res, next) => {
         numberOfStates -= 2;
 
         if (numberOfStates == 0) {
-            activitiesArr.push(createActivity("A1", "normal", projectType, project._id, fromState._id, toState._id));
+            activitiesArr.push(createActivity("A1", "normal", projectType, project._id, fromState._id, toState._id, maxLengthOfActivity));
         } else {
 
         }
@@ -225,6 +230,9 @@ exports.generateProject = async (req, res, next) => {
         console.log("Aktivity")
         console.log(activitiesArr)
 
+        console.log("Max Length of Activity")
+        console.log(maxLengthOfActivity)
+        console.log("ende")
 
         // ulozeni do databaze
         // await project.save();
@@ -244,17 +252,33 @@ function createState(name, projectID) {
     });
 }
 
-function createActivity(name, activityType, projectType, projectID, fromState, toState) {
+function createActivity(name, activityType, projectType, projectID, fromState, toState, maxLength) {
     // TODO
     return ActivityModel({
         activityName: name,
         activityType: activityType,
         fromState: fromState,
         toState: toState,
-        values: [1, 2, 3],
+        values: generateValuesForActivity(projectType, maxLength),
         projectID: projectID
 
     });
+}
+
+function generateValuesForActivity(projectType, maxLength) {
+    // TODO generate pert or cpm length
+    let valArr = [];
+    if(projectType == "cpm") {
+        valArr.push(getRandomInt(maxLength));
+    } else if(projectType == "pert") {
+
+    }
+    return valArr;
+}
+
+// mozna zmenit
+function getRandomInt(max) {
+    return Math.floor(Math.random() * max) + 1;
 }
 
 

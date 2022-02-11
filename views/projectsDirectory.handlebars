@@ -21,12 +21,12 @@
             <tbody>
                 {{#each projects}}
                 {{#each this}}
-                <tr id="{{this.ID}}">
+                <tr id="{{this.ID}}" data-toggle="tooltip" data-placement="left" title="Created: {{this.created}}">
                     <th scope="row">{{inc @index}}</th>
                     <td>{{this.projectName}}</td>
                     <td>{{upper this.projectType}}</td>
                     <td>
-                        <a href="/projects/select/{{this.ID}}"><i class="fas fa-check-square"></i></a>
+                        <a href="/projects/select/{{this.ID}}" data-toggle="tooltip" data-placement="left" title="ahoj"><i class="fas fa-check-square"></i></a>
                         <a href="/projects/edit/{{this.ID}}"><i class="fas fa-edit"></i></a>
                         <a href="#" onclick="deleteModal({{json this.ID}})"><i class="fas fa-trash-alt"></i></a>
                     </td>

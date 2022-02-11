@@ -31,6 +31,7 @@ function graphInit() {
     var pink = "#B71C1C";
     var pinkfill = "#F8BBD0";
     var bluefill = "#B3E5FC";
+    var grayFill = "#D3D3D3";
 
     myDiagram =
         $(go.Diagram, "myDiagramDiv", {
@@ -142,6 +143,42 @@ function graphInit() {
     // pridani stavu (vrcholu) a aktivit (hran) do modelu grafu
     myDiagram.model = new go.GraphLinksModel(statesArray, activitiesArray);
 
+    myDiagram.add(
+		$(go.Node, "Auto",
+			$(go.Shape, "Rectangle",  // the border
+				{ fill: grayFill }),
+			$(go.Panel, "Table",
+				$(go.RowColumnDefinition, { column: 1, separatorStroke: "black" }),
+				$(go.RowColumnDefinition, { column: 2, separatorStroke: "black" }),
+				$(go.RowColumnDefinition, { row: 1, separatorStroke: "black", background: grayFill, coversSeparators: true }),
+				$(go.RowColumnDefinition, { row: 2, separatorStroke: "black" }),
+				$(go.TextBlock, "Earliest Start Time",
+					{ row: 0, column: 0, margin: 5, textAlign: "center" }),
+				$(go.TextBlock, "",
+					{ row: 0, column: 1, margin: 5, textAlign: "center" }),
+				$(go.TextBlock, "Latest Start Time",
+					{ row: 0, column: 2, margin: 5, textAlign: "center" }),
+
+				$(go.TextBlock, "State Name",
+					{
+						row: 1, column: 0, columnSpan: 3, margin: 5,
+						textAlign: "center", font: "bold 14px sans-serif"
+					}),
+
+				$(go.TextBlock, "",
+					{ row: 2, column: 0, margin: 5, textAlign: "center" }),
+				$(go.TextBlock, "Slack",
+					{ row: 2, column: 1, margin: 5, textAlign: "center" }),
+				$(go.TextBlock, "",
+					{ row: 2, column: 2, margin: 5, textAlign: "center" })
+			)
+		)
+	);
+
+                    // preklad doresit
+
+
+
     myDiagram.commandHandler.doKeyDown = function() {
         var e = myDiagram.lastInput;
         if (e.key == "Del") {
@@ -166,6 +203,7 @@ function getNodeDataArray(states) {
     return nodeDataArray;
 }
 
+// PARSE aktivit
 function getLinkDataArray(activities) {
     // dodelat
     var linkDataArray = [];
@@ -173,12 +211,28 @@ function getLinkDataArray(activities) {
     for (var i = 0; i < activitiesData.length; i++) {
         linkDataArray.push({
             "from": activitiesData[i].fromState,
-            "to": activitiesData[i].toState
+            "to": activitiesData[i].toState,
+            "text": parseLinkTextData(activitiesData[i].values),
+            "color": "B"
         })
     }
     return linkDataArray;
 }
 
+function parseLinkTextData(valuesArr) {
+    var result = "";
+    if (valuesArr.length == 1) {
+        result = result + " (" + valuesArr[0] + ") ";
+    } else {
+        result = result + " (" + valuesArr[0] + "," + valuesArr[1] + "," + valuesArr[2] + ") ";
+    }
+    return result;
+}
+
+// TODO TOOLTIP PRO AKTIVITY
+function parseLinkTextTooltip(activityName, valuesArr, timeUnit, linkColor) {
+
+}
 
 function editState(e, obj) {
     var selectedNode = obj.part;
@@ -249,9 +303,20 @@ function editActivity(e, obj) {
 }
 
 function deleteActivity(e, obj) {
+    var selectedLink = obj.part;
+    var linkData = selectedLink.data;
 
+    var activities = _activitiesData.activities;
+    var activity = activities.find(element => element.fromState == linkData.from && element.toState == linkData.to);
+    console.log("Nalezena aktivita")
+
+    console.log(activity)
+
+    console.log("ENDE")
+
+    document.getElementById('deleteActivityForm').setAttribute('name', activity.ID)
+    $('#deleteActivityModal').modal('show');
 }
-
 
 function addCreatedState(state) {
     // add created state to diagram
@@ -274,6 +339,7 @@ function editSelectedState(stateID, projectID, stateName, stateInfo) {
     };
     var foundIndex = states.findIndex(element => element.ID == stateID);
     states[foundIndex] = item;
+    reload();
 }
 
 function deleteSelectedState(stateID) {
@@ -288,12 +354,21 @@ function deleteSelectedState(stateID) {
 }
 
 
+function deleteSelectedActivity(activityID){
+    var activities = _activitiesData.activities;
+    var foundIndex = activities.findIndex(element => element.ID == activityID);
+    if (foundIndex > -1) {
+        activities.splice(foundIndex, 1)
+        reload();
+    }
+}
+
+
 
 function addCreatedActivity(activity) {
     // add created activity to diagram
-
     // TO DO
-
+    // critical ?? 
     _activitiesData.activities.push({
         "ID": activity._id,
         "activityName": activity.activityName,
@@ -305,7 +380,6 @@ function addCreatedActivity(activity) {
         "projectID": activity.projectID
     })
     reload();
-
 }
 
 function reload() {

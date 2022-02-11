@@ -310,7 +310,7 @@
             </div>
             <form class="form-container" id="deleteActivityForm">
                 <div class="modal-body">
-                    {{__ "delete state question"}}
+                    {{__ "delete activity question"}}
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">{{__ "close"}}</button>
@@ -381,28 +381,56 @@
         // TODO
         event.preventDefault();
 
-        var activityName = document.getElementById('activityNameInput').value;
-        var activityType = document.getElementById('activityTypeSelect').value;
-        var activityDescription = document.getElementById('activityDescription').value;
+        var activityName = document.getElementById('activityNameInput');
+        var activityType = document.getElementById('activityTypeSelect');
+        var activityDescription = document.getElementById('activityDescription');
 
         var valuesArr = []; 
         
         var formAction = ($('#addActivityForm').attr('action')).split('&');
 
         if ("{{projectType}}" == "cpm") {
-            var length = document.getElementById("lengthOfActivity").value;
-            valuesArr.push(length);
+            var length = document.getElementById("lengthOfActivity");
+
+            valuesArr.push(length.value);
+
+            length.value = 0;
         } else {
-            var optimisticValue = document.getElementById("optimisticValue").value;
-            var mostExpectedValue = document.getElementById("mostExpectedValue").value;
-            var pessimisticValue = document.getElementById("pessimisticValue").value;
-            valuesArr.push(optimisticValue, mostExpectedValue, pessimisticValue);       
+            var optimisticValue = document.getElementById("optimisticValue");
+            var mostExpectedValue = document.getElementById("mostExpectedValue");
+            var pessimisticValue = document.getElementById("pessimisticValue");
+
+            valuesArr.push(optimisticValue.value, mostExpectedValue.value, pessimisticValue.value);       
+        
+            optimisticValue.value = 0;
+            mostExpectedValue.value = 0;
+            pessimisticValue.value = 0;
+
         }
 
-        socket.emit("new activity", activityName, activityType, formAction[0], formAction[1], valuesArr, activityDescription, "{{projectID}}");
+        socket.emit("new activity", activityName.value, activityType.value, formAction[0], formAction[1], valuesArr, activityDescription.value, "{{projectID}}");
+
+        activityName.value = '';
+        activityDescription.value = '';
 
         $('#addActivityModal').modal('toggle');
-    })
+    });
+
+    document.getElementById('editActivityForm').addEventListener('submit', function(event) {
+        // TODO
+        event.preventDefault();
+    });
+
+
+    // mozna doplnit echa o uspesnem smazani atak...
+    document.getElementById('deleteActivityForm').addEventListener('submit', function(event){
+        event.preventDefault();
+        var activityID = this.getAttribute("name");
+
+        socket.emit("delete activity", activityID);
+
+        $("#deleteActivityModal").modal('toggle'); 
+    });
 
     // add state to diagram
     socket.on('new state', function(state) {
@@ -435,7 +463,7 @@
 
     // delete activity from diagram
     socket.on('delete activity', function(activity) {
-
+        deleteSelectedActivity(activity);
     })
 </script>
 
