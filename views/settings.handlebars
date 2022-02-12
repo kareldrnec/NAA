@@ -1,41 +1,54 @@
 {{> navbar}}
 
-
-<div class="container-fluid bg pt-5">
-    <div class="row">
-        <div class="col-md-4 col-sm-4 col-xs-12"></div>
-        <div class="col-md-4 col-sm-4 col-xs-12">
-            <!--form start-->
-            <form class="form-container" id="settingsForm" action="/applySettings" method="POST">
-                <h2 class="text-center">{{__ "settings"}}</h2>
-                <div class="form-group">
-                    <label for="labelForColors">{{__ "nav color"}}</label>
-                    <select name="colors" class="form-control">
-                        <option value="default">{{__ "default"}}</option>
-                        <option value="blue" style="background-color: lightskyblue;">{{__ "blue"}}</option>
-                        <option value="red" style="background-color: lightcoral;">{{__ "red"}}</option>
-                        <option value="gray" style="background-color: lightgray;">{{__ "gray"}}</option>
-                    </select>
-                </div>
-                <div class="form-group">
-                    <label for="labelForLanguages">{{__ "language"}}</label>
-                    <select name="languages" id="languages" class="form-control">
-                        <option value="en">ENG ({{__ "default"}})</option>
-                        <option value="cz">CZ</option>
-                    </select>
-                </div>
-                <div class="text-center">
-                    <button type="submit" class="btn btn-primary btn-block">{{__ "save settings"}}</button>
-                    <button type="button" class="btn btn-secondary btn-block" onclick="history.back()">{{__ "back"}}</button>
-                </div>
-            </form>
-            <!--form end-->
-        </div>
-        <div class="col-md-4 col-sm-4 col-xs-12"></div>
+<div>
+    {{#if flash}}
+    <div style="text-align: center; position: absolute; width: 100%;" id="flash" class="alert alert-{{flash.type}}" role="alert">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        <strong>{{flash.text}}</strong>
     </div>
+    {{/if}}
+
+    <div class="container-fluid bg pt-5">
+        <div class="row">
+            <div class="col-md-4 col-sm-4 col-xs-12"></div>
+            <div class="col-md-4 col-sm-4 col-xs-12">
+                <!--form start-->
+                <form class="form-container" id="settingsForm" action="/applySettings" method="POST">
+                    <h2 class="text-center">{{__ "settings"}}</h2>
+                    <div class="form-group">
+                        <label for="labelForColors">{{__ "nav color"}}</label>
+                        <select name="colors" class="form-control">
+                            <option value="default">{{__ "default"}}</option>
+                            <option value="blue" style="background-color: lightskyblue;">{{__ "blue"}}</option>
+                            <option value="red" style="background-color: lightcoral;">{{__ "red"}}</option>
+                            <option value="gray" style="background-color: lightgray;">{{__ "gray"}}</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="labelForLanguages">{{__ "language"}}</label>
+                        <select name="languages" id="languages" class="form-control">
+                            <option value="en">ENG ({{__ "default"}})</option>
+                            <option value="cz">CZ</option>
+                        </select>
+                    </div>
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-primary btn-block">{{__ "save settings"}}</button>
+                        <button type="button" class="btn btn-secondary btn-block" onclick="history.back()">{{__ "back"}}</button>
+                    </div>
+                </form>
+                <!--form end-->
+            </div>
+            <div class="col-md-4 col-sm-4 col-xs-12"></div>
+        </div>
+    </div>
+
 </div>
 
 <script>
+    setTimeout(function() {
+        $('#flash').fadeOut('fast');
+    }, 3000);
+
     let element = document.getElementById("languages");
     if("{{language_value}}") {
         element.value = "{{language_value}}";

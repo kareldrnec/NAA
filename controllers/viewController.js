@@ -61,12 +61,15 @@ exports.renderSettings = async(req, res, next) => {
     }
 }
 
-exports.applySettings = function(req, res) {
-    // DODELAT, mozna zmena barvy
-
-    console.log("Vypis barvy")
-
-    res.cookie("locale", req.body.languages);
-    
-    res.redirect("/settings")
+exports.applySettings = function(req, res, next) {
+    // DODELAT, mozna zmena barvy, osetreni chyb
+    try {
+        //throw Error()
+        res.cookie("locale", req.body.languages);
+        req.session.flash = { type: 'success', text: req.__("settings changed")}
+        return res.redirect("/settings")
+    } catch (err) {
+        console.log(err)
+        return next(err);
+    }
 };

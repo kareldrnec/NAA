@@ -237,18 +237,22 @@ function parseLinkTextTooltip(activityName, valuesArr, timeUnit, linkColor) {
 function editState(e, obj) {
     var selectedNode = obj.part;
     var nodeData = selectedNode.data;
-    console.log(nodeData)
+
     document.getElementById('editStateForm').setAttribute('name', nodeData.key);
+    
     var states = _statesData.states;
     var item = states.find(element => element.ID == nodeData.key);
 
     document.getElementById("editStateName").value = item.stateName;
     document.getElementById("editStateInfo").value = item.description;
-    $('#editStateModal').modal('show');
-    //editStateName editStateInfo
-    //window.location.href = "/states/editState/" + nodeData.key;
 
-    // editStateModal
+    if(item.stateName == "Start" || item.stateName == "Finish") {
+        document.getElementById("editStateName").readOnly = true;
+    } else {
+        document.getElementById("editStateName").readOnly = false;
+    }
+
+    $('#editStateModal').modal('show');
 }
 
 function deleteState(e, obj) {

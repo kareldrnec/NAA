@@ -39,27 +39,33 @@ exports.registerNewUser = async (req, res, next) => {
     }
 };
 
-exports.loginUser = async (req, res) => {
+exports.loginUser = async (req, res, next) => {
     const { email, password } = req.body;
 
-    const user = await UserModel.findOne({ email });
+    try {
+        const user = await UserModel.findOne({ email });
 
-    if (!user) {
-        return res.status(400).json({
-            msg: req.__("user not found")
-        });
+        if (!user) {
+            return res.render('login', {
+                errMsg: req.__("user not found")
+            });
+        }
+    
+        const isPasswordMatch = await bcrypt.compare(password, user.password);
+    
+        if (!isPasswordMatch) {
+            return res.render('login', {
+                errMsg: req.__("wrong password")
+            })
+        }
+        
+        req.session.userId = user._id;
+        req.session.flash = { type: 'success', text: req.__("logged in") + " " + user.userName + '! :)' };
+        return res.redirect("/")
+
+    } catch (err) {
+        return next(err);
     }
-
-    const isPasswordMatch = await bcrypt.compare(password, user.password);
-
-    if (!isPasswordMatch) {
-        return res.render('login', {
-            errMsg: req.__("wrong password")
-        })
-    }
-    req.session.userId = user._id;
-    req.session.flash = { type: 'success', text: req.__("logged in") + " " + user.userName + '! :)' };
-    return res.redirect("/")
 };
 
 exports.logout = function (req, res, next) {
@@ -93,34 +99,23 @@ exports.myProfile = async (req, res, next) => {
 };
 
 exports.deleteAccount = async (req, res, next) => {
-    // Dodelat !!
-    let userID = req.session.userId;
-
-    // nalezeni vsech projektu
     try {
-        let projects = await ProjectModel.find({ userId: userID });
+        let projects = await ProjectModel.find({ userId: req.session.userId });
 
         for(var i = 0; i < projects.length; i++) {
             await StateModel.deleteMany({ projectID: projects[i]._id });
             await ActivityModel.deleteMany({ projectID: projects[i]._id });
         }
-        //mazani projektu
-        await ProjectModel.deleteMany({ userId: userID });
 
-        console.log("smazano")
+        await ProjectModel.deleteMany({ userId: req.session.userId });
+        await UserModel.findByIdAndDelete(req.session.userId);
+        
+        req.session.destroy();
+
         return res.redirect("/");
     } catch (err) {
         return next(err);
     }
-
-    /**let userId = req.session.userId;
-    req.session.destroy(function (err) {
-        if (err) {
-            return next(err);
-        }
-    })
-    //await UserModel.findByIdAndRemove(userId);
-    return res.redirect("/"); */
 }
 
 exports.updateAccount = async (req, res, next) => {

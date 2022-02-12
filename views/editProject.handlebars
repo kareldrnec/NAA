@@ -1,42 +1,51 @@
 {{> navbar}}
 
-{{#if flash}}
-<div style="text-align: center" id="flash" class="alert alert-{{flash.type}}" role="alert">
-  <button type="button" class="close" data-dismiss="alert">&times;</button>
-  <strong>{{flash.text}}</strong>
-</div>
-{{/if}}
+<div>
+    {{#if flash}}
+    <div style="text-align: center; position: absolute; width: 100%;" id="flash" class="alert alert-{{flash.type}}" role="alert">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        <strong>{{flash.text}}</strong>
+    </div>
+    {{/if}}
 
-<div class="container-fluid bg pt-5">
-    <div class="row">
-        <div class="col-md-4 col-sm-4 col-xs-12"></div>
-        <div class="col-md-4 col-sm-4 col-xs-12">
-            <!--form start-->
-            <form class="form-container" action="/projects/edit/{{projectID}}" method="post">
-                <h2 class="text-center">{{__ "edit project"}}</h2>
-                <div class="form-group">
-                    <label for="projectName">{{__ "project name"}}</label>
-                    <input type="text" class="form-control" name="projectName" value="{{projectName}}" required>
-                </div>
-                <div class="form-group">
-                    <label for="typeOfProject">{{__ "type of project"}}</label>
-                    <input type="text" class="form-control" value="{{upper projectType}}" readonly>
-                </div>
-                <div class="form-group">
-                    <label for="createdAt">{{__ "created"}}</label>
-                    <input type="text" class="form-control" value="{{createdAt}}" readonly>
-                </div>
-                <div class="form-group">
-                    <label for="projectInfo">{{__ "information"}}</label>
-                    <textarea name="projectInfo" class="form-control">{{projectInfo}}</textarea>
-                </div>
-                <div class="text-center">
-                    <button type="submit" class="btn btn-primary btn-block">{{__ "edit project"}}</button>
-                    <button type="button" class="btn btn-secondary btn-block" onclick="history.back()">{{__ "back"}}</button>
-                </div>
-            </form>
-            <!--form end-->
+    <div class="container-fluid bg pt-5">
+        <div class="row">
+            <div class="col-md-4 col-sm-4 col-xs-12"></div>
+            <div class="col-md-4 col-sm-4 col-xs-12">
+                <!--form start-->
+                <form class="form-container" id="editProjectForm" method="POST" action="/projects/edit/{{projectID}}/?_method=PUT">
+                    <h2 class="text-center">{{__ "edit project"}}</h2>
+                    <div class="form-group">
+                        <label for="projectName">{{__ "project name"}}</label>
+                        <input type="text" class="form-control" name="projectName" value="{{projectName}}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="typeOfProject">{{__ "type of project"}}</label>
+                        <input type="text" class="form-control" value="{{upper projectType}}" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="createdAt">{{__ "created"}}</label>
+                        <input type="text" class="form-control" value="{{createdAt}}" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="projectInfo">{{__ "information"}}</label>
+                        <textarea name="projectInfo" class="form-control">{{projectInfo}}</textarea>
+                    </div>
+                    <div class="text-center">
+                        <button type="submit" class="btn btn-primary btn-block">{{__ "edit project"}}</button>
+                        <button type="button" class="btn btn-secondary btn-block" onclick="history.back()">{{__ "back"}}</button>
+                    </div>
+                </form>
+                <!--form end-->
+            </div>
+            <div class="col-md-4 col-sm-4 col-xs-12"></div>
         </div>
-        <div class="col-md-4 col-sm-4 col-xs-12"></div>
     </div>
 </div>
+
+<script>
+    setTimeout(function() {
+        $('#flash').fadeOut('fast');
+    }, 3000);
+    
+</script>

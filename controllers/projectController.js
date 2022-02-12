@@ -51,17 +51,27 @@ exports.addProject = async (req, res, next) => {
     const { projectName, types, projectInfo } = req.body;
     var statesArr = [];
     try {
-        let project = new ProjectModel({
+        let project = await ProjectModel.findOne({
+            projectName: projectName,
+            userId: req.session.userId
+        });
+
+        if(project) {
+            req.session.flash = { type: 'danger', text: req.__("project exists with this name") };
+            return res.redirect('/projects/new');
+        }
+
+        project = new ProjectModel({
             projectName: projectName,
             projectType: types,
             projectInfo: projectInfo,
             userId: req.session.userId
         });
-        await project.save();
 
         statesArr.push(createState("Start", project._id));
         statesArr.push(createState("Finish", project._id));
-        
+
+        await project.save();
         await StateModel.insertMany(statesArr);
 
         req.session.flash = { type: 'success', text: req.__("project added") };
@@ -76,10 +86,21 @@ exports.editProject = async (req, res, next) => {
     const projectName = req.body.projectName;
     const projectInfo = req.body.projectInfo;
     try {
+        let project = await ProjectModel.findOne({
+            projectName: projectName,
+            userId: req.session.userId
+        });
+        
+        if(project) {
+            req.session.flash = { type: 'danger', text: req.__("project exists with this name")};
+            return res.redirect('/projects/edit/' + req.params.id);
+        }
+        
         await ProjectModel.findByIdAndUpdate(req.params.id, {
             projectName: projectName,
             projectInfo: projectInfo
         });
+        
         req.session.flash = { type: 'success', text: req.__('project updated') };
         return res.redirect("/projects/projectsDirectory");
     } catch (err) {
