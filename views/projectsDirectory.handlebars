@@ -21,14 +21,14 @@
             <tbody>
                 {{#each projects}}
                 {{#each this}}
-                <tr id="{{this.ID}}" data-toggle="tooltip" data-placement="left" title="Created: {{this.created}}">
+                <tr id="{{this.ID}}" title="{{../../__ "created"}}: {{this.created}}">
                     <th scope="row">{{inc @index}}</th>
                     <td>{{this.projectName}}</td>
                     <td>{{upper this.projectType}}</td>
                     <td>
-                        <a href="/projects/select/{{this.ID}}" data-toggle="tooltip" data-placement="left" title="ahoj"><i class="fas fa-check-square"></i></a>
-                        <a href="/projects/edit/{{this.ID}}"><i class="fas fa-edit"></i></a>
-                        <a href="#" onclick="deleteModal({{json this.ID}})"><i class="fas fa-trash-alt"></i></a>
+                        <a href="/projects/select/{{this.ID}}" title="{{../../__ "select"}}"><i class="fas fa-check-square"></i></a>
+                        <a href="/projects/edit/{{this.ID}}" title="{{../../__ "edit"}}"><i class="fas fa-edit"></i></a>
+                        <a href="#" onclick="deleteModal({{json this.ID}})" title="{{../../__ "delete"}}"><i class="fas fa-trash-alt"></i></a>
                     </td>
                 </tr>
                 {{/each}}
@@ -39,8 +39,8 @@
 
     <div class="text-center pb-2">
         <a href="/projects/new"><button type="button" class="btn btn-primary"><i class="fas fa-plus-square"></i>
-                {{__ "add"}}</button></a>
-        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#generateProjectModal"><i class="fas fa-random"></i> {{__ "generate"}}</button>
+                {{__ "add project"}}</button></a>
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#generateProjectModal"><i class="fas fa-random"></i> {{__ "generate project"}}</button>
         <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#loadProjectModal"><i class="far fa-file-excel"></i> {{__ "load file"}}</button>
     </div>
 </div>

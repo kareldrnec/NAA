@@ -52,7 +52,7 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <form method="post" action="/projects/delete/{{projectID}}">
+            <form method="post" action="/projects/delete/{{projectID}}/?_method=DELETE">
                 <div class="modal-body">
                     <div class="text-center">
                         {{__ "delete project"}}
@@ -326,6 +326,8 @@
 <script>
     // pridat aktivity z db do init
     init("{{states}}", "{{activities}}", "{{projectType}}");
+
+    console.log("{{__ "delete"}}")
 
     var socket = io();
 

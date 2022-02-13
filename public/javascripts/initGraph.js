@@ -76,6 +76,7 @@ function graphInit() {
                 contextMenu: $(go.Adornment, "Vertical",
                     $("ContextMenuButton",
                         $(go.TextBlock, "Add Activity"), { click: addActivity }),
+                        // Add Activity
                     $("ContextMenuButton",
                         $(go.TextBlock, "Add State"), {
                             click: function() {

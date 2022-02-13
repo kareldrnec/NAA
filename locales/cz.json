@@ -57,7 +57,8 @@
 	"export": "Export",
 	"filename": "Název souboru",
 	"find": "Hledat",
-	"generate": "Generovat",
+	"generate": "Vygenerovat",
+	"generate project": "Vygenerovat projekt",
 	"go back": "Jít zpět.",
 	"gray": "Šedá",
 	"have account": "Máte již účet? Přihlaste se zde.",
@@ -129,5 +130,6 @@
 	"update": "Aktualizovat",
 	"user exists": "Uživatel s touto emailovou adresou již existuje!",
 	"user not found": "Uživatel s tou emailovou adresou nebyl nalezen",
-	"wrong password": "Špatně zadané heslo!"
+	"wrong password": "Špatně zadané heslo!",
+	"500 response": "500 response"
 }
