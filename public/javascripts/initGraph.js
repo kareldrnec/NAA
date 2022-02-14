@@ -1,21 +1,35 @@
-var _statesData, _activitiesData, projectType;
+var _statesData, _activitiesData, projectType, _translationsData;
 var statesArray = [];
 var activitiesArray = [];
 var myDiagram;
 var selectedStates = [];
 
 
-function init(states, activities, projectT) {
+function init(states, activities, projectT, translations) {
     _statesData = states.replace(/&quot;/g, '"');
     _statesData = JSON.parse(_statesData);
+    
     _activitiesData = activities.replace(/&quot;/g, '"');
     _activitiesData = JSON.parse(_activitiesData);
+    
     projectType = projectT;
 
-    console.log("Vypis")
-    console.log(_activitiesData)
-    console.log("ende")
-        //console.log(_statesData)
+    _translationsData = translations.replace(/&quot;/g, '"');
+    _translationsData = JSON.parse(_translationsData);
+
+    /**
+     * Překlad
+     * translationsData
+     * [0] -- Add Activity (EN), Přidat aktivitu (CZ)
+     * [1] -- Add State (EN), Přidat stav (CZ)
+     * [2] -- Edit (EN), Upravit (CZ)
+     * [3] -- Delete (EN), Smazat (CZ)
+     * [4] -- Slack (EN), Časová rezerva (CZ)
+     * [5] -- State Name (EN), Název stavu (CZ)
+     * [6] -- Earliest Start Time (EN), Nejdříve možný začátek činnosti (CZ)
+     * [7] -- Latest Start Time (EN), Nejpozději přípustný začátek činnosti (CZ)
+     */
+
     graphInit();
 
     document.getElementById("exportButton").addEventListener("click", exportDiagram);
@@ -75,19 +89,19 @@ function graphInit() {
             ), {
                 contextMenu: $(go.Adornment, "Vertical",
                     $("ContextMenuButton",
-                        $(go.TextBlock, "Add Activity"), { click: addActivity }),
+                        $(go.TextBlock, _translationsData[0]), { click: addActivity }),
                         // Add Activity
                     $("ContextMenuButton",
-                        $(go.TextBlock, "Add State"), {
+                        $(go.TextBlock, _translationsData[1]), {
                             click: function() {
                                 jQuery('#addStateModal').modal('show');
                             }
                         }),
                     $("ContextMenuButton",
-                        $(go.TextBlock, "Edit"), { click: editState }),
+                        $(go.TextBlock, _translationsData[2]), { click: editState }),
                     $("ContextMenuButton",
-                        $(go.TextBlock, "Delete", { click: deleteState },
-                            new go.Binding("text", "Delete"),
+                        $(go.TextBlock, _translationsData[3], { click: deleteState },
+                            //new go.Binding("text", "Delete"),
                             new go.Binding("visible", "text", function(textValue) {
                                 if (textValue == "Start" || textValue == "Finish") {
                                     return false;
@@ -98,14 +112,12 @@ function graphInit() {
                     )
                 )
             }
-            // TODO
-            // dodelat preklad pro context menu
         ); // end Node
 
     myDiagram.contextMenu =
         $(go.Adornment, "Vertical",
             $("ContextMenuButton",
-                $(go.TextBlock, "Add State"), {
+                $(go.TextBlock, _translationsData[1]), {
                     click: function() {
                         jQuery('#addStateModal').modal('show');
                     }
@@ -127,10 +139,10 @@ function graphInit() {
                 new go.Binding("fill", "color", function(c) { return linkColors[c] || "blue"; })), {
                 contextMenu: $(go.Adornment, "Vertical",
                     $("ContextMenuButton",
-                        $(go.TextBlock, "Edit Activity"), { click: editActivity }
+                        $(go.TextBlock, _translationsData[2]), { click: editActivity }
                     ),
                     $("ContextMenuButton",
-                        $(go.TextBlock, "Delete Activity"), { click: deleteActivity })
+                        $(go.TextBlock, _translationsData[3]), { click: deleteActivity })
                 )
             }
         );
@@ -153,14 +165,14 @@ function graphInit() {
 				$(go.RowColumnDefinition, { column: 2, separatorStroke: "black" }),
 				$(go.RowColumnDefinition, { row: 1, separatorStroke: "black", background: grayFill, coversSeparators: true }),
 				$(go.RowColumnDefinition, { row: 2, separatorStroke: "black" }),
-				$(go.TextBlock, "Earliest Start Time",
+				$(go.TextBlock, _translationsData[6],
 					{ row: 0, column: 0, margin: 5, textAlign: "center" }),
 				$(go.TextBlock, "",
 					{ row: 0, column: 1, margin: 5, textAlign: "center" }),
-				$(go.TextBlock, "Latest Start Time",
+				$(go.TextBlock, _translationsData[7],
 					{ row: 0, column: 2, margin: 5, textAlign: "center" }),
 
-				$(go.TextBlock, "State Name",
+				$(go.TextBlock, _translationsData[5],
 					{
 						row: 1, column: 0, columnSpan: 3, margin: 5,
 						textAlign: "center", font: "bold 14px sans-serif"
@@ -168,7 +180,7 @@ function graphInit() {
 
 				$(go.TextBlock, "",
 					{ row: 2, column: 0, margin: 5, textAlign: "center" }),
-				$(go.TextBlock, "Slack",
+				$(go.TextBlock, _translationsData[4],
 					{ row: 2, column: 1, margin: 5, textAlign: "center" }),
 				$(go.TextBlock, "",
 					{ row: 2, column: 2, margin: 5, textAlign: "center" })
@@ -176,7 +188,6 @@ function graphInit() {
 		)
 	);
 
-                    // preklad doresit
 
 
 

@@ -1,12 +1,10 @@
 // user controller
 
-const UserModel = require('../models/user');
-const ActivityModel = require('../models/activity');
-const StateModel = require('../models/state');
-const ProjectModel = require('../models/project');
-
-
-const bcrypt = require('bcrypt');
+const UserModel = require('../models/user'),
+    ActivityModel = require('../models/activity'),
+    StateModel = require('../models/state'),
+    ProjectModel = require('../models/project'),
+    bcrypt = require('bcrypt');
 
 exports.registerNewUser = async (req, res, next) => {
     //generating salt
@@ -82,9 +80,11 @@ exports.logout = function (req, res, next) {
 
 exports.myProfile = async (req, res, next) => {
     try {
-        let user = await UserModel.findById(req.session.userId);
-        let date = user.createdAt;
-        let stringDate = date.getDate() + "/" + (date.getMonth() + 1) + "/" + date.getFullYear();
+        var user = await UserModel.findById(req.session.userId),
+            date = user.createdAt;
+
+        var stringDate = date.getDate() + "/" + (date.getMonth() + 1) + "/" + date.getFullYear();
+        
         return res.render("myProfile", {
             title: req.__("my profile"),
             username: user.userName + " " + user.userSurname,
@@ -98,9 +98,10 @@ exports.myProfile = async (req, res, next) => {
     }
 };
 
+// Delete
 exports.deleteAccount = async (req, res, next) => {
     try {
-        let projects = await ProjectModel.find({ userId: req.session.userId });
+        var projects = await ProjectModel.find({ userId: req.session.userId });
 
         for(var i = 0; i < projects.length; i++) {
             await StateModel.deleteMany({ projectID: projects[i]._id });
@@ -118,6 +119,7 @@ exports.deleteAccount = async (req, res, next) => {
     }
 }
 
+// Update 
 exports.updateAccount = async (req, res, next) => {
     const { username, surname } = req.body;
     try {
@@ -125,7 +127,9 @@ exports.updateAccount = async (req, res, next) => {
             userName: username,
             userSurname: surname
         });
+
         req.session.flash = { type: 'success', text: req.__("account updated") };
+
         return res.redirect("/users/myProfile");
     } catch (err) {
         return next(err);

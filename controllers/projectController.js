@@ -4,17 +4,17 @@ const ProjectModel = require('../models/project');
 const StateModel = require('../models/state');
 const ActivityModel = require('../models/activity');
 
-
 //gets project directory
 exports.getProjectsDirectory = async (req, res, next) => {
     try {
-        let user = await UserModel.findById(req.session.userId);
-        let projects = await ProjectModel.find({ userId: req.session.userId });
-        let projectsToSend = {};
-        var projectsPrep = [];
+        var user = await UserModel.findById(req.session.userId);
+            projects = await ProjectModel.find({ userId: req.session.userId }),
+            projectsToSend = {},
+            projectsPrep = [];
+
         for (var i in projects) {
-            var item = projects[i];
-            let date = item.createdAt;
+            var item = projects[i],
+                date = item.createdAt;
             projectsPrep.push({
                 "projectName": item.projectName,
                 "projectType": item.projectType,
@@ -22,7 +22,9 @@ exports.getProjectsDirectory = async (req, res, next) => {
                 "created": date.getDate() + "/" + (date.getMonth() + 1) + "/" + date.getFullYear()
             });
         }
+
         projectsToSend.projects = projectsPrep;
+        
         return res.render('projectsDirectory', {
             title: req.__('directory'),
             projects: projectsToSend,
@@ -135,12 +137,19 @@ exports.selectProject = async (req, res) => {
 //load project after selection
 exports.loadProject = async (req, res, next) => {
     try {
-        let user = await UserModel.findById(req.session.userId);
-        let project = await ProjectModel.findById(req.params.id);
+        let user = await UserModel.findById(req.session.userId),
+            project = await ProjectModel.findById(req.params.id);
         if (project) {
-            let states = await StateModel.find({ projectID: project._id });
-            let statesToSend = {};
-            let statesPrep = [];
+            let states = await StateModel.find({ projectID: project._id }),
+                statesToSend = {},
+                statesPrep = [],
+                activities = await ActivityModel.find({ projectID: project._id }),
+                activitiesToSend = {},
+                activitiesPrep = [],
+                translations = [req.__('add activity'), req.__('add state'), req.__('edit'), req.__('delete'),  
+                    req.__('slack'), req.__('state name'), req.__('earliest start time'), req.__('latest start time')];
+            
+            
             for (var i in states) {
                 var item = states[i];
                 statesPrep.push({
@@ -152,9 +161,6 @@ exports.loadProject = async (req, res, next) => {
             }
             statesToSend.states = statesPrep;
 
-            let activities = await ActivityModel.find({ projectID: project._id });
-            let activitiesToSend = {};
-            let activitiesPrep = [];
             for (var i in activities) {
                 var item = activities[i];
                 activitiesPrep.push({
@@ -171,6 +177,7 @@ exports.loadProject = async (req, res, next) => {
             }
             activitiesToSend.activities = activitiesPrep;
 
+            // ??
             res.cookie("activeProject", project._id);
             res.cookie("projectType", project.projectType);
             res.render("project", {
@@ -179,7 +186,8 @@ exports.loadProject = async (req, res, next) => {
                 projectType: project.projectType,
                 states: JSON.stringify(statesToSend),
                 activities: JSON.stringify(activitiesToSend),
-                username: user.userName + " " + user.userSurname
+                username: user.userName + " " + user.userSurname,
+                translations: JSON.stringify(translations)
             })
         } else {
             // vyresit
@@ -212,16 +220,21 @@ exports.deleteProject = async (req, res, next) => {
 }
 
 // generator 
+// TODO
 exports.generateProject = async (req, res, next) => {
     const projectName = req.body.projectName;
-    const projectType = req.body.types;
-    const projectInfo = req.body.projectInfo;
-    const maxLengthOfActivity = req.body.maxLengthOfActivity;
-    var numberOfStates = req.body.numberOfStates;
-    var fromState, toState;
-    var statesArr = [];
-    var activitiesArr = [];
-    var previousStates, nextStates = [];
+        projectType = req.body.types,
+        projectInfo = req.body.projectInfo,
+        maxLengthOfActivity = req.body.maxLengthOfActivity;
+   
+    var numberOfStates = req.body.numberOfStates,
+        fromState, toState,
+        statesArr = [],
+        activitiesArr = [],
+        previousStates = [], 
+        nextStates = [];
+
+
     try {
         let project = ProjectModel({
             projectName: projectName,

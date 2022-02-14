@@ -1,5 +1,4 @@
 // Schema of project
-
 const mongoose = require('mongoose');
 var Schema = mongoose.Schema;
 

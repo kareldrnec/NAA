@@ -1,13 +1,12 @@
-const StateModel = require('../models/state');
-const ActivityModel = require('../models/activity');
-//const ProjectModel = require('../models/project');
+const StateModel = require('../models/state'),
+    ActivityModel = require('../models/activity');
 
 var app = require('../app');
 
 //socket.io
 exports.addState = async(stateName, projectID, stateInfo) => {
     try {
-        let state = new StateModel({
+        var state = new StateModel({
             stateName: stateName,
             projectID: projectID,
             description: stateInfo

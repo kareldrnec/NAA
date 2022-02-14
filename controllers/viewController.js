@@ -2,7 +2,7 @@ const UserModel = require('../models/user');
 
 exports.aboutApp = async(req, res, next) => {
     try {
-        let user = await UserModel.findById(req.session.userId);
+        var user = await UserModel.findById(req.session.userId);
         return res.render("about", {
             title: req.__("about app"),
             username: user.userName + " " + user.userSurname
@@ -14,7 +14,7 @@ exports.aboutApp = async(req, res, next) => {
 
 exports.helpPage = async(req, res, next) => {
     try {
-        let user = await UserModel.findById(req.session.userId);
+        var user = await UserModel.findById(req.session.userId);
         return res.render("help", {
             title: req.__("help"),
             username: user.userName + " " + user.userSurname
@@ -26,7 +26,7 @@ exports.helpPage = async(req, res, next) => {
 
 exports.results = async(req, res, next) => {
     try {
-        let user = await UserModel.findById(req.session.userId);
+        var user = await UserModel.findById(req.session.userId);
         return res.render("results", {
             title: req.__("results"),
             username: user.userName + " " + user.userSurname
@@ -38,7 +38,7 @@ exports.results = async(req, res, next) => {
 
 exports.monteCarlo = async(req, res, next) => {
     try {
-        let user = await UserModel.findById(req.session.userId);
+        var user = await UserModel.findById(req.session.userId);
         return res.render("monteCarloAnalysis", {
             title: req.__("monte carlo analysis"),
             username: user.userName + " " + user.userSurname
@@ -50,7 +50,7 @@ exports.monteCarlo = async(req, res, next) => {
 
 exports.renderSettings = async(req, res, next) => {
     try {
-        let user = await UserModel.findById(req.session.userId);
+        var user = await UserModel.findById(req.session.userId);
         res.render("settings", {
             title: req.__("settings"),
             username: user.userName + " " + user.userSurname,

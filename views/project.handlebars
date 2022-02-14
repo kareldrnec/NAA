@@ -325,10 +325,8 @@
 <script src="/socket.io/socket.io.js"></script>
 <script>
     // pridat aktivity z db do init
-    init("{{states}}", "{{activities}}", "{{projectType}}");
-
-    console.log("{{__ "delete"}}")
-
+    init("{{states}}", "{{activities}}", "{{projectType}}", "{{translations}}");
+    
     var socket = io();
 
     // addStateForm - submit - add state

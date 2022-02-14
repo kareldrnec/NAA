@@ -5,7 +5,7 @@ var app = require('../app');
 
 exports.addActivity = async(activityName, activityType, fromState, toState, valuesArr, description, projectID) => {
     try {
-        let activity = new ActivityModel({
+        var activity = new ActivityModel({
             activityName: activityName,
             activityType: activityType,
             fromState: fromState,
