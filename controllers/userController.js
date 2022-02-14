@@ -4,7 +4,7 @@ const UserModel = require('../models/user'),
     ActivityModel = require('../models/activity'),
     StateModel = require('../models/state'),
     ProjectModel = require('../models/project'),
-    bcrypt = require('bcrypt');
+    bcrypt = require('bcryptjs');
 
 exports.registerNewUser = async (req, res, next) => {
     //generating salt
