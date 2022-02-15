@@ -4,12 +4,19 @@ const UserModel = require('../models/user'),
     ActivityModel = require('../models/activity'),
     StateModel = require('../models/state'),
     ProjectModel = require('../models/project'),
-    bcrypt = require('bcryptjs');
+    bcrypt = require('bcryptjs'),
+    passwordValidator = require('../passwordValidator');
 
-exports.registerNewUser = async (req, res, next) => {
+exports.registerNewUser = async(req, res, next) => {
     //generating salt
     const { userName, userSurname, email, password, confirmPassword } = req.body;
     try {
+        if (!passwordValidator.validate(password)) {
+            return res.status(400).json({
+                msg: "Heslo neni na zaklade pozadavku"
+            })
+        }
+
         const salt = await bcrypt.genSalt(10);
         if (password != confirmPassword) {
             return res.status(400).json({
@@ -24,12 +31,12 @@ exports.registerNewUser = async (req, res, next) => {
         }
         const hashedPsw = await bcrypt.hash(password, salt);
         user = UserModel({
-            userName,
-            userSurname,
-            email,
-            password: hashedPsw
-        })
-        await user.save();
+                userName,
+                userSurname,
+                email,
+                password: hashedPsw
+            })
+            //  await user.save();
         req.session.flash = { type: 'success', text: req.__("account created") };
         res.redirect("/users/login");
     } catch (err) {
@@ -37,7 +44,7 @@ exports.registerNewUser = async (req, res, next) => {
     }
 };
 
-exports.loginUser = async (req, res, next) => {
+exports.loginUser = async(req, res, next) => {
     const { email, password } = req.body;
 
     try {
@@ -48,15 +55,15 @@ exports.loginUser = async (req, res, next) => {
                 errMsg: req.__("user not found")
             });
         }
-    
+
         const isPasswordMatch = await bcrypt.compare(password, user.password);
-    
+
         if (!isPasswordMatch) {
             return res.render('login', {
                 errMsg: req.__("wrong password")
             })
         }
-        
+
         req.session.userId = user._id;
         req.session.flash = { type: 'success', text: req.__("logged in") + " " + user.userName + '! :)' };
         return res.redirect("/")
@@ -66,9 +73,9 @@ exports.loginUser = async (req, res, next) => {
     }
 };
 
-exports.logout = function (req, res, next) {
+exports.logout = function(req, res, next) {
     if (req.session) {
-        req.session.destroy(function (err) {
+        req.session.destroy(function(err) {
             if (err) {
                 return next(err);
             } else {
@@ -78,13 +85,13 @@ exports.logout = function (req, res, next) {
     }
 };
 
-exports.myProfile = async (req, res, next) => {
+exports.myProfile = async(req, res, next) => {
     try {
         var user = await UserModel.findById(req.session.userId),
             date = user.createdAt;
 
         var stringDate = date.getDate() + "/" + (date.getMonth() + 1) + "/" + date.getFullYear();
-        
+
         return res.render("myProfile", {
             title: req.__("my profile"),
             username: user.userName + " " + user.userSurname,
@@ -99,18 +106,18 @@ exports.myProfile = async (req, res, next) => {
 };
 
 // Delete
-exports.deleteAccount = async (req, res, next) => {
+exports.deleteAccount = async(req, res, next) => {
     try {
         var projects = await ProjectModel.find({ userId: req.session.userId });
 
-        for(var i = 0; i < projects.length; i++) {
+        for (var i = 0; i < projects.length; i++) {
             await StateModel.deleteMany({ projectID: projects[i]._id });
             await ActivityModel.deleteMany({ projectID: projects[i]._id });
         }
 
         await ProjectModel.deleteMany({ userId: req.session.userId });
         await UserModel.findByIdAndDelete(req.session.userId);
-        
+
         req.session.destroy();
 
         return res.redirect("/");
@@ -120,7 +127,7 @@ exports.deleteAccount = async (req, res, next) => {
 }
 
 // Update 
-exports.updateAccount = async (req, res, next) => {
+exports.updateAccount = async(req, res, next) => {
     const { username, surname } = req.body;
     try {
         await UserModel.findByIdAndUpdate(req.session.userId, {
