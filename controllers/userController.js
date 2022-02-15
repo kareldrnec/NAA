@@ -8,35 +8,42 @@ const UserModel = require('../models/user'),
     passwordValidator = require('../passwordValidator');
 
 exports.registerNewUser = async(req, res, next) => {
-    //generating salt
+
     const { userName, userSurname, email, password, confirmPassword } = req.body;
     try {
         if (!passwordValidator.validate(password)) {
-            return res.status(400).json({
-                msg: "Heslo neni na zaklade pozadavku"
+            return res.render('register', {
+                msg: req.__("password must contain")
             })
         }
-
+        // generating salt
         const salt = await bcrypt.genSalt(10);
+        
         if (password != confirmPassword) {
-            return res.status(400).json({
+            return res.render('register', {
                 msg: req.__("passwords not same")
             });
         }
-        let user = await UserModel.findOne({ email });
+
+        var user = await UserModel.findOne({ email });
+        
         if (user) {
-            return res.status(400).json({
+            return res.render('register', {
                 msg: req.__("user exists")
             });
         }
+
         const hashedPsw = await bcrypt.hash(password, salt);
+        
         user = UserModel({
                 userName,
                 userSurname,
                 email,
                 password: hashedPsw
             })
-            //  await user.save();
+        
+        await user.save();
+        
         req.session.flash = { type: 'success', text: req.__("account created") };
         res.redirect("/users/login");
     } catch (err) {
@@ -52,7 +59,7 @@ exports.loginUser = async(req, res, next) => {
 
         if (!user) {
             return res.render('login', {
-                errMsg: req.__("user not found")
+                msg: req.__("user not found")
             });
         }
 
@@ -60,13 +67,13 @@ exports.loginUser = async(req, res, next) => {
 
         if (!isPasswordMatch) {
             return res.render('login', {
-                errMsg: req.__("wrong password")
+                msg: req.__("wrong password")
             })
         }
 
         req.session.userId = user._id;
         req.session.flash = { type: 'success', text: req.__("logged in") + " " + user.userName + '! :)' };
-        return res.redirect("/")
+        return res.redirect("/");
 
     } catch (err) {
         return next(err);

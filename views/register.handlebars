@@ -1,62 +1,76 @@
 {{> navbar_login}}
 
-<div class="container-fluid bg pt-5 animate__animated animate__bounceInUp">
-    <div class="row">
-        <div class="col-md-4 col-sm-4 col-xs-12"></div>
-        <div class="col-md-4 col-sm-4 col-xs-12">
-            <!--form start-->
-            <form class="form-container" action="/users/register" method="post" style="margin-bottom: 20px;">
-                <div class="text-center">
-                    <img src="/images/user.png" width="90" height="90">
-                </div>
-                <h2 class="text-center">{{__ "register"}}</h2>
-                <div class="form-group">
-                    <label for="userName">{{__ "name"}}</label>
-                    <input type="text" class="form-control" id="userName" name="userName" aria-describedby="nameHelp"
-                        placeholder="{{__ "enter name"}}" required>
-                </div>
-                <div class="form-group">
-                    <label for="userSurname">{{__ "surname"}}</label>
-                    <input type="text" class="form-control" id="userSurname" name="userSurname"
-                        aria-describedby="surnameHelp" placeholder="{{__ "enter surname"}}" required>
-                </div>
-                <div class="form-group">
-                    <label for="email">{{__ "email address"}}</label>
-                    <input type="email" class="form-control" id="email" name="email" aria-describedby="emailHelp"
-                        placeholder="{{__ "enter email"}}" required>
-                </div>
-                <small id="emailHelp" class="form-text text-muted text-center">{{__ "email share"}}</small>
-                <div class="form-group">
-                    <label for="passwordInput">{{__ "password"}}</label>
-                    <div class="input-group" id="show_hide_password">
-                        <input type="password" class="form-control" id="password" name="password" placeholder="{{__ "password"}}" required>
-                        <div class="input-group-append">
-                            <span class="input-group-text" title="Show/Hide Password"><i class="far fa-eye" id="togglePassword"></i></span>
+<div>
+    {{#if msg}}
+    <div style="text-align: center; position: absolute; width: 100%;" id="flash" class="alert alert-danger" role="alert">
+        <button type="button" class="close" data-dismiss="alert">&times;</button>
+        <strong>{{ msg }}</strong>
+    </div>
+    {{/if}}
+
+    <div class="container-fluid bg pt-5 animate__animated animate__bounceInUp">
+        <div class="row">
+            <div class="col-md-4 col-sm-4 col-xs-12"></div>
+            <div class="col-md-4 col-sm-4 col-xs-12">
+                <!--form start-->
+                <form class="form-container" action="/users/register" method="post" style="margin-bottom: 20px;">
+                    <div class="text-center">
+                        <img src="/images/user.png" width="90" height="90">
+                    </div>
+                    <h2 class="text-center">{{__ "register"}}</h2>
+                    <div class="form-group">
+                        <label for="userName">{{__ "name"}}</label>
+                        <input type="text" class="form-control" id="userName" name="userName" aria-describedby="nameHelp"
+                            placeholder="{{__ "enter name"}}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="userSurname">{{__ "surname"}}</label>
+                        <input type="text" class="form-control" id="userSurname" name="userSurname"
+                            aria-describedby="surnameHelp" placeholder="{{__ "enter surname"}}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="email">{{__ "email address"}}</label>
+                        <input type="email" class="form-control" id="email" name="email" aria-describedby="emailHelp"
+                            placeholder="{{__ "enter email"}}" required>
+                    </div>
+                    <small id="emailHelp" class="form-text text-muted text-center">{{__ "email share"}}</small>
+                    <div class="form-group">
+                        <label for="passwordInput">{{__ "password"}}</label>
+                        <div class="input-group" id="show_hide_password">
+                            <input type="password" class="form-control" id="password" name="password" placeholder="{{__ "password"}}" required>
+                            <div class="input-group-append">
+                                <span class="input-group-text" title="Show/Hide Password"><i class="far fa-eye" id="togglePassword"></i></span>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="form-group">
-                    <label for="confirmInput">{{__ "confirm password"}}</label>
-                    <div class="input-group" id="show_hide_confirm">
-                        <input type="password" class="form-control" id="confirmPassword" name="confirmPassword"
-                            placeholder="{{__ "password"}}" required>
-                        <div class="input-group-append">
-                            <span class="input-group-text" title="Show/Hide Password"><i class="far fa-eye" id="toggleConfirm"></i></span>
+                    <div class="form-group">
+                        <label for="confirmInput">{{__ "confirm password"}}</label>
+                        <div class="input-group" id="show_hide_confirm">
+                            <input type="password" class="form-control" id="confirmPassword" name="confirmPassword"
+                                placeholder="{{__ "password"}}" required>
+                            <div class="input-group-append">
+                                <span class="input-group-text" title="Show/Hide Password"><i class="far fa-eye" id="toggleConfirm"></i></span>
+                            </div>
                         </div>
                     </div>
-                </div>
-                <div class="text-center">
-                    <button class="btn btn-primary">{{__ "register in"}}</button>
-                </div>
-                <small id="loginHelp" class="form-text text-muted text-center"><a href="/users/login">{{__ "have account"}}</a></small>
-            </form>
-            <!--form end-->
+                    <div class="text-center">
+                        <button class="btn btn-primary">{{__ "register in"}}</button>
+                    </div>
+                    <small id="loginHelp" class="form-text text-muted text-center"><a href="/users/login">{{__ "have account"}}</a></small>
+                </form>
+                <!--form end-->
+            </div>
+            <div class="col-md-4 col-sm-4 col-xs-12"></div>
         </div>
-        <div class="col-md-4 col-sm-4 col-xs-12"></div>
     </div>
 </div>
 
 <script>
+    
+    setTimeout(function() {
+        $('#flash').fadeOut('fast');
+    }, 3000);
+
     const togglePassword = document.querySelector('#togglePassword');
     const toggleConfirm = document.querySelector('#toggleConfirm');
     const password = document.querySelector('#password');
