@@ -70,15 +70,19 @@ exports.addProject = async (req, res, next) => {
             userId: req.session.userId
         });
 
+        await project.save();
+
         statesArr.push(createState("Start", project._id));
         statesArr.push(createState("Finish", project._id));
 
-        await project.save();
+
         await StateModel.insertMany(statesArr);
 
         req.session.flash = { type: 'success', text: req.__("project added") };
+        
         return res.redirect('/projects/projectsDirectory');
     } catch (err) {
+        console.log(err)
         return next(err);
     }
 }

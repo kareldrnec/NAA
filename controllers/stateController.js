@@ -14,13 +14,16 @@ exports.addState = async(stateName, projectID, stateInfo) => {
         await state.save();
         app.io.emit('new state', state);
     } catch (err) {
-        app.io.emit('error state');
+        if(err.name == 'MongoError' && err.code == 11000) {
+            app.io.emit('error state', 11000);
+        } else {
+            app.io.emit('error state', 0);
+        }
     }
 }
 
 //edit
 exports.editState = async(stateID, stateName, stateInfo, projectID) => {
-    console.log(projectID)
     try {
         await StateModel.findByIdAndUpdate(stateID, {
             stateName: stateName,
@@ -28,12 +31,13 @@ exports.editState = async(stateID, stateName, stateInfo, projectID) => {
         })
         app.io.emit('edit state', stateID, stateName, stateInfo, projectID);
     } catch (err) {
-        app.io.emit('error state');
+        if(err.name == 'MongoError' && err.code == 11000) {
+            app.io.emit('error state', 11000);
+        } else {
+            app.io.emit('error state', 0);
+        }
     }
-    // socket.emit("edit state", stateID, stateName.value, stateInfo.value);
 }
-
-
 
 // TODO -- zkontrolovat, zda funguje spravne i pro vice aktivit
 exports.deleteState = async(stateID) => {
@@ -46,11 +50,11 @@ exports.deleteState = async(stateID) => {
                 {fromState: stateID},
                 {toState: stateID}
             ]
-        })
+        });
         // mazani stavu
         await StateModel.findByIdAndDelete(stateID)
         app.io.emit('delete state', stateID);
     } catch (err) {
-        app.io.emit("error state");
+        app.io.emit("error state", 0);
     }
 }

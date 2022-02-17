@@ -122,6 +122,7 @@
 	"set up calculation": "Set Up Calculation",
 	"slack": "Slack",
 	"state": "State",
+	"state already exists": "Error! State with this name already exists!",
 	"state cannot be deleted": " cannot be deleted!",
 	"state created": "New State was successfully created!",
 	"state deleted": " was successfully deleted!",

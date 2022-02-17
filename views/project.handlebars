@@ -249,7 +249,7 @@
                         {{#ifEquals projectType "cpm"}}
                             <div class="form-group">
                                 <label for="lengthOfActivity">{{__ "length of activity"}}</label>
-                                <input type="number" class="form-control" name="lengthOfActivity" id="lengthOfActivity">
+                                <input type="number" class="form-control" name="lengthOfActivity" id="lengthOfActivity" min="0" value="0">
                             </div>                            
                         {{/ifEquals}}
                         {{#ifEquals projectType "pert"}}
@@ -435,6 +435,7 @@
     // add state to diagram
     socket.on('new state', function(state) {
         // idk jestli osetrit aby nechodilo vsem
+
         addCreatedState(state);
     });
 
@@ -448,6 +449,14 @@
     socket.on('delete state', function(stateID) {
         deleteSelectedState(stateID);
     });
+
+    socket.on('error state', function(errCode) {
+        if(errCode == 11000) {
+            alert("{{__ "state already exists"}}");
+        } else {
+            alert("{{__ "error"}}" + "!");
+        }
+    })
 
     // TODO - activity pres socket.io
     // add activity to diagram

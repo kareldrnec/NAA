@@ -220,6 +220,8 @@ function getLinkDataArray(activities) {
     // dodelat
     var linkDataArray = [];
     var activitiesData = activities.activities;
+
+
     for (var i = 0; i < activitiesData.length; i++) {
         linkDataArray.push({
             "from": activitiesData[i].fromState,
@@ -233,6 +235,8 @@ function getLinkDataArray(activities) {
 
 function parseLinkTextData(valuesArr) {
     var result = "";
+
+
     if (valuesArr.length == 1) {
         result = result + " (" + valuesArr[0] + ") ";
     } else {

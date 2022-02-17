@@ -122,6 +122,7 @@
 	"set up calculation": "Nastavení výpočtu",
 	"slack": "Časová rezerva",
 	"state": "Stav",
+	"state already exists": "Chyba! Stav s tímto názvem již existuje!",
 	"state cannot be deleted": " nemůže být smazán!",
 	"state created": "Nový stav byl úspěšně vytvořen!",
 	"state deleted": " byl úspěšně smazán!",
