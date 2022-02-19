@@ -1,6 +1,7 @@
 {
 	"action": "Action",
 	"about app": "About App",
+	"about application": "About Application",
 	"account created": "Your account was successfully created! You can log in now.",
 	"account updated": "Your account was successfully updated!",
 	"activity": "Activity",
@@ -51,6 +52,7 @@
 	"enter name": "Enter Name",
 	"enter name of file": "Enter Name of File",
 	"enter optimistic value": "Enter Optimistic Value",
+	"enter password": "Enter Password",
 	"enter pessimistic value": "Enter Pessimistic Value",
 	"enter project name": "Enter Project Name",
 	"enter state name": "Enter State Name",
@@ -120,6 +122,7 @@
 	"settings": "Settings",
 	"settings changed": "Your Settings was successfully changed!",
 	"set up calculation": "Set Up Calculation",
+	"show/hide password": "Show/Hide Password",
 	"slack": "Slack",
 	"state": "State",
 	"state already exists": "Error! State with this name already exists!",
@@ -136,5 +139,10 @@
 	"user exists": "User already exists!",
 	"user not found": "User with this email address was not found!",
 	"wrong password": "Wrong password!",
-	"500 response": "500 response"
+	"500 response": "500 response",
+	"8-30 chars": "8-30 characters",
+	"1 upper char": "At least 1 uppercase character",
+	"1 lower char": "At least 1 lowercase character",
+	"2 digits": "At least 2 digits",
+	"no spaces": "No spaces"
 }

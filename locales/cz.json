@@ -1,6 +1,7 @@
 {
 	"action": "Akce",
 	"about app": "O aplikaci",
+	"about application": "O aplikaci",
 	"account created": "Váš účet byl úspěšně vytvořen! Nyní se můžete přihlásit.",
 	"account updated": "Váš účet byl úspěšně aktualizován!",
 	"activity": "Aktivita",
@@ -51,6 +52,7 @@
 	"enter name": "Zadejte jméno",
 	"enter name of file": "Zadejte název souboru",
 	"enter optimistic value": "Zadejte optimistický odhad",
+	"enter password": "Zadejte heslo",
 	"enter pessimistic value": "Zadejte pesimistický odhad",
 	"enter project name": "Zadejte název projektu",
 	"enter state name": "Zadejte název stavu",
@@ -120,6 +122,7 @@
 	"settings": "Nastavení",
 	"settings changed": "Vaše nastavení bylo úspěšně změněno!",
 	"set up calculation": "Nastavení výpočtu",
+	"show/hide password": "Ukázat/Schovat heslo",
 	"slack": "Časová rezerva",
 	"state": "Stav",
 	"state already exists": "Chyba! Stav s tímto názvem již existuje!",
@@ -134,7 +137,13 @@
 	"type of project": "Typ projektu",
 	"update": "Aktualizovat",
 	"user exists": "Uživatel s touto emailovou adresou již existuje!",
-	"user not found": "Uživatel s tou emailovou adresou nebyl nalezen",
+	"user not found": "Uživatel s touto emailovou adresou nebyl nalezen!",
 	"wrong password": "Špatně zadané heslo!",
-	"500 response": "500 response"
+	"500 response": "500 response", 
+	
+	"8-30 chars": "8-30 znaků",
+	"1 upper char": "Alespoň 1 velký znak",
+	"1 lower char": "Alespoň 1 malý znak",
+	"2 digits": "Alespoň 2 číslice",
+	"no spaces": "Žádné mezery"
 }
