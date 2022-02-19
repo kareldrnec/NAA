@@ -319,7 +319,24 @@ function editActivity(e, obj) {
 
     var activities = _activitiesData.activities;
     var activity = activities.find(element => element.fromState == linkData.from && element.toState == linkData.to);
-    console.log(activity)
+    var activityValues = activity.values;
+
+    document.getElementById('editActivityForm').setAttribute('name', activity.ID);
+
+    document.getElementById('editedActivityName').value = activity.activityName;
+    document.getElementById('editedActivityType').value = activity.activityType;
+    document.getElementById('editedActivityDescription').value = activity.description;
+
+    if(activityValues.length == 1) {
+        document.getElementById('editedActivityLength').value = activityValues[0];
+    } else if(activityValues.length == 3) {
+        document.getElementById('editedActivityOptimistic').value = activityValues[0];
+        document.getElementById('editedActivityMost').value = activityValues[1];
+        document.getElementById('editedActivityPessimistic').value = activityValues[2];
+    } 
+
+    $('#editActivityModal').modal('show');
+    // asi hotovo
 }
 
 function deleteActivity(e, obj) {
@@ -372,6 +389,12 @@ function deleteSelectedState(stateID) {
     }
     // smazat activity napojene na stavy
 }
+
+function editSelectedActivity(activityID, activityName, activityType, activityDescription, activityValues) {
+
+}
+
+
 
 
 function deleteSelectedActivity(activityID){

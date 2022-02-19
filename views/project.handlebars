@@ -286,7 +286,48 @@
             </div>
             <form class="form-container" id="editActivityForm">
                 <div class="modal-body">
-                    
+                    <div class="form-group">
+                        <label for="editedActivityName">{{__ "activity name"}}</label>
+                        <input type="text" class="form-control" id="editedActivityName" name="editedActivityName"
+                            placeholder="{{__ "enter activity name"}}" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="analysisType">{{__ "analysis type"}}</label>
+                        <input type="text" class="form-control" value="{{upper projectType}}" readonly>
+                    </div>
+                    <div class="form-group">
+                        <label for="editedActivityType">{{__ "activity type"}}</label>
+                        <select class="form-control" id="editedActivityType" name="editedActivityType">
+                            <option value="normal">{{__ "normal"}}</option>
+                            <option value="dummy">{{__ "dummy"}}</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="editedActivityDescription">{{__ "description"}}</label>
+                        <input type="text" class="form-control" id="editedActivityDescription" name="editedActivityDescription" placeholder="{{__ "enter activity description"}}">
+                    </div>
+                    <div id="editedActivityValues">
+                        <hr class="solid">
+                        <div class="text-center">
+                            <h6>{{__ "activity values"}}</h6>
+                        </div>
+                        {{#ifEquals projectType "cpm"}}
+                            <div class="form-group">
+                                <label for="editedActivityLength">{{__ "length of activity"}}</label>
+                                <input type="number" class="form-control" id="editedActivityLength" name="editedActivityLength" min="0">
+                            </div>
+                        {{/ifEquals}}
+                        {{#ifEquals projectType "pert"}}
+                            <div class="form-group">
+                                <label for="editedActivityOptimistic">{{__ "optimistic value"}}</label>
+                                <input type="number" class="form-control" id="editedActivityOptimistic" name="editedActivityOptimistic" min="0">
+                                <label for="editedActivityMost">{{__ "most expected value"}}</label>
+                                <input type="number" class="form-control" id="editedActivityMost" name="editedActivityMost" min="0">
+                                <label for="editedActivityPessimistc">{{__ "pessimistic value"}}</label>
+                                <input type="number" class="form-control" id="editedActivityPessimistic" name="editedActivityPessimistic" min="0">
+                            </div>
+                        {{/ifEquals}}
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">{{__ "close"}}</button>
@@ -377,6 +418,21 @@
         }
     })
 
+
+
+
+    // tady dopsat
+    document.getElementById('editedActivityType').addEventListener('change', function() {
+        if(this.value == "normal") {
+            document.getElementById('editedActivityValues').style.visibility = "visible";
+        } else {
+            document.getElementById('editedActivityValues').style.visibility = "hidden";
+            //$('#editActivityModal').modal('handleUpdate');
+            $('#editActivityModal').data('bs.modal').handleUpdate()
+            // $('#myModal').modal('handleUpdate')
+        }
+    })
+
     document.getElementById('addActivityForm').addEventListener('submit', function(event) {
         // TODO
         event.preventDefault();
@@ -419,6 +475,39 @@
     document.getElementById('editActivityForm').addEventListener('submit', function(event) {
         // TODO
         event.preventDefault();
+
+        var activityID = this.getAttribute("name");
+        
+        var activityName = document.getElementById('editedActivityName').value;
+        var editedActivityType = document.getElementById('editedActivityType').value;
+
+        var editedActivityDescription = document.getElementById('editedActivityDescription');
+
+        var activityValues = [];
+
+        if("{{projectType}}" == "cpm" && editedActivityType == "dummy") {
+            activityValues.push('0');
+        } else if("{{projectType}}" == "cpm" && editedActivityType == "normal") {
+            var editedActivityLength = document.getElementById('editedActivityLength').value;
+            activityValues.push(editedActivityLength);
+        } else if("{{projectType}}" == "pert" && editedActivityType == "dummy") {
+            activityValues = ['0', '0', '0'];
+        } else if("{{projectType}}" == "pert" && editedActivityType == "normal") {
+            var editedActivityOptimistic = document.getElementById('editedActivityOptimistic').value;
+            var editedActivityMost = document.getElementById('editedActivityMost').value;
+            var editedActivityPessimistic = document.getElementById('editedActivityPessimistic').value;
+            activityValues = [editedActivityOptimistic, editedActivityMost, editedActivityPessimistic];
+        }
+
+        // socket
+        console.log(activityID)
+        
+        socket.emit("edit activity", activityID, activityName, editedActivityType, editedActivityDescription.value, activityValues);
+
+
+        editedActivityDescription.value = '';
+
+        $('#editActivityModal').modal('toggle');
     });
 
 
@@ -466,7 +555,11 @@
     })
 
     // edit activity in diagram
-    socket.on('edit activity', function(activity) {
+    socket.on('edit activity', function(activityID, activityName, activityType, activityDescription, activityValues) {
+
+        // TODO 
+        //editSelectedActivity
+        editSelectedActivity(activityID, activityName, activityType, activityDescription, activityValues)
 
     })
 

@@ -25,9 +25,15 @@ exports.addActivity = async(activityName, activityType, fromState, toState, valu
 }
 
 // TODO
-exports.editActivity = async() => {
+exports.editActivity = async(activityID, activityName, activityType, activityDescription, activityValues) => {
     try {
-
+        await ActivityModel.findByIdAndUpdate(activityID, {
+            activityName: activityName,
+            activityType: activityType,
+            description: activityDescription,
+            values: activityValues
+        });
+        app.io.emit('edit activity', activityID, activityName, activityType, activityDescription, activityValues);
     } catch (err) {
         app.io.emit('error activity');
     }
