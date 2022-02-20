@@ -221,14 +221,25 @@ function getLinkDataArray(activities) {
     var linkDataArray = [];
     var activitiesData = activities.activities;
 
+    console.log(activitiesData)
 
     for (var i = 0; i < activitiesData.length; i++) {
-        linkDataArray.push({
-            "from": activitiesData[i].fromState,
-            "to": activitiesData[i].toState,
-            "text": parseLinkTextData(activitiesData[i].values),
-            "color": "B"
-        })
+        if(activitiesData[i].activityType == "normal") {
+            linkDataArray.push({
+                "from": activitiesData[i].fromState,
+                "to": activitiesData[i].toState,
+                "text": parseLinkTextData(activitiesData[i].values),
+                "color": "B"
+            })
+        } else if(activitiesData[i].activityType == "dummy") {
+            linkDataArray.push({
+                "from": activitiesData[i].fromState,
+                "to": activitiesData[i].toState,
+                "text": parseLinkTextData(activitiesData[i].values),
+                "dash": [3, 4],
+                "color": "B"
+            })
+        }
     }
     return linkDataArray;
 }
