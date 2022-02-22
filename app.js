@@ -93,7 +93,6 @@ app.engine('handlebars', engine({
     }
 }));
 
-// 
 app.use(bodyParser.urlencoded({ extended: false }));
 app.use(bodyParser.json());
 
@@ -114,7 +113,7 @@ InitiateMongoServer();
 
 // session store
 const store = new MongoStore({
-    uri: "mongodb+srv://admin:admin@cluster0.gr9ky.mongodb.net/NAA?retryWrites=true&w=majority",
+    uri: process.env.MONGO_URI,
     collection: "mySession"
 });
 
@@ -124,10 +123,7 @@ app.use(session({
     saveUninitialized: false,
     store: store
 }));
-// schovat promenny do env
 
-// TODO express flash messages
-//express-flash-message
 app.use((req, res, next) => {
     if (req.session.flash) {
         res.locals.flash = req.session.flash;
@@ -141,7 +137,7 @@ app.use((req, res, next) => {
 app.use('/', require('./routes/index'));
 app.use('/users', require('./routes/users'));
 app.use('/projects', require('./routes/projects'));
-//app.use('/activities', require('./routes/activities'));
+
 // idk jeste
 app.use('/calculations', require('./routes/calculations'));
 

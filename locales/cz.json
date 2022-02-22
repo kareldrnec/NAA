@@ -35,7 +35,7 @@
     "delete state": "Smazání stavu",
     "delete state question": "Opravdu chcete smazat zvolený stav?",
     "description": "Popis",
-    "directory": "Adresář",
+    "directory": "Adresář projektů",
     "dummy": "Fiktivní",
     "earliest start time": "Nejdříve možný začátek činnosti",
     "edit": "Upravit",
@@ -90,6 +90,7 @@
     "new state": "Nový stav",
     "normal": "Normální",
     "no account": "Nemáte účet? Registrujte se zde.",
+    "no spaces": "Žádné mezery",
     "not found": "Nenalezeno.",
     "number of states": "Počet stavů",
     "on naa since": "V NAA od",
@@ -144,6 +145,5 @@
     "8-30 chars": "8-30 znaků",
     "1 upper char": "Alespoň 1 velký znak",
     "1 lower char": "Alespoň 1 malý znak",
-    "2 digits": "Alespoň 2 číslice",
-    "no spaces": "Žádné mezery"
+    "2 digits": "Alespoň 2 číslice"
 }

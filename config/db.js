@@ -5,13 +5,12 @@ const mongoose = require('mongoose');
 //mongoURI
 const mongoURI = process.env.MONGO_URI;
 
-const InitiateMongoServer = async () => {
+const InitiateMongoServer = async() => {
     try {
         await mongoose.connect(mongoURI, {
-            useNewUrlParser: true 
+            useNewUrlParser: true
         });
-    } catch(e) {
-        console.log(e);
+    } catch (e) {
         throw e;
     }
 }

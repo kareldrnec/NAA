@@ -385,7 +385,7 @@
         stateInfo.value = '';
 
         $('#addStateModal').modal('toggle');
-    })
+    });
 
     // editStateForm - submit - edit state
     document.getElementById('editStateForm').addEventListener('submit', function(event) {
@@ -400,7 +400,7 @@
         stateInfo.value = '';
 
         $('#editStateModal').modal('toggle');
-    })
+    });
 
     // deleteStateForm - submit - delete state
     document.getElementById('deleteStateForm').addEventListener('submit', function(event) {
@@ -410,42 +410,49 @@
         socket.emit("delete state", stateID);
 
         $('#deleteStateModal').modal('toggle');
-    })
+    });
 
     // activityTypeSelect - onchange display/hide values of activity
     document.getElementById('activityTypeSelect').addEventListener('change', function() {
         if(this.value == "normal") {
-            // TODO
-            //document.getElementById('activityValues').style.visibility = "visible";
-            //$('#inp').removeAttr('disabled');
-            $('#editedActivityOptimistic').removeAttr('disabled');
-            $('#editedActivityMost').removeAttr('disabled');
-            $('#editedActivityPessimistic').removeAttr('disabled');
+            if("{{projectType}}" == "cpm") {
+                $('#lengthOfActivity').removeAttr('disabled');
+            } else {
+                $('#optimisticValue').removeAttr('disabled');
+                $('#mostExpectedValue').removeAttr('disabled');
+                $('#pessimisticValue').removeAttr('disabled');
+            }
         } else {
-            //document.getElementById('activityValues').style.visibility = "hidden";
-            $('#editedActivityOptimistic').attr('disabled', 'disabled');
-            $('#editedActivityMost').attr('disabled', 'disabled');
-            $('#editedActivityPessimistic').attr('disabled', 'disabled');
+            if("{{projectType}}" == "cpm") {
+                $('#lengthOfActivity').attr('disabled', 'disabled');
+            } else {
+                $('#optimisticValue').attr('disabled', 'disabled');
+                $('#mostExpectedValue').attr('disabled', 'disabled');
+                $('#pessimisticValue').attr('disabled', 'disabled');
+            }
         }
-    })
+    });
 
     // tady dopsat
     document.getElementById('editedActivityType').addEventListener('change', function() {
         if(this.value == "normal") {
-            //document.getElementById('editedActivityValues').style.visibility = "visible";
-            $('#editedActivityOptimistic').removeAttr('disabled');
-            $('#editedActivityMost').removeAttr('disabled');
-            $('#editedActivityPessimistic').removeAttr('disabled');
+            if("{{projectType}}" == "cpm") {
+                $('#editedActivityLength').removeAttr('disabled');
+            } else {
+                $('#editedActivityOptimistic').removeAttr('disabled');
+                $('#editedActivityMost').removeAttr('disabled');
+                $('#editedActivityPessimistic').removeAttr('disabled');
+            }
         } else {
-            //document.getElementById('editedActivityValues').style.visibility = "hidden";
-            //$('#editActivityModal').modal('handleUpdate');
-            //$('#editActivityModal').data('bs.modal').handleUpdate()
-            // $('#myModal').modal('handleUpdate')
-            $('#editedActivityOptimistic').attr('disabled', 'disabled');
-            $('#editedActivityMost').attr('disabled', 'disabled');
-            $('#editedActivityPessimistic').attr('disabled', 'disabled');
+            if("{{projectType}}" == "cpm") {
+                $('#editedActivityLength').attr('disabled', 'disabled');
+            } else {
+                $('#editedActivityOptimistic').attr('disabled', 'disabled');
+                $('#editedActivityMost').attr('disabled', 'disabled');
+                $('#editedActivityPessimistic').attr('disabled', 'disabled');
+            }
         }
-    })
+    });
 
     document.getElementById('addActivityForm').addEventListener('submit', function(event) {
         // TODO
@@ -564,7 +571,6 @@
     // TODO - activity pres socket.io
     // add activity to diagram
     socket.on('new activity', function(activity) {
-        console.log("Dostavam echo zpet")
         addCreatedActivity(activity);
     })
 

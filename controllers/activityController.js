@@ -14,7 +14,7 @@ exports.addActivity = async(activityName, activityType, fromState, toState, valu
             description: description,
             projectID: projectID
         })
-        
+
         // ukladam aktivitu
         await activity.save();
 
@@ -42,7 +42,6 @@ exports.editActivity = async(activityID, activityName, activityType, activityDes
 // TODO 
 exports.deleteActivity = async(activityID) => {
     try {
-        console.log("Jsem tu a budu mazat")
         await ActivityModel.findByIdAndDelete(activityID);
         app.io.emit('delete activity', activityID);
     } catch (err) {

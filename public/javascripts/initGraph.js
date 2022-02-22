@@ -381,10 +381,11 @@ function addCreatedState(state) {
         stateName: state.stateName,
         description: state.description
     })
-    console.log(_statesData)
     reload();
 }
 
+
+// projectID ?
 function editSelectedState(stateID, projectID, stateName, stateInfo) {
     var foundIndex = _statesData.states.findIndex(element => element.ID == stateID);
     _statesData.states[foundIndex].stateName = stateName;
@@ -393,17 +394,25 @@ function editSelectedState(stateID, projectID, stateName, stateInfo) {
 }
 
 function deleteSelectedState(stateID) {
-    var states = _statesData.states;
-    var foundIndex = states.findIndex(element => element.ID == stateID);
-    console.log(foundIndex)
+
+    var foundIndex = _statesData.states.findIndex(element => element.ID == stateID);
+
     if (foundIndex > -1) {
-        states.splice(foundIndex, 1)
+        var activitiesTo = _activitiesData.activities.filter(element => element.toState == _statesData.states[foundIndex].ID);
+        var activitiesFrom = _activitiesData.activities.filter(element => element.fromState == _statesData.states[foundIndex].ID);
+        var activitiesToDelete = activitiesTo.concat(activitiesFrom);
+
+        _statesData.states.splice(foundIndex, 1);
+
+        for (var i = 0; i < activitiesToDelete.length; i++) {
+            foundIndex = _activitiesData.activities.findIndex(element => element.ID == activitiesToDelete[i].ID);
+            _activitiesData.activities.splice(foundIndex, 1);
+        }
+
         reload();
     }
-    console.log("Vypis")
-    console.log(_activitiesData)
-    console.log("////////")
-        // smazat activity napojene na stavy
+
+    // smazat activity napojene na stavy
 }
 
 function editSelectedActivity(activityID, activityName, activityType, activityDescription, activityValues) {
