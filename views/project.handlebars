@@ -314,20 +314,20 @@
                         {{#ifEquals projectType "cpm"}}
                             <div class="form-group">
                                 <label for="editedActivityLength">{{__ "length of activity"}}</label>
-                                <input type="number" class="form-control" id="editedActivityLength" name="editedActivityLength" min="0">
+                                <input type="number" class="form-control" id="editedActivityLength" name="editedActivityLength" min="0" required>
                             </div>
                         {{/ifEquals}}
                         {{#ifEquals projectType "pert"}}
                             <div class="form-group">
                                 <label for="editedActivityOptimistic">{{__ "optimistic value"}}</label>
                                 <input type="number" class="form-control" id="editedActivityOptimistic" name="editedActivityOptimistic" min="0"
-                                    title="{{__ "optimistic value"}}">
+                                    title="{{__ "optimistic value"}}" required>
                                 <label for="editedActivityMost">{{__ "most expected value"}}</label>
                                 <input type="number" class="form-control" id="editedActivityMost" name="editedActivityMost" min="0"
-                                    title="{{__ "most expected value"}}">
+                                    title="{{__ "most expected value"}}" required>
                                 <label for="editedActivityPessimistc">{{__ "pessimistic value"}}</label>
                                 <input type="number" class="form-control" id="editedActivityPessimistic" name="editedActivityPessimistic" min="0"
-                                    title="{{__ "pessimistic value"}}">
+                                    title="{{__ "pessimistic value"}}" required>
                             </div>
                         {{/ifEquals}}
                     </div>
