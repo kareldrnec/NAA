@@ -6,12 +6,13 @@ var projectSchema = new Schema({
     projectName: {
         type: String,
         required: true,
+        trim: true,
         unique: true
     },
     projectType: {
         type: String,
         required: true
-    }, 
+    },
     projectInfo: {
         type: String,
         default: ""
@@ -19,7 +20,7 @@ var projectSchema = new Schema({
     createdAt: {
         type: Date,
         default: Date.now()
-    }, 
+    },
     userId: {
         type: String,
         required: true

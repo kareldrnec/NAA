@@ -4,6 +4,7 @@ const Schema = mongoose.Schema;
 var stateSchema = new Schema({
     stateName: {
         type: String,
+        trim: true,
         required: true
     },
     projectID: {
@@ -16,6 +17,6 @@ var stateSchema = new Schema({
     }
 });
 
-stateSchema.index({ "stateName": 1, "projectID": 1}, {unique: true});
+stateSchema.index({ "stateName": 1, "projectID": 1 }, { unique: true });
 
 module.exports = mongoose.model('State', stateSchema);

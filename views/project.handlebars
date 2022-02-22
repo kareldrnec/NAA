@@ -320,11 +320,14 @@
                         {{#ifEquals projectType "pert"}}
                             <div class="form-group">
                                 <label for="editedActivityOptimistic">{{__ "optimistic value"}}</label>
-                                <input type="number" class="form-control" id="editedActivityOptimistic" name="editedActivityOptimistic" min="0">
+                                <input type="number" class="form-control" id="editedActivityOptimistic" name="editedActivityOptimistic" min="0"
+                                    title="{{__ "optimistic value"}}">
                                 <label for="editedActivityMost">{{__ "most expected value"}}</label>
-                                <input type="number" class="form-control" id="editedActivityMost" name="editedActivityMost" min="0">
+                                <input type="number" class="form-control" id="editedActivityMost" name="editedActivityMost" min="0"
+                                    title="{{__ "most expected value"}}">
                                 <label for="editedActivityPessimistc">{{__ "pessimistic value"}}</label>
-                                <input type="number" class="form-control" id="editedActivityPessimistic" name="editedActivityPessimistic" min="0">
+                                <input type="number" class="form-control" id="editedActivityPessimistic" name="editedActivityPessimistic" min="0"
+                                    title="{{__ "pessimistic value"}}">
                             </div>
                         {{/ifEquals}}
                     </div>
@@ -412,24 +415,35 @@
     // activityTypeSelect - onchange display/hide values of activity
     document.getElementById('activityTypeSelect').addEventListener('change', function() {
         if(this.value == "normal") {
-            document.getElementById('activityValues').style.visibility = "visible";
+            // TODO
+            //document.getElementById('activityValues').style.visibility = "visible";
+            //$('#inp').removeAttr('disabled');
+            $('#editedActivityOptimistic').removeAttr('disabled');
+            $('#editedActivityMost').removeAttr('disabled');
+            $('#editedActivityPessimistic').removeAttr('disabled');
         } else {
-            document.getElementById('activityValues').style.visibility = "hidden";
+            //document.getElementById('activityValues').style.visibility = "hidden";
+            $('#editedActivityOptimistic').attr('disabled', 'disabled');
+            $('#editedActivityMost').attr('disabled', 'disabled');
+            $('#editedActivityPessimistic').attr('disabled', 'disabled');
         }
     })
-
-
-
 
     // tady dopsat
     document.getElementById('editedActivityType').addEventListener('change', function() {
         if(this.value == "normal") {
-            document.getElementById('editedActivityValues').style.visibility = "visible";
+            //document.getElementById('editedActivityValues').style.visibility = "visible";
+            $('#editedActivityOptimistic').removeAttr('disabled');
+            $('#editedActivityMost').removeAttr('disabled');
+            $('#editedActivityPessimistic').removeAttr('disabled');
         } else {
-            document.getElementById('editedActivityValues').style.visibility = "hidden";
+            //document.getElementById('editedActivityValues').style.visibility = "hidden";
             //$('#editActivityModal').modal('handleUpdate');
-            $('#editActivityModal').data('bs.modal').handleUpdate()
+            //$('#editActivityModal').data('bs.modal').handleUpdate()
             // $('#myModal').modal('handleUpdate')
+            $('#editedActivityOptimistic').attr('disabled', 'disabled');
+            $('#editedActivityMost').attr('disabled', 'disabled');
+            $('#editedActivityPessimistic').attr('disabled', 'disabled');
         }
     })
 

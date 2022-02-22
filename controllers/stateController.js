@@ -14,7 +14,7 @@ exports.addState = async(stateName, projectID, stateInfo) => {
         await state.save();
         app.io.emit('new state', state);
     } catch (err) {
-        if(err.name == 'MongoError' && err.code == 11000) {
+        if (err.name == 'MongoError' && err.code == 11000) {
             app.io.emit('error state', 11000);
         } else {
             app.io.emit('error state', 0);
@@ -31,7 +31,7 @@ exports.editState = async(stateID, stateName, stateInfo, projectID) => {
         })
         app.io.emit('edit state', stateID, stateName, stateInfo, projectID);
     } catch (err) {
-        if(err.name == 'MongoError' && err.code == 11000) {
+        if (err.name == 'MongoError' && err.code == 11000) {
             app.io.emit('error state', 11000);
         } else {
             app.io.emit('error state', 0);
@@ -47,8 +47,8 @@ exports.deleteState = async(stateID) => {
         // mazani aktivit
         await ActivityModel.deleteMany({
             $or: [
-                {fromState: stateID},
-                {toState: stateID}
+                { fromState: stateID },
+                { toState: stateID }
             ]
         });
         // mazani stavu

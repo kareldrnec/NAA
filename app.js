@@ -149,6 +149,12 @@ app.use('/calculations', require('./routes/calculations'));
 
 // Dodelat !! :)
 app.use((err, req, res, next) => {
+    console.log("Chyba")
+    console.log(err)
+    console.log("/////")
+    if (err.code == 11000) {
+        return res.redirect('back');
+    }
     return res.status(500).render('error', {
         title: req.__("error"),
         code: "500",

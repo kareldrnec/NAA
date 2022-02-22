@@ -5,10 +5,10 @@ const StateModel = require('../models/state');
 const ActivityModel = require('../models/activity');
 
 //gets project directory
-exports.getProjectsDirectory = async (req, res, next) => {
+exports.getProjectsDirectory = async(req, res, next) => {
     try {
         var user = await UserModel.findById(req.session.userId);
-            projects = await ProjectModel.find({ userId: req.session.userId }),
+        projects = await ProjectModel.find({ userId: req.session.userId }),
             projectsToSend = {},
             projectsPrep = [];
 
@@ -24,7 +24,7 @@ exports.getProjectsDirectory = async (req, res, next) => {
         }
 
         projectsToSend.projects = projectsPrep;
-        
+
         return res.render('projectsDirectory', {
             title: req.__('directory'),
             projects: projectsToSend,
@@ -36,7 +36,13 @@ exports.getProjectsDirectory = async (req, res, next) => {
 };
 
 //redirects to new project page
-exports.newProject = async (req, res, next) => {
+/**
+ * newProject
+ * GET
+ * Async function that redirects to form for a new project
+ * if error appears, it is automatically redirected to error handler
+ */
+exports.newProject = async(req, res, next) => {
     try {
         let user = await UserModel.findById(req.session.userId);
         return res.render('addProject', {
@@ -48,22 +54,18 @@ exports.newProject = async (req, res, next) => {
     }
 }
 
-//add new project
-exports.addProject = async (req, res, next) => {
+
+/**
+ * addProject
+ * POST
+ * Async function that adds a new project with Start state and Finish state
+ * if error appears, it is automatically redirected to error handler
+ */
+exports.addProject = async(req, res, next) => {
     const { projectName, types, projectInfo } = req.body;
     var statesArr = [];
     try {
-        let project = await ProjectModel.findOne({
-            projectName: projectName,
-            userId: req.session.userId
-        });
-
-        if(project) {
-            req.session.flash = { type: 'danger', text: req.__("project exists with this name") };
-            return res.redirect('/projects/new');
-        }
-
-        project = new ProjectModel({
+        let project = new ProjectModel({
             projectName: projectName,
             projectType: types,
             projectInfo: projectInfo,
@@ -75,58 +77,68 @@ exports.addProject = async (req, res, next) => {
         statesArr.push(createState("Start", project._id));
         statesArr.push(createState("Finish", project._id));
 
-
         await StateModel.insertMany(statesArr);
 
         req.session.flash = { type: 'success', text: req.__("project added") };
-        
+
         return res.redirect('/projects/projectsDirectory');
     } catch (err) {
-        console.log(err)
+        if (err.code == 11000) {
+            req.session.flash = { type: 'danger', text: req.__("project exists with this name") };
+        }
         return next(err);
     }
 }
 
-//update of project
-exports.editProject = async (req, res, next) => {
+/**
+ * editProject
+ * PUT
+ * Async function that updates selected project
+ * if error appears, it is automatically redirected to error handler
+ * if error has code 11000 (Duplicate Key), the error message is added to flash message
+ */
+exports.editProject = async(req, res, next) => {
     const projectName = req.body.projectName;
     const projectInfo = req.body.projectInfo;
     try {
-        let project = await ProjectModel.findOne({
-            projectName: projectName,
-            userId: req.session.userId
-        });
-        
-        if(project) {
-            req.session.flash = { type: 'danger', text: req.__("project exists with this name")};
-            return res.redirect('/projects/edit/' + req.params.id);
-        }
-        
         await ProjectModel.findByIdAndUpdate(req.params.id, {
             projectName: projectName,
             projectInfo: projectInfo
         });
-        
+
         req.session.flash = { type: 'success', text: req.__('project updated') };
+
         return res.redirect("/projects/projectsDirectory");
     } catch (err) {
+        if (err.code == 11000) {
+            req.session.flash = { type: 'danger', text: req.__('project exists with this name') };
+        }
         return next(err);
     }
 }
 
-//select project for edit and redirection
-exports.getProjectForEdit = async (req, res, next) => {
+/**
+ * getProjectForEdit
+ * GET
+ * Async function that displays selected project for edit
+ * if error appears, it is automatically redirected to error handler
+ */
+exports.getProjectForEdit = async(req, res, next) => {
     try {
-        let project = await ProjectModel.findById(req.params.id);
+        const user = await UserModel.findById(req.session.userId);
+        const project = await ProjectModel.findById(req.params.id);
+
         let date = project.createdAt;
         let stringDate = date.getDate() + "/" + (date.getMonth() + 1) + "/" + date.getFullYear();
+
         return res.render('editProject', {
             title: req.__('edit project'),
             projectID: project._id,
             projectName: project.projectName,
             projectType: project.projectType,
             projectInfo: project.projectInfo,
-            createdAt: stringDate
+            createdAt: stringDate,
+            username: user.userName + " " + user.userSurname
         })
     } catch (err) {
         return next(err);
@@ -134,12 +146,12 @@ exports.getProjectForEdit = async (req, res, next) => {
 }
 
 //project selection
-exports.selectProject = async (req, res) => {
+exports.selectProject = async(req, res) => {
     res.redirect("/projects/" + encodeURIComponent(req.params.id));
 }
 
 //load project after selection
-exports.loadProject = async (req, res, next) => {
+exports.loadProject = async(req, res, next) => {
     try {
         let user = await UserModel.findById(req.session.userId),
             project = await ProjectModel.findById(req.params.id);
@@ -150,10 +162,11 @@ exports.loadProject = async (req, res, next) => {
                 activities = await ActivityModel.find({ projectID: project._id }),
                 activitiesToSend = {},
                 activitiesPrep = [],
-                translations = [req.__('add activity'), req.__('add state'), req.__('edit'), req.__('delete'),  
-                    req.__('slack'), req.__('state name'), req.__('earliest start time'), req.__('latest start time')];
-            
-            
+                translations = [req.__('add activity'), req.__('add state'), req.__('edit'), req.__('delete'),
+                    req.__('slack'), req.__('state name'), req.__('earliest start time'), req.__('latest start time')
+                ];
+
+
             for (var i in states) {
                 var item = states[i];
                 statesPrep.push({
@@ -203,7 +216,7 @@ exports.loadProject = async (req, res, next) => {
 }
 
 // delete project
-exports.deleteProject = async (req, res, next) => {
+exports.deleteProject = async(req, res, next) => {
     try {
         await StateModel.deleteMany({
             projectID: req.params.id
@@ -214,9 +227,9 @@ exports.deleteProject = async (req, res, next) => {
         });
 
         await ProjectModel.findByIdAndDelete(req.params.id);
-        
+
         req.session.flash = { type: 'success', text: req.__("project deleted") };
-        
+
         return res.redirect("/projects/projectsDirectory");
     } catch (err) {
         return next(err);
@@ -225,17 +238,17 @@ exports.deleteProject = async (req, res, next) => {
 
 // generator 
 // TODO
-exports.generateProject = async (req, res, next) => {
+exports.generateProject = async(req, res, next) => {
     const projectName = req.body.projectName;
-        projectType = req.body.types,
+    projectType = req.body.types,
         projectInfo = req.body.projectInfo,
         maxLengthOfActivity = req.body.maxLengthOfActivity;
-   
+
     var numberOfStates = req.body.numberOfStates,
         fromState, toState,
         statesArr = [],
         activitiesArr = [],
-        previousStates = [], 
+        previousStates = [],
         nextStates = [];
 
 
@@ -306,9 +319,9 @@ function createActivity(name, activityType, projectType, projectID, fromState, t
 function generateValuesForActivity(projectType, maxLength) {
     // TODO generate pert or cpm length
     let valArr = [];
-    if(projectType == "cpm") {
+    if (projectType == "cpm") {
         valArr.push(getRandomInt(maxLength));
-    } else if(projectType == "pert") {
+    } else if (projectType == "pert") {
 
     }
     return valArr;
@@ -318,5 +331,3 @@ function generateValuesForActivity(projectType, maxLength) {
 function getRandomInt(max) {
     return Math.floor(Math.random() * max) + 1;
 }
-
-
