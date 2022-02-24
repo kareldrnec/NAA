@@ -262,6 +262,18 @@
                                 <input type="number" class="form-control" name="pessimisticValue" id="pessimisticValue" min="0" value="0">
                             </div>
                         {{/ifEquals}}
+                        <hr class="solid">
+                        <div class="form-group">
+                            <label for="valueType">{{__ "time unit"}}</label>
+                            <select class="form-control" id="activityTimeUnit" name="activityTimeUnit">
+                                <option value="seconds">{{__ "seconds"}}</option>
+                                <option value="minutes">{{__ "minutes"}}</option>
+                                <option value="hours" selected>{{__ "hours"}}</option>
+                                <option value="days">{{__ "days"}}</option>
+                                <option value="weeks">{{__ "weeks"}}</option>
+                                <option value="months">{{__ "months"}}</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -330,6 +342,18 @@
                                     title="{{__ "pessimistic value"}}" required>
                             </div>
                         {{/ifEquals}}
+                        <hr class="solid">
+                        <div class="form-group">
+                            <label for="editedTimeUnit">{{__ "time unit"}}</label>
+                            <select class="form-control" id="editedTimeUnit" name="editedTimeUnit">
+                                <option value="seconds">{{__ "seconds"}}</option>
+                                <option value="minutes">{{__ "minutes"}}</option>
+                                <option value="hours">{{__ "hours"}}</option>
+                                <option value="days">{{__ "days"}}</option>
+                                <option value="weeks">{{__ "weeks"}}</option>
+                                <option value="months">{{__ "months"}}</option>
+                            </select>
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -461,7 +485,7 @@
         var activityName = document.getElementById('activityNameInput');
         var activityType = document.getElementById('activityTypeSelect');
         var activityDescription = document.getElementById('activityDescription');
-
+        var activityTimeUnit = document.getElementById('activityTimeUnit');
         var valuesArr = []; 
         
         var formAction = ($('#addActivityForm').attr('action')).split('&');
@@ -485,7 +509,7 @@
 
         }
 
-        socket.emit("new activity", activityName.value, activityType.value, formAction[0], formAction[1], valuesArr, activityDescription.value, "{{projectID}}");
+        socket.emit("new activity", activityName.value, activityType.value, formAction[0], formAction[1], activityTimeUnit.value, valuesArr, activityDescription.value, "{{projectID}}");
 
         activityName.value = '';
         activityDescription.value = '';
@@ -501,7 +525,7 @@
         
         var activityName = document.getElementById('editedActivityName').value;
         var editedActivityType = document.getElementById('editedActivityType').value;
-
+        var editedTimeUnit = document.getElementById('editedTimeUnit');
         var editedActivityDescription = document.getElementById('editedActivityDescription');
 
         var activityValues = [];
@@ -523,7 +547,7 @@
         // socket
         console.log(activityID)
         
-        socket.emit("edit activity", activityID, activityName, editedActivityType, editedActivityDescription.value, activityValues);
+        socket.emit("edit activity", activityID, activityName, editedActivityType, editedActivityDescription.value, editedTimeUnit, activityValues);
 
 
         editedActivityDescription.value = '';
@@ -575,7 +599,7 @@
     })
 
     // edit activity in diagram
-    socket.on('edit activity', function(activityID, activityName, activityType, activityDescription, activityValues) {
+    socket.on('edit activity', function(activityID, activityName, activityType, activityDescription, timeUnit, activityValues) {
 
         // TODO 
         //editSelectedActivity
@@ -585,7 +609,7 @@
         // udelat generator .. 
 
 
-        editSelectedActivity(activityID, activityName, activityType, activityDescription, activityValues)
+        editSelectedActivity(activityID, activityName, activityType, activityDescription, timeUnit, activityValues)
 
     })
 

@@ -19,6 +19,10 @@ var activitySchema = new Schema({
         type: String,
         required: true
     },
+    timeUnit: {
+        type: String,
+        required: true
+    },
     values: {
         type: Array,
         default: []

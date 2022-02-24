@@ -188,6 +188,7 @@ exports.loadProject = async(req, res, next) => {
                     "toState": item.toState,
                     "critical": false,
                     "values": item.values,
+                    "timeUnit": item.timeUnit,
                     "description": item.description,
                     "projectID": item.projectID
                 });

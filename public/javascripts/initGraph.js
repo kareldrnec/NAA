@@ -12,6 +12,11 @@ function init(states, activities, projectT, translations) {
     _activitiesData = activities.replace(/&quot;/g, '"');
     _activitiesData = JSON.parse(_activitiesData);
 
+    //
+    console.log("Activities Data")
+    console.log(_activitiesData)
+    console.log("END")
+
     projectType = projectT;
 
     _translationsData = translations.replace(/&quot;/g, '"');
@@ -329,9 +334,14 @@ function editActivity(e, obj) {
     var activity = activities.find(element => element.fromState == linkData.from && element.toState == linkData.to);
     var activityValues = activity.values;
 
+    console.log("Aktivita k uprave")
     console.log(activity)
+    console.log("///ENDE")
+
+
 
     document.getElementById('editActivityForm').setAttribute('name', activity.ID);
+
 
     document.getElementById('editedActivityName').value = activity.activityName;
     document.getElementById('editedActivityType').value = activity.activityType;
@@ -352,6 +362,8 @@ function editActivity(e, obj) {
         $('#editedActivityMost').attr('disabled', 'disabled');
         $('#editedActivityPessimistic').attr('disabled', 'disabled');
     }
+
+    document.getElementById('editedTimeUnit').value = activity.timeUnit;
 
 
     $('#editActivityModal').modal('show');
@@ -415,8 +427,14 @@ function deleteSelectedState(stateID) {
     // smazat activity napojene na stavy
 }
 
-function editSelectedActivity(activityID, activityName, activityType, activityDescription, activityValues) {
+function editSelectedActivity(activityID, activityName, activityType, activityDescription, timeUnit, activityValues) {
     var foundIndex = _activitiesData.activities.findIndex(element => element.ID == activityID);
+
+    console.log("Editovana time unit")
+    console.log(timeUnit)
+    console.log("ende")
+
+
     _activitiesData.activities[foundIndex].activityName = activityName;
     _activitiesData.activities[foundIndex].activityType = activityType;
     _activitiesData.activities[foundIndex].description = activityDescription;

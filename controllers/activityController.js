@@ -2,14 +2,15 @@ const ActivityModel = require('../models/activity');
 
 var app = require('../app');
 
-
-exports.addActivity = async(activityName, activityType, fromState, toState, valuesArr, description, projectID) => {
+// TODO po vypoctu a simulaci, osetrit vstupni cisla
+exports.addActivity = async(activityName, activityType, fromState, toState, timeUnit, valuesArr, description, projectID) => {
     try {
         var activity = new ActivityModel({
             activityName: activityName,
             activityType: activityType,
             fromState: fromState,
             toState: toState,
+            timeUnit: timeUnit,
             values: valuesArr,
             description: description,
             projectID: projectID
@@ -25,15 +26,16 @@ exports.addActivity = async(activityName, activityType, fromState, toState, valu
 }
 
 // TODO
-exports.editActivity = async(activityID, activityName, activityType, activityDescription, activityValues) => {
+exports.editActivity = async(activityID, activityName, activityType, activityDescription, editedTimeUnit, activityValues) => {
     try {
         await ActivityModel.findByIdAndUpdate(activityID, {
             activityName: activityName,
             activityType: activityType,
             description: activityDescription,
+            timeUnit: editedTimeUnit,
             values: activityValues
         });
-        app.io.emit('edit activity', activityID, activityName, activityType, activityDescription, activityValues);
+        app.io.emit('edit activity', activityID, activityName, activityType, activityDescription, editedTimeUnit, activityValues);
     } catch (err) {
         app.io.emit('error activity');
     }
