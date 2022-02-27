@@ -41,7 +41,8 @@ exports.monteCarlo = async(req, res, next) => {
         var user = await UserModel.findById(req.session.userId);
         return res.render("monteCarloAnalysis", {
             title: req.__("monte carlo analysis"),
-            username: user.userName + " " + user.userSurname
+            username: user.userName + " " + user.userSurname,
+            navColor: req.cookies.navColor
         })
     } catch (err) {
         return next(err);
@@ -54,7 +55,8 @@ exports.renderSettings = async(req, res, next) => {
         res.render("settings", {
             title: req.__("settings"),
             username: user.userName + " " + user.userSurname,
-            language_value: req.cookies.locale
+            language_value: req.cookies.locale,
+            navColor: req.cookies.navColor
         });
     } catch (err) {
         return next(err);
@@ -64,9 +66,10 @@ exports.renderSettings = async(req, res, next) => {
 exports.applySettings = function(req, res, next) {
     // DODELAT, mozna zmena barvy, osetreni chyb
     try {
-        //throw Error()
+
         res.cookie("locale", req.body.languages);
-        req.session.flash = { type: 'success', text: req.__("settings changed")}
+        res.cookie("navColor", req.body.colors);
+        req.session.flash = { type: 'success', text: req.__("settings changed") }
         return res.redirect("/settings")
     } catch (err) {
         console.log(err)

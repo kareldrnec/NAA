@@ -75,7 +75,11 @@
                     </div>
                     <div class="form-group">
                         <label for="numberOfStates">{{__ "number of states"}}</label>
-                        <input type="number" class="form-control" name="numberOfStates" min="2" max="20" value="2" required>
+                        <input type="number" class="form-control" id="numberOfStates" name="numberOfStates" min="2" max="20" value="2" required>
+                    </div>
+                    <div class="form-group">
+                        <label for="numberOfActivities">{{__ "number of activities"}}</label>
+                        <input type="number" class="form-control" id="numberOfActivities" name="numberOfActivities" min="1" value="1" title="Pocet stavu - 1" required>
                     </div>
                     <div class="form-group">
                         <label for="maxLengthOfActivity">{{__ "max length of activity"}}</label>
@@ -167,8 +171,13 @@
         })
     })
 
+    document.getElementById("numberOfStates").addEventListener('change', function() {
+        document.getElementById("numberOfActivities").value = this.value - 1;
+    })
+
     function deleteModal(projectID) {
         $('#deleteProjectForm').attr("action", "/projects/delete/" + projectID + "/?_method=DELETE");
         $('#deleteProjectModal').modal('show');
     }
+
 </script>

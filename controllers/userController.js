@@ -18,7 +18,7 @@ exports.registerNewUser = async(req, res, next) => {
         }
         // generating salt
         const salt = await bcrypt.genSalt(10);
-        
+
         if (password != confirmPassword) {
             return res.render('register', {
                 msg: req.__("passwords not same")
@@ -26,7 +26,7 @@ exports.registerNewUser = async(req, res, next) => {
         }
 
         var user = await UserModel.findOne({ email });
-        
+
         if (user) {
             return res.render('register', {
                 msg: req.__("user exists")
@@ -34,16 +34,16 @@ exports.registerNewUser = async(req, res, next) => {
         }
 
         const hashedPsw = await bcrypt.hash(password, salt);
-        
+
         user = UserModel({
-                userName,
-                userSurname,
-                email,
-                password: hashedPsw
-            })
-        
+            userName,
+            userSurname,
+            email,
+            password: hashedPsw
+        })
+
         await user.save();
-        
+
         req.session.flash = { type: 'success', text: req.__("account created") };
         res.redirect("/users/login");
     } catch (err) {
@@ -105,7 +105,8 @@ exports.myProfile = async(req, res, next) => {
             name: user.userName,
             surname: user.userSurname,
             email: user.email,
-            created: stringDate
+            created: stringDate,
+            navColor: req.cookies.navColor
         });
     } catch (err) {
         return next(err);

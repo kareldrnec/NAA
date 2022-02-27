@@ -28,6 +28,11 @@ exports.addActivity = async(activityName, activityType, fromState, toState, time
 // TODO
 exports.editActivity = async(activityID, activityName, activityType, activityDescription, editedTimeUnit, activityValues) => {
     try {
+        console.log("Edituju")
+
+        console.log(editedTimeUnit)
+
+        console.log("/////")
         await ActivityModel.findByIdAndUpdate(activityID, {
             activityName: activityName,
             activityType: activityType,
@@ -35,6 +40,7 @@ exports.editActivity = async(activityID, activityName, activityType, activityDes
             timeUnit: editedTimeUnit,
             values: activityValues
         });
+        console.log("Editovano")
         app.io.emit('edit activity', activityID, activityName, activityType, activityDescription, editedTimeUnit, activityValues);
     } catch (err) {
         app.io.emit('error activity');

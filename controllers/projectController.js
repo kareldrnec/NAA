@@ -28,7 +28,8 @@ exports.getProjectsDirectory = async(req, res, next) => {
         return res.render('projectsDirectory', {
             title: req.__('directory'),
             projects: projectsToSend,
-            username: user.userName + " " + user.userSurname
+            username: user.userName + " " + user.userSurname,
+            navColor: req.cookies.navColor
         })
     } catch (err) {
         return next(err);
@@ -47,7 +48,8 @@ exports.newProject = async(req, res, next) => {
         let user = await UserModel.findById(req.session.userId);
         return res.render('addProject', {
             title: req.__('new project'),
-            username: user.userName + " " + user.userSurname
+            username: user.userName + " " + user.userSurname,
+            navColor: req.cookies.navColor
         })
     } catch (err) {
         return next(err);
@@ -138,7 +140,8 @@ exports.getProjectForEdit = async(req, res, next) => {
             projectType: project.projectType,
             projectInfo: project.projectInfo,
             createdAt: stringDate,
-            username: user.userName + " " + user.userSurname
+            username: user.userName + " " + user.userSurname,
+            navColor: req.cookies.navColor
         })
     } catch (err) {
         return next(err);
@@ -205,7 +208,8 @@ exports.loadProject = async(req, res, next) => {
                 states: JSON.stringify(statesToSend),
                 activities: JSON.stringify(activitiesToSend),
                 username: user.userName + " " + user.userSurname,
-                translations: JSON.stringify(translations)
+                translations: JSON.stringify(translations),
+                navColor: req.cookies.navColor
             })
         } else {
             // vyresit

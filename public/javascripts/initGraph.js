@@ -25,7 +25,7 @@ function init(states, activities, projectT, translations) {
     /**
      * Překlad
      * translationsData
-     * [0] -- Add Activity (EN), Přidat aktivitu (CZ)
+     * [0] -- Add Activity (EN), Přidat činnost (CZ)
      * [1] -- Add State (EN), Přidat stav (CZ)
      * [2] -- Edit (EN), Upravit (CZ)
      * [3] -- Delete (EN), Smazat (CZ)
@@ -139,6 +139,7 @@ function graphInit() {
                 new go.Binding("strokeDashArray", "dash")),
             $(go.TextBlock, { segmentOffset: new go.Point(0, -25) },
                 new go.Binding("text", "text")),
+
             $(go.Shape, // arrowhead
                 { toArrow: "Triangle", stroke: null, scale: 1.5 },
                 new go.Binding("fill", "color", function(c) { return linkColors[c] || "blue"; })), {
@@ -149,6 +150,10 @@ function graphInit() {
                     $("ContextMenuButton",
                         $(go.TextBlock, _translationsData[3]), { click: deleteActivity })
                 )
+            }, {
+                toolTip: $("ToolTip",
+                    $(go.TextBlock, { margin: 4 },
+                        new go.Binding("text", "tooltip")))
             }
         );
 
@@ -231,7 +236,8 @@ function getLinkDataArray(activities) {
                 "from": activitiesData[i].fromState,
                 "to": activitiesData[i].toState,
                 "text": parseLinkTextData(activitiesData[i].values),
-                "color": "B"
+                "color": "B",
+                "tooltip": parseLinkTextTooltip(activitiesData[i].activityName, activitiesData[i].activityType, activitiesData[i].values, activitiesData[i].timeUnit, "B")
             })
         } else if (activitiesData[i].activityType == "dummy") {
             linkDataArray.push({
@@ -239,7 +245,8 @@ function getLinkDataArray(activities) {
                 "to": activitiesData[i].toState,
                 "text": parseLinkTextData(activitiesData[i].values),
                 "dash": [3, 4],
-                "color": "B"
+                "color": "B",
+                "tooltip": parseLinkTextTooltip(activitiesData[i].activityName, activitiesData[i].activityType, activitiesData[i].values, activitiesData[i].timeUnit, "B")
             })
         }
     }
@@ -259,8 +266,17 @@ function parseLinkTextData(valuesArr) {
 }
 
 // TODO TOOLTIP PRO AKTIVITY
-function parseLinkTextTooltip(activityName, valuesArr, timeUnit, linkColor) {
+function parseLinkTextTooltip(activityName, activityType, valuesArr, timeUnit, linkColor) {
+    var result = "Name: " + activityName + "\n" + "Type: " + activityType + "\n" + "Values" + "\n";
 
+    if (projectType == "cpm") {
+        result += "Length: " + valuesArr[0];
+    } else {
+        result += "a: " + valuesArr[0] + "\n" + "m: " + valuesArr[1] + "\n" + "b: " + valuesArr[2] + "\n" + "Time Unit: " + timeUnit;
+    }
+
+    // Dodelat s preklady a jestli je critical nebo ne
+    return result;
 }
 
 function editState(e, obj) {
@@ -438,6 +454,7 @@ function editSelectedActivity(activityID, activityName, activityType, activityDe
     _activitiesData.activities[foundIndex].activityName = activityName;
     _activitiesData.activities[foundIndex].activityType = activityType;
     _activitiesData.activities[foundIndex].description = activityDescription;
+    _activitiesData.activities[foundIndex].timeUnit = timeUnit;
     _activitiesData.activities[foundIndex].values = activityValues;
     reload();
 }
@@ -463,6 +480,7 @@ function addCreatedActivity(activity) {
         "toState": activity.toState,
         "values": activity.values,
         "description": activity.description,
+        "timeUnit": activity.timeUnit,
         "projectID": activity.projectID
     })
     reload();
