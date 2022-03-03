@@ -16,7 +16,14 @@
                 <form class="form-container" id="settingsForm" action="/applySettings" method="POST">
                     <h2 class="text-center">{{__ "settings"}}</h2>
                     <div class="form-group">
-                        <label for="labelForColors">{{__ "nav color"}}</label>
+                        <label for="labelForLanguages">{{__ "language"}}</label>
+                        <select name="languages" id="languages" class="form-control">
+                            <option value="en">ENG ({{__ "default"}})</option>
+                            <option value="cz">CZ</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="colors">{{__ "nav color"}}</label>
                         <select name="colors" id="colors" class="form-control">
                             <option value="lightsteelblue" style="background-color: lightsteelblue;">{{__ "default"}}</option>
                             <option value="lightblue" style="background-color: lightblue;">{{__ "blue"}}</option>
@@ -27,10 +34,15 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="labelForLanguages">{{__ "language"}}</label>
-                        <select name="languages" id="languages" class="form-control">
-                            <option value="en">ENG ({{__ "default"}})</option>
-                            <option value="cz">CZ</option>
+                        <label for="statesColor">{{__ "color states"}}</label>
+                        <select name="statesColor" id="statesColor" class="form-control">
+                            
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label for="activitiesColor">{{__ "color activities"}}</label>
+                        <select name="activitiesColor" id="statesColor" class="form-control">
+
                         </select>
                     </div>
                     <div class="text-center">

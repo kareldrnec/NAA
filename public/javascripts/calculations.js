@@ -2,6 +2,7 @@ function calculate() {
     console.log("Pocitam")
     console.log(_activitiesData)
     console.log("ENDE")
+    console.log("END MAYBE")
 }
 
 function getExpectedValue(optimisticValue, modalValue, pessimisticValue) {
