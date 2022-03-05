@@ -23,8 +23,8 @@
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="colors">{{__ "nav color"}}</label>
-                        <select name="colors" id="colors" class="form-control">
+                        <label for="navColor">{{__ "nav color"}}</label>
+                        <select name="navColor" id="navColor" class="form-control">
                             <option value="lightsteelblue" style="background-color: lightsteelblue;">{{__ "default"}}</option>
                             <option value="lightblue" style="background-color: lightblue;">{{__ "blue"}}</option>
                             <option value="lightcoral" style="background-color: lightcoral;">{{__ "red"}}</option>
@@ -36,13 +36,23 @@
                     <div class="form-group">
                         <label for="statesColor">{{__ "color states"}}</label>
                         <select name="statesColor" id="statesColor" class="form-control">
-                            
+                            <option value="#B3E5FC" style="background-color: #B3E5FC;">{{__ "default"}}</option>
+                            <option value="lightblue" style="background-color: lightblue;">{{__ "blue"}}</option>
+                            <option value="lightcoral" style="background-color: lightcoral;">{{__ "red"}}</option>
+                            <option value="lightgray" style="background-color: lightgray;">{{__ "gray"}}</option>
+                            <option value="lightgreen" style="background-color: lightgreen;">{{__ "green"}}</option>
+                            <option value="lightyellow" style="background-color: lightyellow;">{{__ "yellow"}}</option>
                         </select>
                     </div>
                     <div class="form-group">
                         <label for="activitiesColor">{{__ "color activities"}}</label>
-                        <select name="activitiesColor" id="statesColor" class="form-control">
-
+                        <select name="activitiesColor" id="activitiesColor" class="form-control">
+                            <option value="#0288D1" style="background-color: #0288D1;">{{__ "default"}}</option>
+                            <option value="lightblue" style="background-color: lightblue;">{{__ "blue"}}</option>
+                            <option value="lightcoral" style="background-color: lightcoral;">{{__ "red"}}</option>
+                            <option value="lightgray" style="background-color: lightgray;">{{__ "gray"}}</option>
+                            <option value="lightgreen" style="background-color: lightgreen;">{{__ "green"}}</option>
+                            <option value="lightyellow" style="background-color: lightyellow;">{{__ "yellow"}}</option>
                         </select>
                     </div>
                     <div class="text-center">
@@ -63,11 +73,10 @@
         $('#flash').fadeOut('fast');
     }, 3000);
 
-    let colorSelect = document.getElementById('colors');
     let languageSelect = document.getElementById("languages");
     
     if("{{navColor}}"){
-        colorSelect.value = "{{navColor}}";
+        document.getElementById('navColor').value = "{{navColor}}";
     }
 
     if("{{language_value}}") {
@@ -75,4 +84,11 @@
     } else {
         languageSelect.value = "en";
     }
+
+    if("{{graphSettings}}") {
+        let graphSettings = JSON.parse("{{graphSettings}}".replace(/&quot;/g, '"'));
+        document.getElementById("statesColor").value = graphSettings[0];
+        document.getElementById("activitiesColor").value = graphSettings[1];
+    }
+
 </script>

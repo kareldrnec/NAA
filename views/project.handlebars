@@ -400,10 +400,17 @@
 
 <script src="/javascripts/initGraph.js"></script>
 <script src="/javascripts/calculations.js"></script>
+<script src="/javascripts/ParallelRouteLink.js"></script>
 <script src="/socket.io/socket.io.js"></script>
 <script>
+    var activities, states, translations;
+
+    var activities = JSON.parse("{{activities}}".replace(/&quot;/g, '"'));
+    var states = JSON.parse("{{states}}".replace(/&quot;/g, '"'));
+    var translations = JSON.parse("{{translations}}".replace(/&quot;/g, '"'));
+
     // pridat aktivity z db do init
-    init("{{states}}", "{{activities}}", "{{projectType}}", "{{translations}}");
+    init(states, activities, "{{projectType}}", translations, "{{graphSettings}}");
 
 
     // TODO check form before add/edit activity 
@@ -411,8 +418,8 @@
 
     document.getElementById('calculationForm').addEventListener('submit', function() {
         // TODO 
-        calculate();
-        alert();
+        calculate(states.states, activities.activities);
+
     });
 
 
@@ -566,11 +573,6 @@
         }
 
         // socket
-        console.log(activityID)
-
-        console.log("Time Unit")
-        console.log(editedTimeUnit)
-        console.log("///")
         
         socket.emit("edit activity", activityID, activityName, editedActivityType, editedActivityDescription.value, editedTimeUnit.value, activityValues);
 

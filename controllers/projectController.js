@@ -209,7 +209,8 @@ exports.loadProject = async(req, res, next) => {
                 activities: JSON.stringify(activitiesToSend),
                 username: user.userName + " " + user.userSurname,
                 translations: JSON.stringify(translations),
-                navColor: req.cookies.navColor
+                navColor: req.cookies.navColor,
+                graphSettings: req.cookies.graphSettings
             })
         } else {
             // vyresit

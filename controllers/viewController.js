@@ -59,7 +59,8 @@ exports.renderSettings = async(req, res, next) => {
             title: req.__("settings"),
             username: user.userName + " " + user.userSurname,
             language_value: req.cookies.locale,
-            navColor: req.cookies.navColor
+            navColor: req.cookies.navColor,
+            graphSettings: req.cookies.graphSettings
         });
     } catch (err) {
         return next(err);
@@ -69,13 +70,12 @@ exports.renderSettings = async(req, res, next) => {
 exports.applySettings = function(req, res, next) {
     // DODELAT, mozna zmena barvy, osetreni chyb
     try {
-
         res.cookie("locale", req.body.languages);
-        res.cookie("navColor", req.body.colors);
+        res.cookie("navColor", req.body.navColor);
+        res.cookie("graphSettings", JSON.stringify([req.body.statesColor, req.body.activitiesColor]))
         req.session.flash = { type: 'success', text: req.__("settings changed") }
         return res.redirect("/settings")
     } catch (err) {
-        console.log(err)
         return next(err);
     }
 };

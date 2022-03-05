@@ -3,24 +3,14 @@ var statesArray = [];
 var activitiesArray = [];
 var myDiagram;
 var selectedStates = [];
+var graphSettingsData = [];
 
 
-function init(states, activities, projectT, translations) {
-    _statesData = states.replace(/&quot;/g, '"');
-    _statesData = JSON.parse(_statesData);
-
-    _activitiesData = activities.replace(/&quot;/g, '"');
-    _activitiesData = JSON.parse(_activitiesData);
-
-    //
-    console.log("Activities Data")
-    console.log(_activitiesData)
-    console.log("END")
-
+function init(states, activities, projectT, translations, graphSettings) {
+    _statesData = states;
+    _activitiesData = activities;
     projectType = projectT;
-
-    _translationsData = translations.replace(/&quot;/g, '"');
-    _translationsData = JSON.parse(_translationsData);
+    _translationsData = translations;
 
     /**
      * Překlad
@@ -35,26 +25,40 @@ function init(states, activities, projectT, translations) {
      * [7] -- Latest Start Time (EN), Nejpozději přípustný začátek činnosti (CZ)
      */
 
-    graphInit();
+    if(graphSettings) {
+        graphSettingsData = graphSettings.replace(/&quot;/g, '"');
+        graphSettingsData = JSON.parse(graphSettingsData);
+    }
+
+
+    graphInit(graphSettingsData);
 
     document.getElementById("exportButton").addEventListener("click", exportDiagram);
 }
 
-function graphInit() {
+function graphInit(graphSettingsData) {
 
     //init grafu
     var $ = go.GraphObject.make;
 
-    // nastaveni barev
-    var blue = "#0288D1";
+    var edgeFill, nodeFill;
     var pink = "#B71C1C";
-    var pinkfill = "#F8BBD0";
-    var bluefill = "#B3E5FC";
+    var pinkFill = "#F8BBD0";
     var grayFill = "#D3D3D3";
+    
+    // nastaveni barev
+    if(graphSettingsData.length == 0) {
+        nodeFill = "#B3E5FC";
+        edgeFill = "#0288D1";
+    } else {
+        nodeFill = graphSettingsData[0];
+        edgeFill = graphSettingsData[1];
+    }
+
 
     myDiagram =
         $(go.Diagram, "myDiagramDiv", {
-            //initialAutoScale: go.Diagram.Uniform,
+            initialAutoScale: go.Diagram.Uniform,
             layout: $(go.LayeredDigraphLayout)
         });
 
@@ -63,8 +67,8 @@ function graphInit() {
         $(go.Node, "Auto",
             $(go.Shape, "Rectangle", // the border
                 { fill: "white", strokeWidth: 2 },
-                new go.Binding("fill", "critical", function(b) { return (b ? pinkfill : bluefill); }),
-                new go.Binding("stroke", "critical", function(b) { return (b ? pink : blue); })),
+                new go.Binding("fill", "critical", function(b) { return (b ? pinkFill : nodeFill); }),
+                new go.Binding("stroke", "critical", function(b) { return (b ? pink : "#0288D1"); })),
             $(go.Panel, "Table", { padding: 0.5 },
                 $(go.RowColumnDefinition, { column: 1, separatorStroke: "black" }),
                 $(go.RowColumnDefinition, { column: 2, separatorStroke: "black" }),
@@ -129,15 +133,15 @@ function graphInit() {
                 }))
 
     // link (activities) colors
-    var linkColors = { "R": pink, "B": blue };
+    var linkColors = { "R": pink, "B": edgeFill };
 
     // link Template
     myDiagram.linkTemplate =
-        $(go.Link, { toShortLength: 6, toEndSegmentLength: 20 },
+        $(ParallelRouteLink, { toShortLength: 6, toEndSegmentLength: 20 },
             $(go.Shape, { strokeWidth: 4 },
                 new go.Binding("stroke", "color", function(c) { return linkColors[c] || "blue"; }),
                 new go.Binding("strokeDashArray", "dash")),
-            $(go.TextBlock, { segmentOffset: new go.Point(0, -25) },
+            $(go.TextBlock, { segmentOffset: new go.Point(0, -20) },
                 new go.Binding("text", "text")),
 
             $(go.Shape, // arrowhead
