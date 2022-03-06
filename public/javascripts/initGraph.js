@@ -133,7 +133,7 @@ function graphInit(graphSettingsData) {
                 }))
 
     // link (activities) colors
-    var linkColors = { "R": pink, "B": edgeFill };
+    var linkColors = { "R": pink, "N": edgeFill };
 
     // link Template
     myDiagram.linkTemplate =
@@ -219,9 +219,25 @@ function getNodeDataArray(states) {
     //dodelat
     var nodeDataArray = [];
     var statesData = states.states;
-    // var criticalState, earliestStartTime, latestStartTime, slackText;
-    for (var i = 0; i < statesData.length; i++) {
-        nodeDataArray.push({ "key": statesData[i].ID, "text": statesData[i].stateName, critical: false });
+    var currentNode, criticalState;
+    var resArr = JSON.parse(sessionStorage.getItem("resultArr"));
+    var currentProject = sessionStorage.getItem("currentProject");
+    var calculatedProject = sessionStorage.getItem("calculatedProject");
+    if (resArr && currentProject == calculatedProject) {
+        for (var i = 0; i < statesData.length; i++) {
+            currentNode = resArr.find(element => element.ID == statesData[i].ID);
+            if(currentNode.slack == 0) {
+                criticalState = true;
+            } else {
+                criticalState = false;
+            }
+            nodeDataArray.push({ "key": statesData[i].ID, "text": statesData[i].stateName, critical: criticalState,
+                earliestStart: currentNode.ES + "/6", latestStart: currentNode.LS + "/6", slack: currentNode.slack})
+        }
+    } else {
+        for (var i = 0; i < statesData.length; i++) {
+            nodeDataArray.push({ "key": statesData[i].ID, "text": statesData[i].stateName, critical: false });
+        }
     }
     return nodeDataArray;
 }
@@ -231,16 +247,28 @@ function getLinkDataArray(activities) {
     // dodelat
     var linkDataArray = [];
     var activitiesData = activities.activities;
+    var nodeColor;
+    var currentProject = sessionStorage.getItem("currentProject");
+    var calculatedProject = sessionStorage.getItem("calculatedProject");
 
-    console.log(activitiesData)
+    var resActivities = JSON.parse(sessionStorage.getItem("activities"))
+    if(resActivities && currentProject == calculatedProject) {
+        activitiesData = resActivities;
+    }
 
     for (var i = 0; i < activitiesData.length; i++) {
+        if (activitiesData[i].critical) {
+            nodeColor = "R"
+        } else {
+            nodeColor = "N"
+        }
+
         if (activitiesData[i].activityType == "normal") {
             linkDataArray.push({
                 "from": activitiesData[i].fromState,
                 "to": activitiesData[i].toState,
                 "text": parseLinkTextData(activitiesData[i].values),
-                "color": "B",
+                "color": nodeColor,
                 "tooltip": parseLinkTextTooltip(activitiesData[i].activityName, activitiesData[i].activityType, activitiesData[i].values, activitiesData[i].timeUnit, "B")
             })
         } else if (activitiesData[i].activityType == "dummy") {
@@ -249,7 +277,7 @@ function getLinkDataArray(activities) {
                 "to": activitiesData[i].toState,
                 "text": parseLinkTextData(activitiesData[i].values),
                 "dash": [3, 4],
-                "color": "B",
+                "color": nodeColor,
                 "tooltip": parseLinkTextTooltip(activitiesData[i].activityName, activitiesData[i].activityType, activitiesData[i].values, activitiesData[i].timeUnit, "B")
             })
         }

@@ -2,17 +2,43 @@
 
 <div style="text-align: center;">
     <table class="table table-hover">
-        <thead>
-            <tr style="background-color: lightskyblue;">
-                <th scope="col">#</th>
-                <th scope="col">{{__ "activity name"}}</th>
-                <th scope="col">{{__ "activity type"}}</th>
-                <th scope="col">{{__ "activity values"}}</th>
-                <th scope="col">{{__ "time unit"}}</th>
-            </tr>
+        <thead id="tableHead" style="background-color: lightskyblue;">
+
         </thead>
-        <tbody>
+        <tbody id="tableBody">
 
         </tbody>
     </table>
 </div>
+
+<script> 
+    createTableHeadPERT();
+
+    var activities = sessionStorage.getItem("activities");
+    
+
+
+
+    var tbody = document.getElementById("tableBody");
+
+
+    function createTableHeadCPM() {
+        var thead = document.getElementById("tableHead");
+        thead.insertRow().innerHTML =
+            "<th>" + "Activity Name" + "</th>"
+            + "<th>" + "Activity Type" + "</th>"
+            + "<th>" + "Time" + "</th>"
+    }
+
+    function createTableHeadPERT() {
+        var thead = document.getElementById("tableHead");
+        thead.insertRow().innerHTML = 
+            "<th>" + "Activity Name" + "</th>"
+            + "<th>" + "Activity Type" + "</th>"
+            + "<th>" + "Optimistic Time" + "</th>"
+            + "<th>" + "Modal Time" + "</th>"
+            + "<th>" + "Pessimistic Time" + "</th>"
+    }
+
+
+</script>

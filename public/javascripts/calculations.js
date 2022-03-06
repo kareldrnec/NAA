@@ -1,5 +1,4 @@
-function calculate(states, activities) {
-
+function calculate(states, activities, currentProject) {
     var calculatedActivities;
     var calculatedStates = arrStates(states);
 
@@ -9,8 +8,26 @@ function calculate(states, activities) {
         calculatedActivities = pertActivities(activities)
     }
 
-    findCriticalPaths(calculatedStates, calculatedActivities);
+    calculatedStates = findCriticalPaths(calculatedStates, calculatedActivities);
 
+    activities = findCriticalActivities(activities, calculatedStates, calculatedActivities);
+
+    sessionStorage.setItem("activities", JSON.stringify(activities));
+    sessionStorage.setItem("calculatedProject", currentProject);
+}
+
+function findCriticalActivities(activities, calculatedStates, calculatedActivities) {
+    var fromState, toState, activity;
+
+    for (var i = 0; i < calculatedActivities.length; i++) {
+        fromState = calculatedStates.find(element => element.ID == calculatedActivities[i].fromState);
+        toState = calculatedStates.find(element => element.ID == calculatedActivities[i].toState);
+        if(fromState.slack == 0 && toState.slack == 0 && (toState.LS - calculatedActivities[i].value) == fromState.LS) {
+            activity = activities.find(element => element.ID == calculatedActivities[i].ID);
+            activity.critical = true;
+        }
+    }
+    return activities;
 }
 
 function arrStates(states) {
@@ -74,6 +91,7 @@ function getZ(x, expectedValue, standardDeviation) {
 function findCriticalPaths(states, activities) {
 
     states = forwardCalculation(states, activities);
+    states = backwardCalculation(states, activities);
 
     // backwardCalculation(states, activities)
 
@@ -82,59 +100,179 @@ function findCriticalPaths(states, activities) {
         console.log(states[i])
     }
     console.log("end")
+
+    sessionStorage.setItem("resultArr", JSON.stringify(states));
+
+    return states;
 }
 
 function forwardCalculation(states, activities) {
-    var states = states;
     var statesToCalculate = [];
-    var nextActivities;
+    var calculatedStates = [];
+    var nextActivities, currentState, activitiesFromState, tempStateArray, nextStates, found;
 
+    currentState = states.find(element => element.name == "Start");
 
-    var index = states.findIndex(element => element.name == "Start");
+    currentState.ES = 0;
 
-    states[index].ES = 0;
+    calculatedStates.push(currentState)
 
-    nextActivities = activities.filter(element => element.fromState == states[index].ID);
+    nextActivities = activities.filter(element => element.fromState == currentState.ID);
 
     statesToCalculate = getToStates(nextActivities, states);
 
     while (statesToCalculate.length != 0) {
+        tempStateArray = [];
+        nextActivities = [];
         for (var i = 0; i < statesToCalculate.length; i++) {
-            var tempActivities = activities.filter(element => element.toState == statesToCalculate[i].ID);
-            console.log("Aktivity")
-            console.log(JSON.stringify(tempActivities))
-            console.log("ende")
-
+            var tempActivities = activities.filter(item => item.toState == statesToCalculate[i].ID);
+            if (predecessorStatesCheck(calculatedStates, tempActivities)) {
+                currentState = {
+                    ID: statesToCalculate[i].ID,
+                    name: statesToCalculate[i].name,
+                    ES: getMax(calculatedStates, tempActivities),
+                    LS: -1,
+                    slack: -1
+                }
+                calculatedStates.push(currentState);
+                activitiesFromState = activities.filter(element => element.fromState == currentState.ID);
+                nextActivities = nextActivities.concat(activitiesFromState);
+            } else {
+                tempStateArray.push(statesToCalculate[i])
+            }
         }
-
-        statesToCalculate = [];
+        statesToCalculate = tempStateArray;
+        nextStates = getToStates(nextActivities, states);
+        for (var i = 0; i < nextStates.length; i++) {
+            found = calculatedStates.find(element => element.ID == nextStates[i].ID);
+            if (!found) {
+                found = statesToCalculate.find(element => element.ID == nextStates[i].ID);
+                if (!found) {
+                    statesToCalculate.push(nextStates[i]);
+                }
+            }
+        }
     }
-
-    return states;
+    return calculatedStates;
 }
 
 function backwardCalculation(states, activities) {
-    var states = states;
+    var activitiesToState = [];
+    var nextStates;
+    var statesToCalculate = [];
+    var tempStateArray;
+    var tempActivities
+    var activitiesToCalc
+    var found
 
+    var currentState = states.find(element => element.name == "Finish");
+    currentState.LS = currentState.ES;
+    currentState.slack = currentState.LS - currentState.ES;
+
+    activitiesToState = activities.filter(element => element.toState == currentState.ID);
+    nextStates = getFromStates(activitiesToState, states);
+    statesToCalculate = statesToCalculate.concat(nextStates);
+
+    while (statesToCalculate.length != 0) {
+        tempStateArray = [];
+        activitiesToCalc = [];
+        for (var i = 0; i < statesToCalculate.length; i++) {
+            tempActivities = activities.filter(element => element.fromState == statesToCalculate[i].ID);
+            if(successorStatesCheck(states, tempActivities)) {
+                currentState = statesToCalculate[i];
+                currentState.LS = getMin(states, tempActivities);
+                currentState.slack = currentState.LS - currentState.ES;
+                activitiesToState = activities.filter(element => element.toState == statesToCalculate[i].ID)
+                activitiesToCalc = activitiesToCalc.concat(activitiesToState);
+            } else {
+                tempStateArray.push(statesToCalculate[i]);
+            }
+        }
+        statesToCalculate = tempStateArray;
+        nextStates = getFromStates(activitiesToState, states);
+
+        for (var i = 0; i < nextStates.length; i++) {
+            found = states.find(element => element.ID == nextStates[i].ID);
+            if(found.LS == -1) {
+                statesToCalculate.push(nextStates[i]);
+            }
+        }
+    }
     return states;
+}
+
+// check predecessor
+function predecessorStatesCheck(calculatedStates, activities) {
+    var isCalculated = true;
+    for (var i = 0; i < activities.length; i++) {
+        if (calculatedStates.find(element => element.ID == activities[i].fromState) == null) {
+            isCalculated = false;
+            break;
+        }
+    }
+    return isCalculated;
+}
+
+// check successor
+function successorStatesCheck(calculatedStates, activities) {
+    var isCalculated = true;
+    var currentState;
+    for (var i = 0; i < activities.length; i++) {
+        currentState = calculatedStates.find(element => element.ID == activities[i].toState);
+        if (currentState.LS == -1) {
+            isCalculated = false;
+            break;
+        }
+    }
+    return isCalculated;
+}
+
+function getMax(calculatedStates, tempActivities) {
+    var max = 0;
+    var tmp = 0;
+    var tmpResultState;
+    for (var i = 0; i < tempActivities.length; i++) {
+        tmpResultState = calculatedStates.find(element => element.ID == tempActivities[i].fromState);
+        tmp = tmpResultState.ES + tempActivities[i].value;
+        if (tmp > max) {
+            max = tmp;
+        }
+    }
+    return max;
+}
+
+function getMin(calculatedStates, tempActivities) {
+    var tmp;
+    var tmpResultState;
+    var min
+    for (var i = 0; i < tempActivities.length; i++) {
+        tmpResultState = calculatedStates.find(element => element.ID == tempActivities[i].toState);
+        tmp = tmpResultState.LS - tempActivities[i].value;
+        if (min == null) {
+            min = tmp;
+        } else {
+            if (tmp < min) {
+                min = tmp;
+            }
+        }
+    }
+    return min;
 }
 
 // vyresit pokud budou dve cinnosti do jednoho stavu
 function getToStates(activities, states) {
     var nextStates = [];
     for (var i = 0; i < activities.length; i++) {
-        nextStates.push(states.find(element => element.ID == activities[i].toState))
+        nextStates.push(states.find(element => element.ID == activities[i].toState));
     }
     return nextStates;
 }
 
-
-
-
-function calculateCPM() {
-
+function getFromStates(activities, states) {
+    var nextStates = [];
+    for (var i = 0; i < activities.length; i++) {
+        nextStates.push(states.find(element => element.ID == activities[i].fromState));
+    }
+    return nextStates;
 }
 
-function calculatePERT() {
-
-}

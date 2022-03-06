@@ -409,16 +409,21 @@
     var states = JSON.parse("{{states}}".replace(/&quot;/g, '"'));
     var translations = JSON.parse("{{translations}}".replace(/&quot;/g, '"'));
 
+    sessionStorage.setItem("currentProject", "{{projectID}}")
+
     // pridat aktivity z db do init
     init(states, activities, "{{projectType}}", translations, "{{graphSettings}}");
 
+    console.log("Project ID")
+    console.log("{{projectID}}")
+    console.log("konec vypisu")
 
     // TODO check form before add/edit activity 
 
 
     document.getElementById('calculationForm').addEventListener('submit', function() {
         // TODO 
-        calculate(states.states, activities.activities);
+        calculate(states.states, activities.activities, "{{projectID}}");
 
     });
 
