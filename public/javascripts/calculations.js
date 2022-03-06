@@ -3,9 +3,9 @@ function calculate(states, activities) {
     var calculatedActivities;
     var calculatedStates = arrStates(states);
 
-    if(projectType == 'cpm') {
+    if (projectType == 'cpm') {
         calculatedActivities = cpmActivities(activities)
-    } else if(projectType == 'pert') {
+    } else if (projectType == 'pert') {
         calculatedActivities = pertActivities(activities)
     }
 
@@ -15,7 +15,7 @@ function calculate(states, activities) {
 
 function arrStates(states) {
     var statesArr = [];
-    for(var i = 0; i < states.length; i++) {
+    for (var i = 0; i < states.length; i++) {
         statesArr.push({
             ID: states[i].ID,
             name: states[i].stateName,
@@ -31,7 +31,7 @@ function arrStates(states) {
 
 function cpmActivities(activities) {
     var activitiesArr = [];
-    for(var i = 0; i < activities.length; i++) {
+    for (var i = 0; i < activities.length; i++) {
         activitiesArr.push({
             ID: activities[i].ID,
             fromState: activities[i].fromState,
@@ -45,7 +45,7 @@ function cpmActivities(activities) {
 // TIME UNIT DODELAT
 function pertActivities(activities) {
     var activitiesArr = [];
-    for(var i = 0; i < activities.length; i++) {
+    for (var i = 0; i < activities.length; i++) {
         activitiesArr.push({
             ID: activities[i].ID,
             fromState: activities[i].fromState,
@@ -73,47 +73,60 @@ function getZ(x, expectedValue, standardDeviation) {
 
 function findCriticalPaths(states, activities) {
 
-    var nextActivities, statesToCalculate;
+    states = forwardCalculation(states, activities);
 
-    var currentIndex = states.findIndex(element => element.name == "Start");
-    
-    states[currentIndex].ES = 0;
+    // backwardCalculation(states, activities)
 
-    nextActivities = activities.filter(element => element.fromState == states[currentIndex].ID);
+    console.log("Vypis")
+    for (var i = 0; i < states.length; i++) {
+        console.log(states[i])
+    }
+    console.log("end")
+}
 
-    // dalsi stavy
-    statesToCalculate = getToStates(nextActivities);
-
-    while(statesToCalculate.length != 0) {
-
-
+function forwardCalculation(states, activities) {
+    var states = states;
+    var statesToCalculate = [];
+    var nextActivities;
 
 
+    var index = states.findIndex(element => element.name == "Start");
+
+    states[index].ES = 0;
+
+    nextActivities = activities.filter(element => element.fromState == states[index].ID);
+
+    statesToCalculate = getToStates(nextActivities, states);
+
+    while (statesToCalculate.length != 0) {
+        for (var i = 0; i < statesToCalculate.length; i++) {
+            var tempActivities = activities.filter(element => element.toState == statesToCalculate[i].ID);
+            console.log("Aktivity")
+            console.log(JSON.stringify(tempActivities))
+            console.log("ende")
+
+        }
+
+        statesToCalculate = [];
     }
 
-
-    console.log("Vypis dalsi stavu")
-    console.log(JSON.stringify(getToStates(nextActivities, states)))
-    console.log("ENDE")
-
+    return states;
 }
 
-function forwardCalculation() {
+function backwardCalculation(states, activities) {
+    var states = states;
 
-}
-
-function backwardCalculation() {
-    
+    return states;
 }
 
 // vyresit pokud budou dve cinnosti do jednoho stavu
 function getToStates(activities, states) {
     var nextStates = [];
-    for(var i = 0; i < activities.length; i++) {
+    for (var i = 0; i < activities.length; i++) {
         nextStates.push(states.find(element => element.ID == activities[i].toState))
     }
     return nextStates;
-} 
+}
 
 
 
