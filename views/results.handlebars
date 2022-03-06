@@ -1,5 +1,9 @@
 {{> navbar}}
 
+<div class="text-center">
+    <button class="btn btn-primary">Results</button>
+</div>
+
 <div style="text-align: center;">
     <table class="table table-hover">
         <thead id="tableHead" style="background-color: lightskyblue;">
@@ -11,21 +15,47 @@
     </table>
 </div>
 
-<script> 
+<script>
+    //TODO
+    // dodelat MODAL pro results
     createTableHeadPERT();
 
-    var activities = sessionStorage.getItem("activities");
+
+    var activities = JSON.parse(sessionStorage.getItem("activities"));
     
-
-
+    createBodyPERT(activities);
+    createTableBottomPERT();
 
     var tbody = document.getElementById("tableBody");
 
+    // createBodyCPM()
+
+    function createBodyPERT(activities) {
+        console.log("Vypis")
+        console.log(activities)
+        console.log("ende")
+        var tbody = document.getElementById('tableBody');
+        for(var i = 0; i < activities.length; i++) {
+            var row = tbody.insertRow();
+            row.innerHTML =
+                "<tr>" + "<td>" + activities[i].activityName + "</td>"
+                + "<td>" + activities[i].values[0] + "</td>"
+                + "<td>" + activities[i].values[1] + "</td>"
+                + "<td>" + activities[i].values[2] + "</td>"
+                + "<td>" + "expectedValue" + "</td>"
+                + "<td>" + "std" + "</td>"
+                + "<td>" + "variance" + "</td>"
+                + "</tr>";
+            if(activities[i].critical == true) {
+                row.className = "table-danger";
+            }
+        }
+    }
 
     function createTableHeadCPM() {
         var thead = document.getElementById("tableHead");
         thead.insertRow().innerHTML =
-            "<th>" + "Activity Name" + "</th>"
+            "<th>" + "{{__ "activity name"}}" + "</th>"
             + "<th>" + "Activity Type" + "</th>"
             + "<th>" + "Time" + "</th>"
     }
@@ -33,12 +63,36 @@
     function createTableHeadPERT() {
         var thead = document.getElementById("tableHead");
         thead.insertRow().innerHTML = 
-            "<th>" + "Activity Name" + "</th>"
-            + "<th>" + "Activity Type" + "</th>"
-            + "<th>" + "Optimistic Time" + "</th>"
-            + "<th>" + "Modal Time" + "</th>"
-            + "<th>" + "Pessimistic Time" + "</th>"
+            "<th>" + "{{__ "activity name"}}" + "</th>"
+            + "<th>" + "{{__ "optimistic value"}}" + "</th>"
+            + "<th>" + "{{__ "modal time"}}" + "</th>"
+            + "<th>" + "{{__ "pessimistic value"}}" + "</th>"
+            + "<th>" + "{{__ "expected value"}}" + "</th>"
+            + "<th>" + "{{__ "standard deviation"}}" + "</th>"
+            + "<th>" + "{{__ "variance"}}" + "</th>"
     }
+
+    function createTableBottomPERT() {
+        var tbody = document.getElementById("tableBody");
+        var row = tbody.insertRow();
+        row.innerHTML = 
+            "<tr>" + "<td>" + "{{__ "project"}}" + "</td>"
+            + "<td>" + "" + "</td>"
+            + "<td>" + "" + "</td>"
+            + "<td>" + "" + "</td>"
+            + "<td>" + "totalMeanValue" + "</td>"
+            + "<td>" + "totalVariance" + "</td>"
+            + "<td>" + "totalVariance" + "</td>"
+            + "</tr>";
+        row.className = "table-success";
+    //doplnit totalMeanValue, totalvariance ...
+    
+    }
+
+    function createTableBottomCPM() {
+
+    }
+
 
 
 </script>
