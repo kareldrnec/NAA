@@ -408,7 +408,28 @@
                 </button>
             </div>
             <div class="modal-body">
-                Obsah
+                <div class="text-center">
+                    <h6>{{__ "state"}}</h6>
+                    <img src="/images/state.png" width="150" height="100">
+                </div>
+                <ul>
+                    <li>ES - {{__ "earliest start time"}} </li>
+                    <li>LS - {{__ "latest start time"}}</li>
+                    <li>State Name - {{__ "state name"}}</li>
+                    <li>Slack - {{__ "time reserve"}}</li>
+                </ul>
+                <div class="text-center">
+                    <h6>{{__ "activity"}}</h6>
+                    <img src="/images/normal_activity.png" width="150" height="75">
+                    <img src="/images/dummy_activity.png" width="150" height="75">
+                </div>
+                <ul>
+                    <li>(a) - {{__ "normal activity"}}</li>
+                    <li>(b) - {{__ "dummy activity"}}</li>
+                </ul>
+                <div class="text-center">
+                    <a href="/help">{{__ "complete user manual"}}</a>
+                </div>
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">{{__ "close"}}</button>

@@ -181,9 +181,9 @@ function graphInit(graphSettingsData) {
                 $(go.RowColumnDefinition, { column: 2, separatorStroke: "black" }),
                 $(go.RowColumnDefinition, { row: 1, separatorStroke: "black", background: grayFill, coversSeparators: true }),
                 $(go.RowColumnDefinition, { row: 2, separatorStroke: "black" }),
-                $(go.TextBlock, _translationsData[6], { row: 0, column: 0, margin: 5, textAlign: "center" }),
+                $(go.TextBlock, "ES", { row: 0, column: 0, margin: 5, textAlign: "center" }),
                 $(go.TextBlock, "", { row: 0, column: 1, margin: 5, textAlign: "center" }),
-                $(go.TextBlock, _translationsData[7], { row: 0, column: 2, margin: 5, textAlign: "center" }),
+                $(go.TextBlock, "LS", { row: 0, column: 2, margin: 5, textAlign: "center" }),
 
                 $(go.TextBlock, _translationsData[5], {
                     row: 1,
