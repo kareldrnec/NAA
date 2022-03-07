@@ -166,7 +166,8 @@ exports.loadProject = async(req, res, next) => {
                 activitiesToSend = {},
                 activitiesPrep = [],
                 translations = [req.__('add activity'), req.__('add state'), req.__('edit'), req.__('delete'),
-                    req.__('slack'), req.__('state name'), req.__('earliest start time'), req.__('latest start time')
+                    req.__('slack'), req.__('state name'), req.__('earliest start time'), req.__('latest start time'),
+                    req.__('help')
                 ];
 
 

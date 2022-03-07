@@ -23,9 +23,10 @@ function init(states, activities, projectT, translations, graphSettings) {
      * [5] -- State Name (EN), Název stavu (CZ)
      * [6] -- Earliest Start Time (EN), Nejdříve možný začátek činnosti (CZ)
      * [7] -- Latest Start Time (EN), Nejpozději přípustný začátek činnosti (CZ)
+     * [8] -- Help, Nápověda
      */
 
-    if(graphSettings) {
+    if (graphSettings) {
         graphSettingsData = graphSettings.replace(/&quot;/g, '"');
         graphSettingsData = JSON.parse(graphSettingsData);
     }
@@ -45,9 +46,9 @@ function graphInit(graphSettingsData) {
     var pink = "#B71C1C";
     var pinkFill = "#F8BBD0";
     var grayFill = "#D3D3D3";
-    
+
     // nastaveni barev
-    if(graphSettingsData.length == 0) {
+    if (graphSettingsData.length == 0) {
         nodeFill = "#B3E5FC";
         edgeFill = "#0288D1";
     } else {
@@ -126,10 +127,11 @@ function graphInit(graphSettingsData) {
     myDiagram.contextMenu =
         $(go.Adornment, "Vertical",
             $("ContextMenuButton",
-                $(go.TextBlock, _translationsData[1]), {
-                    click: function() {
-                        jQuery('#addStateModal').modal('show');
-                    }
+                $(go.TextBlock, _translationsData[8]), {
+                    click:
+                    // napoveda
+                        displayHelp
+
                 }))
 
     // link (activities) colors
@@ -215,6 +217,11 @@ function graphInit(graphSettingsData) {
     }
 }
 
+function displayHelp() {
+    // display help modal
+    $('#helpModal').modal('show');
+}
+
 function getNodeDataArray(states) {
     //dodelat
     var nodeDataArray = [];
@@ -226,13 +233,19 @@ function getNodeDataArray(states) {
     if (resArr && currentProject == calculatedProject) {
         for (var i = 0; i < statesData.length; i++) {
             currentNode = resArr.find(element => element.ID == statesData[i].ID);
-            if(currentNode.slack == 0) {
+            if (currentNode.slack == 0) {
                 criticalState = true;
             } else {
                 criticalState = false;
             }
-            nodeDataArray.push({ "key": statesData[i].ID, "text": statesData[i].stateName, critical: criticalState,
-                earliestStart: currentNode.ES + "/6", latestStart: currentNode.LS + "/6", slack: currentNode.slack})
+            nodeDataArray.push({
+                "key": statesData[i].ID,
+                "text": statesData[i].stateName,
+                critical: criticalState,
+                earliestStart: currentNode.ES + "/6",
+                latestStart: currentNode.LS + "/6",
+                slack: currentNode.slack
+            })
         }
     } else {
         for (var i = 0; i < statesData.length; i++) {
@@ -252,7 +265,7 @@ function getLinkDataArray(activities) {
     var calculatedProject = sessionStorage.getItem("calculatedProject");
 
     var resActivities = JSON.parse(sessionStorage.getItem("activities"))
-    if(resActivities && currentProject == calculatedProject) {
+    if (resActivities && currentProject == calculatedProject) {
         activitiesData = resActivities;
     }
 
