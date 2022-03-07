@@ -1,9 +1,5 @@
 {{> navbar}}
 
-<div class="text-center">
-    <button class="btn btn-primary">Results</button>
-</div>
-
 <div style="text-align: center;">
     <table class="table table-hover">
         <thead id="tableHead" style="background-color: lightskyblue;">
@@ -18,38 +14,53 @@
 <script>
     //TODO
     // dodelat MODAL pro results
+
+    var expectedValue, standardDeviation, variance;
+    var totalExpectedValue = 0,
+        totalStandardDeviation = 0,
+        totalVariance = 0;
     createTableHeadPERT();
 
 
     var activities = JSON.parse(sessionStorage.getItem("activities"));
     
     createBodyPERT(activities);
-    createTableBottomPERT();
+    
 
     var tbody = document.getElementById("tableBody");
 
     // createBodyCPM()
 
     function createBodyPERT(activities) {
-        console.log("Vypis")
-        console.log(activities)
-        console.log("ende")
+        var a, m, b;
         var tbody = document.getElementById('tableBody');
         for(var i = 0; i < activities.length; i++) {
+            a = parseInt(activities[i].values[0]);
+            m = parseInt(activities[i].values[1]);
+            b = parseInt(activities[i].values[2]);
+            
+            expectedValue = a + 4 * m + b;
+            standardDeviation = b - a;
+            variance = standardDeviation * standardDeviation;
+            // deleni sesti zkusit vyresit
             var row = tbody.insertRow();
             row.innerHTML =
                 "<tr>" + "<td>" + activities[i].activityName + "</td>"
                 + "<td>" + activities[i].values[0] + "</td>"
                 + "<td>" + activities[i].values[1] + "</td>"
                 + "<td>" + activities[i].values[2] + "</td>"
-                + "<td>" + "expectedValue" + "</td>"
-                + "<td>" + "std" + "</td>"
-                + "<td>" + "variance" + "</td>"
+                + "<td>" + expectedValue + "/6" + "</td>"
+                + "<td>" + standardDeviation + "/6" + "</td>"
+                + "<td>" + variance + "/36" + "</td>"
                 + "</tr>";
             if(activities[i].critical == true) {
                 row.className = "table-danger";
+                totalExpectedValue += expectedValue;
+                totalStandardDeviation += standardDeviation;
+                totalVariance += variance;
             }
         }
+        createTableBottomPERT(totalExpectedValue, totalStandardDeviation, totalVariance);
     }
 
     function createTableHeadCPM() {
@@ -72,19 +83,20 @@
             + "<th>" + "{{__ "variance"}}" + "</th>"
     }
 
-    function createTableBottomPERT() {
+    function createTableBottomPERT(expectedValue, standardDeviation, variance) {
         var tbody = document.getElementById("tableBody");
         var row = tbody.insertRow();
         row.innerHTML = 
-            "<tr>" + "<td>" + "{{__ "project"}}" + "</td>"
+            "<tr>" + "<td>" + "{{__ "total"}}" + "</td>"
             + "<td>" + "" + "</td>"
             + "<td>" + "" + "</td>"
             + "<td>" + "" + "</td>"
-            + "<td>" + "totalMeanValue" + "</td>"
-            + "<td>" + "totalVariance" + "</td>"
-            + "<td>" + "totalVariance" + "</td>"
+            + "<td>" + expectedValue + "/6" + "</td>"
+            + "<td>" + standardDeviation + "/6" + "</td>"
+            + "<td>" + variance + "/36" + "</td>"
             + "</tr>";
         row.className = "table-success";
+    // suma "&#8721;"
     //doplnit totalMeanValue, totalvariance ...
     
     }
