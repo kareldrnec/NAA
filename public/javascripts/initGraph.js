@@ -172,38 +172,6 @@ function graphInit(graphSettingsData) {
     // pridani stavu (vrcholu) a aktivit (hran) do modelu grafu
     myDiagram.model = new go.GraphLinksModel(statesArray, activitiesArray);
 
-    myDiagram.add(
-        $(go.Node, "Auto",
-            $(go.Shape, "Rectangle", // the border
-                { fill: grayFill }),
-            $(go.Panel, "Table",
-                $(go.RowColumnDefinition, { column: 1, separatorStroke: "black" }),
-                $(go.RowColumnDefinition, { column: 2, separatorStroke: "black" }),
-                $(go.RowColumnDefinition, { row: 1, separatorStroke: "black", background: grayFill, coversSeparators: true }),
-                $(go.RowColumnDefinition, { row: 2, separatorStroke: "black" }),
-                $(go.TextBlock, "ES", { row: 0, column: 0, margin: 5, textAlign: "center" }),
-                $(go.TextBlock, "", { row: 0, column: 1, margin: 5, textAlign: "center" }),
-                $(go.TextBlock, "LS", { row: 0, column: 2, margin: 5, textAlign: "center" }),
-
-                $(go.TextBlock, _translationsData[5], {
-                    row: 1,
-                    column: 0,
-                    columnSpan: 3,
-                    margin: 5,
-                    textAlign: "center",
-                    font: "bold 14px sans-serif"
-                }),
-
-                $(go.TextBlock, "", { row: 2, column: 0, margin: 5, textAlign: "center" }),
-                $(go.TextBlock, _translationsData[4], { row: 2, column: 1, margin: 5, textAlign: "center" }),
-                $(go.TextBlock, "", { row: 2, column: 2, margin: 5, textAlign: "center" })
-            )
-        )
-    );
-
-
-
-
     myDiagram.commandHandler.doKeyDown = function() {
         var e = myDiagram.lastInput;
         if (e.key == "Del") {
