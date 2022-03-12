@@ -16,6 +16,9 @@ const i18n = require('i18n');
 // body parser ?? 
 var bodyParser = require('body-parser');
 
+//helmetjs
+const helmet = require('helmet');
+
 // path
 const path = require('path');
 
@@ -75,19 +78,19 @@ app.engine('handlebars', engine({
     defaultLayout: 'main',
     extname: '.handlebars',
     helpers: {
-        json: function(value) {
+        json: function (value) {
             return JSON.stringify(value);
         },
-        inc: function(value, options) {
+        inc: function (value, options) {
             return parseInt(value) + 1;
         },
-        upper: function(value, options) {
+        upper: function (value, options) {
             return value.toUpperCase();
         },
-        ifEquals: function(value1, value2, options) {
+        ifEquals: function (value1, value2, options) {
             return (value1 == value2) ? options.fn(this) : options.inverse(this);
         },
-        __: function() {
+        __: function () {
             return i18n.__.apply(this, arguments);
         }
     }
@@ -112,9 +115,11 @@ const InitiateMongoServer = require('./config/db');
 InitiateMongoServer();
 
 // session store
+// expires - 1800000 ms = 30 minutes 
 const store = new MongoStore({
     uri: process.env.MONGO_URI,
-    collection: "mySession"
+    collection: "mySession",
+    expires: 1800000
 });
 
 app.use(session({
@@ -131,6 +136,25 @@ app.use((req, res, next) => {
     }
     next();
 });
+
+// helmet
+const scriptSources = ["'self'", "'unsafe-inline'", "'unsafe-eval'", 'code.jquery.com', 'stackpath.bootstrapcdn.com',
+    'cdnjs.cloudflare.com', 'kit.fontawesome.com'];
+const styleSources = ["'self'", "'unsafe-inline'", 'stackpath.bootstrapcdn.com', 'cdnjs.cloudflare.com']
+
+app.use(helmet({
+    contentSecurityPolicy: {
+        directives: {
+            defaultSrc: ["'self'"],
+            scriptSrc: scriptSources,
+            styleSrc: styleSources,
+            fontSrc: ["'self'", 'https://ka-f.fontawesome.com'],
+            connectSrc: ["'self'", 'https://ka-f.fontawesome.com'],
+            imgSrc: ["'self'", 'data:']
+        }
+    }
+}));
+
 
 
 // routing 
@@ -162,7 +186,7 @@ app.use((err, req, res, next) => {
 
 // handle error pages 400, 500
 // 404
-app.use(function(req, res) {
+app.use(function (req, res) {
     res.status(404).render("error", {
         code: "404"
     });

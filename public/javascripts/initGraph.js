@@ -245,6 +245,7 @@ function getLinkDataArray(activities) {
         }
 
         if (activitiesData[i].activityType == "normal") {
+            // parseLinkTextData(activitiesData[i].values)
             linkDataArray.push({
                 "from": activitiesData[i].fromState,
                 "to": activitiesData[i].toState,
