@@ -107,22 +107,15 @@
                     <span aria-hidden="true">&times;</span>
                 </button>
             </div>
-            <form method="post" action="/projects/loadFile">
+            <form method="POST" id="loadFileForm" action="/projects/loadFile">
                 <div class="modal-body">
                     <div class="form-group">
                         <label for="projectName">{{__ "project name"}}</label>
                         <input type="text" name="projectName" class="form-control" placeholder="{{__ "enter project name"}}" required>
                     </div>
                     <div class="form-group">
-                        <label for="typeOfProject">{{__ "type of project"}}</label>
-                        <select name="typeOfProject" class="form-control">
-                            <option value="CPM">CPM</option>
-                            <option value="PERT">PERT</option>
-                        </select>
-                    </div>
-                    <div class="form-group">
                         <label for="myFile">{{__ "select a file"}}</label><br>
-                        <input type="file" id="myFile" name="myFile">
+                        <input type="file" id="myFile" name="myFile" accept=".json" required>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -169,11 +162,51 @@
         $('.table > tbody > tr').dblclick(function(event) {
             window.location.href = "/projects/select/" + $(this).attr('id');
         })
-    })
+    });
+
+    // pripadne doresit osetreni proti chybam
+    let loadForm = document.getElementById('loadFileForm');
+    let input = document.getElementById('myFile');
+    let xhr = new XMLHttpRequest();
+    var dataJSON;
+
+
+    input.addEventListener('change', () => {
+        let files = input.files;
+
+        if (files.length == 0) return;
+
+        const file = files[0];
+
+        if(file.type == "application/json") {
+            let reader = new FileReader();
+            reader.onload = (e) => {
+                const file = e.target.result;
+                const lines = file.split(/\r\n|\n/);
+
+                xhr.open(loadForm.method, loadForm.action, true);
+
+                dataJSON = JSON.parse(lines);
+
+                console.log(dataJSON);
+            };
+
+            reader.onerror = (e) => alert(e.target.error.name);
+            
+            reader.readAsText(file);
+        } else {
+            alert("{{__ "invalid extension of file"}}" + " (" + file.type + "). " + "{{__ "please load JSON file"}}");
+            input.value = '';
+        }
+    });
+
+    loadForm.addEventListener('submit', function() {
+        xhr.send(JSON.stringify(dataJSON));
+    });
 
     document.getElementById("numberOfStates").addEventListener('change', function() {
         document.getElementById("numberOfActivities").value = this.value - 1;
-    })
+    });
 
     function deleteModal(projectID) {
         $('#deleteProjectForm').attr("action", "/projects/delete/" + projectID + "/?_method=DELETE");

@@ -12,6 +12,13 @@ router.get("/new", auth.requiresLogin, project_controller.newProject);
 // POST - router Post Project
 router.post("/add", auth.requiresLogin, project_controller.addProject);
 
+
+
+// POST - router Load project
+router.post("/loadFile", auth.requiresLogin, project_controller.loadProjectFromFile);
+// TODO
+
+
 // GET - router Edit Project
 router.get("/edit/:id", auth.requiresLogin, project_controller.getProjectForEdit);
 

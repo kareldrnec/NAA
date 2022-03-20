@@ -204,6 +204,7 @@ exports.loadProject = async(req, res, next) => {
             res.cookie("projectType", project.projectType);
             res.render("project", {
                 title: project.projectName,
+                project: JSON.stringify(project),
                 projectID: project._id,
                 projectType: project.projectType,
                 states: JSON.stringify(statesToSend),
@@ -242,6 +243,41 @@ exports.deleteProject = async(req, res, next) => {
         return next(err);
     }
 }
+
+exports.loadProjectFromFile = async(req, res, next) => {
+
+    var activities = req.body.activities;
+
+    console.log("activities")
+    console.log(req.body)
+    console.log("ende")
+
+
+    try {
+        //TODO
+        /*let project = new ProjectModel({
+            projectName: req.body.projectName,
+            projectType: req.body.typeOfProject,
+            userId: req.session.userId
+        })
+
+        await project.save()*/
+        console.log("Jsem tu")
+
+        req.session.flash = { type: 'success', text: req.__("project loaded")};
+        
+        return res.redirect("/projects/projectsDirectory");
+    } catch (err) {
+        // TODO
+        req.session.flash = { type: 'danger', text: "Error!"};
+
+        return next(err);
+    }
+}
+
+
+
+
 
 // generator 
 // TODO
@@ -302,6 +338,10 @@ exports.generateProject = async(req, res, next) => {
         return next(err);
     }
 }
+
+
+
+
 
 function createState(name, projectID) {
     return StateModel({

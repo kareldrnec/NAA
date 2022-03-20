@@ -16,12 +16,14 @@
         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
           <h6 class="dropdown-header">{{__ "project"}}</h6>
           <a class="dropdown-item" href="/projects/projectsDirectory"><i class="fas fa-folder"></i> {{__ "directory"}}</a>
-          <div class="dropdown-divider"></div>
           <a class="dropdown-item" href="/projects/new"><i class="fas fa-plus-square"></i> {{__ "new"}}</a>
+          <div class="dropdown-divider"></div>
+          <h6 class="dropdown-header">{{__ "current project"}}</h6>
           {{#if projectID}}
           <a class="dropdown-item" href="/projects/edit/{{projectID}}"><i class="fas fa-edit"></i> {{__ "edit"}}</a>
           <a class="dropdown-item" data-toggle="modal" data-target="#deleteProjectModal" style="cursor: pointer;"><i
               class="fas fa-trash-alt"></i> {{__ "delete"}}</a>
+          <a class="dropdown-item" data-toggle="modal" data-target="#saveProjectModal" style="cursor: pointer;"><i class="fas fa-save"></i> {{__ "save"}}</a>
           <div class="dropdown-divider"></div>
           <h6 class="dropdown-header">{{__ "export project"}}</h6>
           <a class="dropdown-item" data-toggle="modal" data-target="#exportProjectModal" style="cursor: pointer;"><i class="fas fa-file-export"></i> {{__ "export"}}</a>

@@ -35,11 +35,41 @@
             </div>
             <div class="modal-footer">
                 <button type="button" class="btn btn-secondary" data-dismiss="modal">{{__ "close"}}</button>
-                <button type="submit" class="btn btn-primary"  id="exportButton">{{__ "export"}}</button>
+                <button type="submit" class="btn btn-primary" id="exportButton">{{__ "export"}}</button>
             </div>
         </div>
     </div>
 </div>
+
+<!-- Modal Save -->
+<div class="modal fade" id="saveProjectModal" tabindex="-1" role="dialog" aria-labelledby="saveProjectModalLabel"
+    aria-hidden="true">
+    <div class="modal-dialog" role="document">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h5 class="modal-title" id="saveProjectModalLabel">{{__ "save as JSON"}}</h5>
+                <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="nameOfSavedFile">{{__ "filename"}}</label>
+                    <input type="text" class="form-control" id="nameOfSavedFile" placeholder="{{__ "enter name of file"}}">
+                </div>
+                <div class="form-group">
+                    <label for="typeOfFile">{{__ "type of file"}}</label>
+                    <input type="text" class="form-control" value="JSON" readonly>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-secondary" data-dismiss="modal">{{__ "close"}}</button>
+                <button type="submit" class="btn btn-primary" id="saveButton">{{__ "save"}}</button>
+            </div>
+        </div>
+    </div>
+</div>
+
 
 <!-- Modal Delete -->
 <div class="modal fade" id="deleteProjectModal" tabindex="-1" role="dialog" aria-labelledby="deleteProjectModalLabel"
@@ -451,18 +481,91 @@
 
     var activities = JSON.parse("{{activities}}".replace(/&quot;/g, '"'));
     var states = JSON.parse("{{states}}".replace(/&quot;/g, '"'));
+    var project = JSON.parse("{{project}}".replace(/&quot;/g, '"'));
     var translations = JSON.parse("{{translations}}".replace(/&quot;/g, '"'));
 
-    sessionStorage.setItem("currentProject", "{{projectID}}")
+    sessionStorage.setItem("currentProject", "{{projectID}}");
+
+   // sessionStorage.setItem("activities", JSON.stringify(activities));
 
     // pridat aktivity z db do init
     init(states, activities, "{{projectType}}", translations, "{{graphSettings}}");
 
+
+    console.log("PROJECT")
     console.log("Project ID")
     console.log("{{projectID}}")
+    console.log("Aktivity")
+    console.log(activities)
+    console.log("Stavy")
+    console.log(states)
     console.log("konec vypisu")
 
     // TODO check form before add/edit activity 
+
+
+
+
+    document.getElementById("saveButton").addEventListener("click", function(event) {
+        event.preventDefault();
+
+        var filename = document.getElementById('nameOfSavedFile').value;
+        var jsonFile = {};
+        var statesJSON = [];
+        var activitiesJSON = [];
+        var projectJSON = {
+            "name": project.projectName,
+            "type": project.projectType,
+            "description": project.projectInfo, 
+            "created": project.createdAt
+        }
+        // States to JSON
+        for(var i = 0; i < states.states.length; i++) {
+            statesJSON.push({
+                "name": states.states[i].stateName,
+                "description": states.states[i].description
+            })
+        }
+        // Activities to JSON
+        for(var i = 0; i < activities.activities.length; i++) {
+            var fromState = states.states.find(element => element.ID == activities.activities[i].fromState);
+            var toState = states.states.find(element => element.ID == activities.activities[i].toState);
+            activitiesJSON.push({
+                "name": activities.activities[i].activityName,
+                "type": activities.activities[i].activityType,
+                "description": activities.activities[i].description,
+                "fromState": fromState.stateName,
+                "toState": toState.stateName,
+                "values": activities.activities[i].values,
+                "timeUnit": activities.activities[i].timeUnit
+            })
+        }
+        // append data to final JSON
+        jsonFile.project = projectJSON;
+        jsonFile.states = statesJSON;
+        jsonFile.activities = activitiesJSON;
+
+        if(!filename) filename = project.projectName;
+
+        // download file
+        var a = document.createElement("a");
+        a.href = URL.createObjectURL(
+            new Blob([JSON.stringify(jsonFile)], {type:"application/json"})
+        );
+        a.download = filename + ".json";
+        a.click();
+
+        /*
+        console.log("vysledny soubor")
+        console.log(jsonFile)
+        console.log("ENDE")
+        */
+
+        document.getElementById('nameOfSavedFile').value = '';
+
+        $('#saveProjectModal').modal('toggle');
+    });
+
 
 
     document.getElementById('calculationForm').addEventListener('submit', function() {
@@ -470,7 +573,6 @@
         calculate(states.states, activities.activities, "{{projectID}}");
 
     });
-
 
     var socket = io();
 

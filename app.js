@@ -119,7 +119,8 @@ InitiateMongoServer();
 const store = new MongoStore({
     uri: process.env.MONGO_URI,
     collection: "mySession",
-    expires: 1800000
+    //expires: 1800000
+    // podivat se na expiraci session
 });
 
 app.use(session({
@@ -142,6 +143,9 @@ const scriptSources = ["'self'", "'unsafe-inline'", "'unsafe-eval'", 'code.jquer
     'cdnjs.cloudflare.com', 'kit.fontawesome.com'];
 const styleSources = ["'self'", "'unsafe-inline'", 'stackpath.bootstrapcdn.com', 'cdnjs.cloudflare.com']
 
+
+// TODO
+/*
 app.use(helmet({
     contentSecurityPolicy: {
         directives: {
@@ -155,7 +159,7 @@ app.use(helmet({
     }
 }));
 
-
+*/
 
 // routing 
 app.use('/', require('./routes/index'));
