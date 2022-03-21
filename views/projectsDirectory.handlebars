@@ -117,6 +117,7 @@
                         <label for="myFile">{{__ "select a file"}}</label><br>
                         <input type="file" id="myFile" name="myFile" accept=".json" required>
                     </div>
+                    <input type="text" id="loadedFileInput" name="loadedFileInput" style="display: none;">
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">{{__ "close"}}</button>
@@ -167,7 +168,6 @@
     // pripadne doresit osetreni proti chybam
     let loadForm = document.getElementById('loadFileForm');
     let input = document.getElementById('myFile');
-    let xhr = new XMLHttpRequest();
     var dataJSON;
 
 
@@ -183,12 +183,8 @@
             reader.onload = (e) => {
                 const file = e.target.result;
                 const lines = file.split(/\r\n|\n/);
-
-                xhr.open(loadForm.method, loadForm.action, true);
-
                 dataJSON = JSON.parse(lines);
-
-                console.log(dataJSON);
+                document.getElementById('loadedFileInput').value = JSON.stringify(dataJSON);
             };
 
             reader.onerror = (e) => alert(e.target.error.name);
@@ -201,7 +197,7 @@
     });
 
     loadForm.addEventListener('submit', function() {
-        xhr.send(JSON.stringify(dataJSON));
+        
     });
 
     document.getElementById("numberOfStates").addEventListener('change', function() {

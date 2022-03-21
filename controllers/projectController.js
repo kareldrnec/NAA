@@ -245,38 +245,68 @@ exports.deleteProject = async(req, res, next) => {
 }
 
 exports.loadProjectFromFile = async(req, res, next) => {
-
-    var activities = req.body.activities;
-
-    console.log("activities")
-    console.log(req.body)
-    console.log("ende")
-
-
+    var states = [];
+    var activities = [];
+    var fromState, toState;
+    var projectName = req.body.projectName;
+    var filename = req.body.myFile;
+    
+    var dataJSON = JSON.parse(req.body.loadedFileInput);
+    
+    var projectData = dataJSON.project;
+    var statesData = dataJSON.states;
+    var activitiesData = dataJSON.activities;
+    
     try {
-        //TODO
-        /*let project = new ProjectModel({
-            projectName: req.body.projectName,
-            projectType: req.body.typeOfProject,
+        // Project
+        let project = new ProjectModel({
+            projectName: projectName,
+            projectType: projectData.type,
+            projectInfo: projectData.description,
+            createdAt: projectData.created,
             userId: req.session.userId
-        })
+        });
+        // States
+        for(var i = 0; i < statesData.length; i++) {
+            states.push(new StateModel({
+                stateName: statesData[i].name,
+                projectID: project._id,
+                description: statesData[i].description
+            }))
+        }
+        // Activities
+        for(var i = 0; i < activitiesData.length; i++) {
+            fromState = states.find(element => element.stateName == activitiesData[i].fromState);
+            toState = states.find(element => element.stateName == activitiesData[i].toState);
+            activities.push(new ActivityModel({
+                activityName: activitiesData[i].name,
+                activityType: activitiesData[i].type,
+                fromState: fromState._id,
+                toState: toState._id,
+                timeUnit: activitiesData[i].timeUnit,
+                values: activitiesData[i].values,
+                description: activitiesData[i].description,
+                projectID: project._id
+            }))
+        }
+        // Save to Mongo...
+        await project.save();
+        await StateModel.insertMany(states);
+        await ActivityModel.insertMany(activities);
 
-        await project.save()*/
-        console.log("Jsem tu")
-
-        req.session.flash = { type: 'success', text: req.__("project loaded")};
+        req.session.flash = { type: 'success', text: req.__("file") + " " + filename + req.__("was successfully loaded")};
         
         return res.redirect("/projects/projectsDirectory");
     } catch (err) {
-        // TODO
-        req.session.flash = { type: 'danger', text: "Error!"};
-
+        // TODO - dodelat chybova hlaseni + presmerovani
+        if (err.code == 11000) {
+            req.session.flash = { type: 'danger', text: req.__("project exists with this name") };
+        } else {
+            req.session.flash = { type: 'danger', text: "Error!"};
+        }
         return next(err);
     }
 }
-
-
-
 
 
 // generator 
