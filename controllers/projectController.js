@@ -56,7 +56,6 @@ exports.newProject = async(req, res, next) => {
     }
 }
 
-
 /**
  * addProject
  * POST
@@ -67,22 +66,22 @@ exports.addProject = async(req, res, next) => {
     const { projectName, types, projectInfo } = req.body;
     var statesArr = [];
     try {
+        // create a Project (ProjectModel - Schema)
         let project = new ProjectModel({
             projectName: projectName,
             projectType: types,
             projectInfo: projectInfo,
             userId: req.session.userId
         });
-
+        // save Project to MongoDB...
         await project.save();
-
+        // create 2 States (Start, Finish) of Project
         statesArr.push(createState("Start", project._id));
         statesArr.push(createState("Finish", project._id));
-
+        // save States to MongoDB...
         await StateModel.insertMany(statesArr);
-
+        // define message (success) and redirect to projectsDirectory
         req.session.flash = { type: 'success', text: req.__("project added") };
-
         return res.redirect('/projects/projectsDirectory');
     } catch (err) {
         if (err.code == 11000) {
@@ -129,10 +128,9 @@ exports.getProjectForEdit = async(req, res, next) => {
     try {
         const user = await UserModel.findById(req.session.userId);
         const project = await ProjectModel.findById(req.params.id);
-
-        let date = project.createdAt;
-        let stringDate = date.getDate() + "/" + (date.getMonth() + 1) + "/" + date.getFullYear();
-
+        const date = project.createdAt;
+        const stringDate = date.getDate() + "/" + (date.getMonth() + 1) + "/" + date.getFullYear();
+        // render page editProject with selected Project
         return res.render('editProject', {
             title: req.__('edit project'),
             projectID: project._id,
@@ -167,9 +165,12 @@ exports.loadProject = async(req, res, next) => {
                 activitiesPrep = [],
                 translations = [req.__('add activity'), req.__('add state'), req.__('edit'), req.__('delete'),
                     req.__('slack'), req.__('state name'), req.__('earliest start time'), req.__('latest start time'),
-                    req.__('help')
+                    req.__('help'), req.__('name'), req.__('type'), req.__('normal'), req.__('dummy'), req.__('values'),
+                    req.__('length'), req.__('time unit'), req.__('seconds'), req.__('minutes'), req.__('hours'),
+                    req.__('days'), req.__('weeks'), req.__('months')
                 ];
-
+            // pridat do prekladu
+            // name, type, values, time unit
 
             for (var i in states) {
                 var item = states[i];
@@ -226,39 +227,42 @@ exports.loadProject = async(req, res, next) => {
 // delete project
 exports.deleteProject = async(req, res, next) => {
     try {
+        // Delete all States of Project
         await StateModel.deleteMany({
             projectID: req.params.id
         });
-
+        // Delete all Activities of Project
         await ActivityModel.deleteMany({
             projectID: req.params.id
         });
-
+        // Delete Project
         await ProjectModel.findByIdAndDelete(req.params.id);
-
+        // message (success) with redirection
         req.session.flash = { type: 'success', text: req.__("project deleted") };
-
         return res.redirect("/projects/projectsDirectory");
     } catch (err) {
         return next(err);
     }
 }
 
+/**
+ * loadProjectFromFile
+ * POST
+ * Async function that loads project from selected file (JSON)
+ * if error appears, it is automatically redirected to error handler
+ */
 exports.loadProjectFromFile = async(req, res, next) => {
+    const projectName = req.body.projectName;
+    const filename = req.body.myFile;
+    const dataJSON = JSON.parse(req.body.loadedFileInput);
+    const projectData = dataJSON.project;
+    const statesData = dataJSON.states;
+    const activitiesData = dataJSON.activities;
     var states = [];
     var activities = [];
     var fromState, toState;
-    var projectName = req.body.projectName;
-    var filename = req.body.myFile;
-    
-    var dataJSON = JSON.parse(req.body.loadedFileInput);
-    
-    var projectData = dataJSON.project;
-    var statesData = dataJSON.states;
-    var activitiesData = dataJSON.activities;
-    
     try {
-        // Project
+        // create a Project (ProjectModel - Schema)
         let project = new ProjectModel({
             projectName: projectName,
             projectType: projectData.type,
@@ -266,15 +270,15 @@ exports.loadProjectFromFile = async(req, res, next) => {
             createdAt: projectData.created,
             userId: req.session.userId
         });
-        // States
+        // create States of Project (StateModel - Schema)
         for(var i = 0; i < statesData.length; i++) {
             states.push(new StateModel({
                 stateName: statesData[i].name,
                 projectID: project._id,
                 description: statesData[i].description
-            }))
+            }));
         }
-        // Activities
+        // create Activities of Project (ActivityModel - Schema)
         for(var i = 0; i < activitiesData.length; i++) {
             fromState = states.find(element => element.stateName == activitiesData[i].fromState);
             toState = states.find(element => element.stateName == activitiesData[i].toState);
@@ -287,17 +291,18 @@ exports.loadProjectFromFile = async(req, res, next) => {
                 values: activitiesData[i].values,
                 description: activitiesData[i].description,
                 projectID: project._id
-            }))
+            }));
         }
-        // Save to Mongo...
+        // save Project, States and Activities to MongoDB...
         await project.save();
         await StateModel.insertMany(states);
         await ActivityModel.insertMany(activities);
-
-        req.session.flash = { type: 'success', text: req.__("file") + " " + filename + req.__("was successfully loaded")};
-        
+        // define message (success) and redirect to projectsDirectory
+        req.session.flash = { type: 'success', text: req.__("file") + " " + filename + req.__("was successfully loaded") };
         return res.redirect("/projects/projectsDirectory");
     } catch (err) {
+        //
+        //
         // TODO - dodelat chybova hlaseni + presmerovani
         if (err.code == 11000) {
             req.session.flash = { type: 'danger', text: req.__("project exists with this name") };
@@ -307,6 +312,11 @@ exports.loadProjectFromFile = async(req, res, next) => {
         return next(err);
     }
 }
+
+
+
+
+
 
 
 // generator 

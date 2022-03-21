@@ -9,7 +9,7 @@
     {{/if}}
 
     <div style="text-align: center;">
-        <table class="table table-hover">
+        <table class="table table-hover" id="projectsTable">
             <thead>
                 <tr style="background-color: lightskyblue;">
                     <th scope="col">#</th>
@@ -158,6 +158,18 @@
     setTimeout(function() {
         $('#flash').fadeOut('fast');
     }, 3000);
+
+    var tableLength = parseInt(sessionStorage.getItem("tableLength"));
+    var rowCount = $('#projectsTable tr').length - 1;
+    
+    if(tableLength && rowCount > tableLength) {
+        $('#projectsTable tr').last().css('background', 'yellow');
+        setTimeout(function() {
+            $('#projectsTable tr').last().css('background', 'white');
+        }, 3000);
+    }
+
+    sessionStorage.setItem("tableLength", rowCount);
 
     $(document).ready(function() {
         $('.table > tbody > tr').dblclick(function(event) {

@@ -24,7 +24,25 @@ function init(states, activities, projectT, translations, graphSettings) {
      * [6] -- Earliest Start Time (EN), Nejdříve možný začátek činnosti (CZ)
      * [7] -- Latest Start Time (EN), Nejpozději přípustný začátek činnosti (CZ)
      * [8] -- Help, Nápověda
+     * [9] -- Name, Název
+     * [10]-- Type, Typ
+     * [11]-- Normal, Normální
+     * [12]-- Dummy, Fiktivní
+     * [13]-- Values, Hodnoty
+     * [14]-- Length, Délka
+     * [15]-- Time Unit, Jednotka času
+     * [16]-- Seconds, Sekundy
+     * [17]-- Minutes, Minuty
+     * [18]-- Hours, Hodiny
+     * [19]-- Days, Dny
+     * [20]-- Weeks, Týdny
+     * [21]-- Months, Měsíce
      */
+
+    // pridat do prekladu
+    // name, type, values, time unit
+
+    console.log(_translationsData)
 
     if (graphSettings) {
         graphSettingsData = graphSettings.replace(/&quot;/g, '"');
@@ -281,13 +299,39 @@ function parseLinkTextData(valuesArr) {
 
 // TODO TOOLTIP PRO AKTIVITY
 function parseLinkTextTooltip(activityName, activityType, valuesArr, timeUnit, linkColor) {
-    var result = "Name: " + activityName + "\n" + "Type: " + activityType + "\n" + "Values" + "\n";
-
-    if (projectType == "cpm") {
-        result += "Length: " + valuesArr[0];
+    var result = _translationsData[9] + ": " + activityName + "\n" + _translationsData[10] + ": ";
+    if(activityType == "normal") {
+        result += _translationsData[11] + "\n" + _translationsData[13] + "\n";
     } else {
-        result += "a: " + valuesArr[0] + "\n" + "m: " + valuesArr[1] + "\n" + "b: " + valuesArr[2] + "\n" + "Time Unit: " + timeUnit;
+        result += result + _translationsData[12] + "\n" + _translationsData[13] + "\n";
     }
+    if (projectType == "cpm") {
+        // idk jestli dát length nebo y podle teorie - uvidíme
+        result += _translationsData[14] + ": " + valuesArr[0] + "\n" + _translationsData[15] + ": ";
+    } else {
+        result += "a: " + valuesArr[0] + "\n" + "m: " + valuesArr[1] + "\n" + "b: " + valuesArr[2] + "\n" + _translationsData[15]+ ": ";
+    }
+    // switch for timeUnit
+    switch (timeUnit) {
+        case "seconds":
+            result += _translationsData[16];
+            break;
+        case "minutes":
+            result += _translationsData[17];
+            break;
+        case "hours":
+            result += _translationsData[18];
+            break;
+        case "days":
+            result += _translationsData[19];
+            break;
+        case "weeks":
+            result += _translationsData[20];
+            break;
+        case "months":
+            result += _translationsData[21];
+            break;
+    } 
 
     // Dodelat s preklady a jestli je critical nebo ne
     return result;
