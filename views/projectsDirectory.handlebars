@@ -86,10 +86,19 @@
                         <input type="range" id="maxLengthOfActivity" name="maxLengthOfActivity" class="form-control" value="50" min="10" max="100" oninput="this.nextElementSibling.value = this.value">
                         <output>50</output>
                     </div>
+                    <div class="text-center" style="padding-bottom: 5px;">
+                        <button type="button" class="btn btn-primary" id="generateButton">{{__ "generate"}}</button>
+                    </div>
+                    <input type="text" id="generatedProjectJSON" name="generatedProjectJSON" style="display: none;">
+                    <p id="done" style="display: none;">{{__ "done"}}</p>
+                    <div class="spinner-border text-primary" id="spinner" role="status" style="display: none;">
+                        <span class="sr-only">Loading...</span>
+                    </div>
+                    <p id="generatingProject" style="display: none;">{{__ "generating project"}}</p>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">{{__ "close"}}</button>
-                    <input type="submit" value="{{__ "generate"}}" id="submit" name="submit" class="btn btn-primary">
+                    <input type="submit" value="{{__ "add"}}" id="submit" name="submit" class="btn btn-primary">
                 </div>
             </form>
         </div>
@@ -154,10 +163,17 @@
     </div>
 </div>
 
+<script src="/javascripts/projectGenerator.js"></script>
 <script>
     setTimeout(function() {
         $('#flash').fadeOut('fast');
     }, 3000);
+
+    $(document).ready(function() {
+        $('.table > tbody > tr').dblclick(function(event) {
+            window.location.href = "/projects/select/" + $(this).attr('id');
+        })
+    });
 
     var tableLength = parseInt(sessionStorage.getItem("tableLength"));
     var rowCount = $('#projectsTable tr').length - 1;
@@ -171,17 +187,20 @@
 
     sessionStorage.setItem("tableLength", rowCount);
 
-    $(document).ready(function() {
-        $('.table > tbody > tr').dblclick(function(event) {
-            window.location.href = "/projects/select/" + $(this).attr('id');
-        })
-    });
+    var generateButton = document.getElementById('generateButton');
 
-    // pripadne doresit osetreni proti chybam
+    generateButton.addEventListener('click', function(){
+        generateProject();
+        document.getElementById('spinner').style.display = 'flex';
+        document.getElementById('generatingProject').style.display = 'flex';
+    })
+
+
+
+    // pripadne doresit osetreni proti chybam (nahrani projektu ze souboru)
     let loadForm = document.getElementById('loadFileForm');
     let input = document.getElementById('myFile');
     var dataJSON;
-
 
     input.addEventListener('change', () => {
         let files = input.files;
@@ -208,10 +227,6 @@
         }
     });
 
-    loadForm.addEventListener('submit', function() {
-        
-    });
-
     document.getElementById("numberOfStates").addEventListener('change', function() {
         document.getElementById("numberOfActivities").value = this.value - 1;
     });
@@ -220,5 +235,6 @@
         $('#deleteProjectForm').attr("action", "/projects/delete/" + projectID + "/?_method=DELETE");
         $('#deleteProjectModal').modal('show');
     }
+
 
 </script>

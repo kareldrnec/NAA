@@ -554,15 +554,8 @@
         );
         a.download = filename + ".json";
         a.click();
-
-        /*
-        console.log("vysledny soubor")
-        console.log(jsonFile)
-        console.log("ENDE")
-        */
-
+        // delete value of nameOfSavedFile element and close modal
         document.getElementById('nameOfSavedFile').value = '';
-
         $('#saveProjectModal').modal('toggle');
     });
 
@@ -660,7 +653,7 @@
     document.getElementById('addActivityForm').addEventListener('submit', function(event) {
         // TODO
         event.preventDefault();
-
+        let valid = true;
         var activityName = document.getElementById('activityNameInput');
         var activityType = document.getElementById('activityTypeSelect');
         var activityDescription = document.getElementById('activityDescription');
@@ -669,9 +662,10 @@
         
         var formAction = ($('#addActivityForm').attr('action')).split('&');
 
+        console.log("JSEM TU")
+
         if ("{{projectType}}" == "cpm") {
             var length = document.getElementById("lengthOfActivity");
-
             valuesArr.push(length.value);
 
             length.value = 0;
@@ -679,6 +673,17 @@
             var optimisticValue = document.getElementById("optimisticValue");
             var mostExpectedValue = document.getElementById("mostExpectedValue");
             var pessimisticValue = document.getElementById("pessimisticValue");
+            if(!(mostExpectedValue.value >= optimisticValue.value)) {
+                alert("C")
+                valid = false;
+                // TODO FORM VALIDATION
+            }
+
+            if(!(pessimisticValue.value >= mostExpectedValue.value)) {
+                alert("C1")
+                valid = false;
+                // TODO FORM VALIDATION
+            }
 
             valuesArr.push(optimisticValue.value, mostExpectedValue.value, pessimisticValue.value);       
         
@@ -688,12 +693,12 @@
 
         }
 
-        socket.emit("new activity", activityName.value, activityType.value, formAction[0], formAction[1], activityTimeUnit.value, valuesArr, activityDescription.value, "{{projectID}}");
-
-        activityName.value = '';
-        activityDescription.value = '';
-
-        $('#addActivityModal').modal('toggle');
+        if(valid){
+            socket.emit("new activity", activityName.value, activityType.value, formAction[0], formAction[1], activityTimeUnit.value, valuesArr, activityDescription.value, "{{projectID}}");
+            activityName.value = '';
+            activityDescription.value = '';
+            $('#addActivityModal').modal('toggle');
+        }
     });
 
     document.getElementById('editActivityForm').addEventListener('submit', function(event) {
@@ -795,6 +800,24 @@
     socket.on('delete activity', function(activity) {
         deleteSelectedActivity(activity);
     })
+
+    function canAddActivity(e) {
+        let valid = true;
+        console.log("Kontroluji form...")
+        if("{{projectType}}" == "pert") {
+            var optimisticValue = document.getElementById('optimisticValue').value;
+            var mostExpectedValue = document.getElementById('mostExpectedValue').value;
+            var pessimisticValue = document.getElementById('pessimisticValue').value;
+            console.log(typeof(optimisticValue))
+        }
+        return false;
+    }
+
+    function canEditActivity() {
+        let valid = true;
+
+        return valid;
+    }
 </script>
 
 

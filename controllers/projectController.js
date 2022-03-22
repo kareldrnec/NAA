@@ -322,58 +322,9 @@ exports.loadProjectFromFile = async(req, res, next) => {
 // generator 
 // TODO
 exports.generateProject = async(req, res, next) => {
-    const projectName = req.body.projectName;
-    projectType = req.body.types,
-        projectInfo = req.body.projectInfo,
-        maxLengthOfActivity = req.body.maxLengthOfActivity;
-
-    var numberOfStates = req.body.numberOfStates,
-        fromState, toState,
-        statesArr = [],
-        activitiesArr = [],
-        previousStates = [],
-        nextStates = [];
-
-
     try {
-        let project = ProjectModel({
-            projectName: projectName,
-            projectType: projectType,
-            projectInfo: projectInfo,
-            userId: req.session.userId
-        });
-
-        fromState = createState("Start", project._id);
-        toState = createState("Finish", project._id);
-
-        statesArr.push(fromState);
-        statesArr.push(toState);
-
-        numberOfStates -= 2;
-
-        if (numberOfStates == 0) {
-            activitiesArr.push(createActivity("A1", "normal", projectType, project._id, fromState._id, toState._id, maxLengthOfActivity));
-        } else {
-
-        }
-
-        console.log("Project")
-        console.log(project)
-        console.log("Stavy")
-        console.log(statesArr)
-        console.log("Aktivity")
-        console.log(activitiesArr)
-
-        console.log("Max Length of Activity")
-        console.log(maxLengthOfActivity)
-        console.log("ende")
-
-        // ulozeni do databaze
-        // await project.save();
-        // await StateModel.insertMany(statesArr)
-        // await ActivityModel.insertMany(activitiesArr);
-
-        return res.redirect("/")
+        console.log("Generuju projekt...");
+        return res.redirect('/projects/projectsDirectory');
     } catch (err) {
         return next(err);
     }

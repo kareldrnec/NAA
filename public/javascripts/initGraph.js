@@ -287,8 +287,6 @@ function getLinkDataArray(activities) {
 
 function parseLinkTextData(valuesArr) {
     var result = "";
-
-
     if (valuesArr.length == 1) {
         result = result + " (" + valuesArr[0] + ") ";
     } else {
