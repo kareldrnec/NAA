@@ -37,12 +37,20 @@
         </table>
     </div>
 
-    <div class="text-center pb-2">
-        <a href="/projects/new"><button type="button" class="btn btn-primary"><i class="fas fa-plus-square"></i>
-                {{__ "add project"}}</button></a>
-        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#generateProjectModal"><i class="fas fa-random"></i> {{__ "generate project"}}</button>
-        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#loadProjectModal"><i class="far fa-file-excel"></i> {{__ "load file"}}</button>
+    <div class="text-center">
+        <a href="/projects/new">
+            <button type="button" class="btn btn-primary" title="{{__ "add new project"}}" style="width: 120px;">
+                <i class="fas fa-plus-square"></i> {{__ "add"}}
+            </button>
+        </a>
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#generateProjectModal" title="{{__ "generate random project"}}" style="width: 120px;">
+            <i class="fas fa-random"></i> {{__ "generate"}}
+        </button>
+        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#loadProjectModal" title="{{__ "load project from file"}}" style="width: 120px;">
+            <i class="far fa-file-excel"></i> {{__ "load"}}
+        </button>
     </div>
+    
 </div>
 
 <!-- Modal Generator -->
@@ -63,8 +71,8 @@
                         <input type="text" class="form-control" name="projectName" placeholder="{{__ "enter project name"}}" required>
                     </div>
                     <div class="form-group">
-                        <label for="typeOfProject">{{__ "type of project"}}</label>
-                        <select name="types" class="form-control">
+                        <label for="type">{{__ "type of project"}}</label>
+                        <select name="type" class="form-control" id="typeOfProject">
                             <option value="cpm">CPM</option>
                             <option value="pert">PERT</option>
                         </select>
@@ -98,7 +106,7 @@
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">{{__ "close"}}</button>
-                    <input type="submit" value="{{__ "add"}}" id="submit" name="submit" class="btn btn-primary">
+                    <input type="submit" value="{{__ "add"}}" id="submitGeneratedProject" class="btn btn-primary" title="{{__ "press generate"}}" disabled>
                 </div>
             </form>
         </div>
@@ -123,7 +131,7 @@
                         <input type="text" name="projectName" class="form-control" placeholder="{{__ "enter project name"}}" required>
                     </div>
                     <div class="form-group">
-                        <label for="myFile">{{__ "select a file"}}</label><br>
+                        <label for="myFile">{{__ "select a file"}} (.json)</label><br>
                         <input type="file" id="myFile" name="myFile" accept=".json" required>
                     </div>
                     <input type="text" id="loadedFileInput" name="loadedFileInput" style="display: none;">
@@ -192,11 +200,26 @@
     generateButton.addEventListener('click', function(){
         //
         // TODO
-        generateProject(6);
         //
         //
+        const numberOfStates = document.getElementById('numberOfStates').value;
+        var submitButton = document.getElementById('submitGeneratedProject');
+
+
+        //Generating
+        var dataJSON = generateProject(numberOfStates);
+
+
+        // pridani generovaneho projektu do neviditelneho elementu formulare
+        document.getElementById('generatedProjectJSON').value = JSON.stringify(dataJSON);
+
+        submitButton.disabled = false;
+        submitButton.title = "{{__ "add generated project"}}"
+        
         document.getElementById('spinner').style.display = 'flex';
         document.getElementById('generatingProject').style.display = 'flex';
+
+
     })
 
 
@@ -208,22 +231,16 @@
 
     input.addEventListener('change', () => {
         let files = input.files;
-
         if (files.length == 0) return;
-
         const file = files[0];
-
         if(file.type == "application/json") {
             let reader = new FileReader();
             reader.onload = (e) => {
                 const file = e.target.result;
-                const lines = file.split(/\r\n|\n/);
-                dataJSON = JSON.parse(lines);
+                dataJSON = JSON.parse(file)
                 document.getElementById('loadedFileInput').value = JSON.stringify(dataJSON);
             };
-
             reader.onerror = (e) => alert(e.target.error.name);
-            
             reader.readAsText(file);
         } else {
             alert("{{__ "invalid extension of file"}}" + " (" + file.type + "). " + "{{__ "please load JSON file"}}");

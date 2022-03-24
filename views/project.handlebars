@@ -508,8 +508,8 @@
 
     document.getElementById("saveButton").addEventListener("click", function(event) {
         event.preventDefault();
-
-        var filename = document.getElementById('nameOfSavedFile').value;
+        //const
+        const filename = document.getElementById('nameOfSavedFile').value;
         var jsonFile = {};
         var statesJSON = [];
         var activitiesJSON = [];
@@ -550,15 +550,15 @@
         // download file
         var a = document.createElement("a");
         a.href = URL.createObjectURL(
-            new Blob([JSON.stringify(jsonFile)], {type:"application/json"})
+            new Blob([JSON.stringify(jsonFile, null, 4)], {type:"application/json"})
         );
         a.download = filename + ".json";
         a.click();
         // delete value of nameOfSavedFile element and close modal
         document.getElementById('nameOfSavedFile').value = '';
         $('#saveProjectModal').modal('toggle');
+        
     });
-
 
 
     document.getElementById('calculationForm').addEventListener('submit', function() {

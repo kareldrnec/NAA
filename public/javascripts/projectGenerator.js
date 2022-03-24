@@ -1,20 +1,26 @@
 // Generator skript
-
+//
+//
+//
+//
 function generateProject(statesCount) {
-    console.log("cau")
+    var dataJSON = {};
+
+
     // generovani stavu
     var states = generateStates(statesCount);
 
-    console.log("States");
-    console.log(states);
-    console.log("ende");
+    dataJSON.states = states;
+    console.log("DATA JSON")
+    console.log(dataJSON)
+    console.log("ENDE")
+    return dataJSON;
 }
 
+// generate Start, Finish and (count - 2) other states
 function generateStates(count) {
     var states = [];
-    // add Start State
     states.push({"name": "Start"});
-    // add Finish State
     states.push({"name": "Finish"});
     for(var i = 0; i < count - 2; i++) {
         states.push({"name": "S" + (i+1)});
@@ -22,6 +28,19 @@ function generateStates(count) {
     return states;
 }
 
-function generateActivities() {
-
+// generate activities
+function generateActivities(count) {
+    //name
+    //type
+    //fromState
+    //toStates
+    //values
+    var activities = [];
+    for(var i = 0; i < count; i++) {
+        activities.push({
+            "name": "A" + (i+1),
+            "type": "normal"
+        });
+    }
+    return activities;
 }

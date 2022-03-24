@@ -5,7 +5,7 @@ const StateModel = require('../models/state');
 const ActivityModel = require('../models/activity');
 
 //gets project directory
-exports.getProjectsDirectory = async(req, res, next) => {
+exports.getProjectsDirectory = async (req, res, next) => {
     try {
         var user = await UserModel.findById(req.session.userId);
         projects = await ProjectModel.find({ userId: req.session.userId }),
@@ -43,7 +43,7 @@ exports.getProjectsDirectory = async(req, res, next) => {
  * Async function that redirects to form for a new project
  * if error appears, it is automatically redirected to error handler
  */
-exports.newProject = async(req, res, next) => {
+exports.newProject = async (req, res, next) => {
     try {
         let user = await UserModel.findById(req.session.userId);
         return res.render('addProject', {
@@ -62,22 +62,28 @@ exports.newProject = async(req, res, next) => {
  * Async function that adds a new project with Start state and Finish state
  * if error appears, it is automatically redirected to error handler
  */
-exports.addProject = async(req, res, next) => {
-    const { projectName, types, projectInfo } = req.body;
+exports.addProject = async (req, res, next) => {
+    const { projectName, type, projectInfo } = req.body;
     var statesArr = [];
     try {
         // create a Project (ProjectModel - Schema)
-        let project = new ProjectModel({
+        const project = new ProjectModel({
             projectName: projectName,
-            projectType: types,
+            projectType: type,
             projectInfo: projectInfo,
             userId: req.session.userId
         });
         // save Project to MongoDB...
         await project.save();
-        // create 2 States (Start, Finish) of Project
-        statesArr.push(createState("Start", project._id));
-        statesArr.push(createState("Finish", project._id));
+        // create 2 States (Start, Finish)
+        statesArr.push(new StateModel({
+            stateName: "Start",
+            projectID: project._id
+        }));
+        statesArr.push(new StateModel({
+            stateName: "Finish",
+            projectID: project._id
+        }));
         // save States to MongoDB...
         await StateModel.insertMany(statesArr);
         // define message (success) and redirect to projectsDirectory
@@ -98,7 +104,7 @@ exports.addProject = async(req, res, next) => {
  * if error appears, it is automatically redirected to error handler
  * if error has code 11000 (Duplicate Key), the error message is added to flash message
  */
-exports.editProject = async(req, res, next) => {
+exports.editProject = async (req, res, next) => {
     const projectName = req.body.projectName;
     const projectInfo = req.body.projectInfo;
     try {
@@ -124,7 +130,7 @@ exports.editProject = async(req, res, next) => {
  * Async function that displays selected project for edit
  * if error appears, it is automatically redirected to error handler
  */
-exports.getProjectForEdit = async(req, res, next) => {
+exports.getProjectForEdit = async (req, res, next) => {
     try {
         const user = await UserModel.findById(req.session.userId);
         const project = await ProjectModel.findById(req.params.id);
@@ -147,12 +153,12 @@ exports.getProjectForEdit = async(req, res, next) => {
 }
 
 //project selection
-exports.selectProject = async(req, res) => {
+exports.selectProject = async (req, res) => {
     res.redirect("/projects/" + encodeURIComponent(req.params.id));
 }
 
 //load project after selection
-exports.loadProject = async(req, res, next) => {
+exports.loadProject = async (req, res, next) => {
     try {
         let user = await UserModel.findById(req.session.userId),
             project = await ProjectModel.findById(req.params.id);
@@ -164,10 +170,10 @@ exports.loadProject = async(req, res, next) => {
                 activitiesToSend = {},
                 activitiesPrep = [],
                 translations = [req.__('add activity'), req.__('add state'), req.__('edit'), req.__('delete'),
-                    req.__('slack'), req.__('state name'), req.__('earliest start time'), req.__('latest start time'),
-                    req.__('help'), req.__('name'), req.__('type'), req.__('normal'), req.__('dummy'), req.__('values'),
-                    req.__('length'), req.__('time unit'), req.__('seconds'), req.__('minutes'), req.__('hours'),
-                    req.__('days'), req.__('weeks'), req.__('months')
+                req.__('slack'), req.__('state name'), req.__('earliest start time'), req.__('latest start time'),
+                req.__('help'), req.__('name'), req.__('type'), req.__('normal'), req.__('dummy'), req.__('values'),
+                req.__('length'), req.__('time unit'), req.__('seconds'), req.__('minutes'), req.__('hours'),
+                req.__('days'), req.__('weeks'), req.__('months')
                 ];
             // pridat do prekladu
             // name, type, values, time unit
@@ -225,8 +231,9 @@ exports.loadProject = async(req, res, next) => {
 }
 
 // delete project
-exports.deleteProject = async(req, res, next) => {
+exports.deleteProject = async (req, res, next) => {
     try {
+        const project = await ProjectModel.findById(req.params.id);
         // Delete all States of Project
         await StateModel.deleteMany({
             projectID: req.params.id
@@ -238,7 +245,7 @@ exports.deleteProject = async(req, res, next) => {
         // Delete Project
         await ProjectModel.findByIdAndDelete(req.params.id);
         // message (success) with redirection
-        req.session.flash = { type: 'success', text: req.__("project deleted") };
+        req.session.flash = { type: 'success', text: req.__("project") + " " + project.projectName + req.__("project deleted") };
         return res.redirect("/projects/projectsDirectory");
     } catch (err) {
         return next(err);
@@ -251,7 +258,7 @@ exports.deleteProject = async(req, res, next) => {
  * Async function that loads project from selected file (JSON)
  * if error appears, it is automatically redirected to error handler
  */
-exports.loadProjectFromFile = async(req, res, next) => {
+exports.loadProjectFromFile = async (req, res, next) => {
     const projectName = req.body.projectName;
     const filename = req.body.myFile;
     const dataJSON = JSON.parse(req.body.loadedFileInput);
@@ -271,7 +278,7 @@ exports.loadProjectFromFile = async(req, res, next) => {
             userId: req.session.userId
         });
         // create States of Project (StateModel - Schema)
-        for(var i = 0; i < statesData.length; i++) {
+        for (var i = 0; i < statesData.length; i++) {
             states.push(new StateModel({
                 stateName: statesData[i].name,
                 projectID: project._id,
@@ -279,7 +286,7 @@ exports.loadProjectFromFile = async(req, res, next) => {
             }));
         }
         // create Activities of Project (ActivityModel - Schema)
-        for(var i = 0; i < activitiesData.length; i++) {
+        for (var i = 0; i < activitiesData.length; i++) {
             fromState = states.find(element => element.stateName == activitiesData[i].fromState);
             toState = states.find(element => element.stateName == activitiesData[i].toState);
             activities.push(new ActivityModel({
@@ -301,71 +308,64 @@ exports.loadProjectFromFile = async(req, res, next) => {
         req.session.flash = { type: 'success', text: req.__("file") + " " + filename + req.__("was successfully loaded") };
         return res.redirect("/projects/projectsDirectory");
     } catch (err) {
-        //
-        //
         // TODO - dodelat chybova hlaseni + presmerovani
         if (err.code == 11000) {
-            req.session.flash = { type: 'danger', text: req.__("project exists with this name") };
+            req.session.flash = { type: 'danger', text: req.__("error") + "! " + req.__("project exists with this name") };
         } else {
-            req.session.flash = { type: 'danger', text: "Error!"};
+            req.session.flash = { type: 'danger', text: req.__("error") + "!" };
         }
         return next(err);
     }
 }
 
-
-
-
-
-
-
 // generator 
 // TODO
-exports.generateProject = async(req, res, next) => {
+exports.generateProject = async (req, res, next) => {
     try {
-        console.log("Generuju projekt...");
+        const projectName = req.body.projectName,
+            projectType = req.body.type,
+            projectDescription = req.body.projectInfo,
+            generatedProject = JSON.parse(req.body.generatedProjectJSON),
+            generatedStates = generatedProject.states;
+
+        var states = [];
+        var activities = [];
+
+        console.log("generovany projekt")
+        console.log(generatedProject);
+        console.log("Ende")
+
+        // generatedProjectJSON
+        let project = new ProjectModel({
+            projectName: projectName,
+            projectType: projectType,
+            projectInfo: projectDescription,
+            userId: req.session.userId
+        });
+        // ulozeni generovanych stavu
+        for (var i = 0; i < generatedStates.length; i++) {
+            states.push(new StateModel({
+                stateName: generatedStates[i].name,
+                projectID: project._id
+            }))
+        }
+        // for pro
+
+        // ulozeni do databaze
+        await project.save();
+        await StateModel.insertMany(states);
+        // TODO
+        // ulozeni aktivity
+        // await ActivityModel.insertMany(activities);
+        req.session.flash = { type: 'success', text: req.__("project") + " " + project.projectName + req.__("project generated") };
         return res.redirect('/projects/projectsDirectory');
     } catch (err) {
+        //TODO
+        if (err.code == 11000) {
+            req.session.flash = { type: 'danger', text: req.__("error") + "! " + req.__("project exists with this name") };
+        } else {
+            req.session.flash = { type: 'danger', text: req.__("error") + "!" };
+        }
         return next(err);
     }
-}
-
-
-
-
-
-function createState(name, projectID) {
-    return StateModel({
-        stateName: name,
-        projectID: projectID
-    });
-}
-
-function createActivity(name, activityType, projectType, projectID, fromState, toState, maxLength) {
-    // TODO
-    return ActivityModel({
-        activityName: name,
-        activityType: activityType,
-        fromState: fromState,
-        toState: toState,
-        values: generateValuesForActivity(projectType, maxLength),
-        projectID: projectID
-
-    });
-}
-
-function generateValuesForActivity(projectType, maxLength) {
-    // TODO generate pert or cpm length
-    let valArr = [];
-    if (projectType == "cpm") {
-        valArr.push(getRandomInt(maxLength));
-    } else if (projectType == "pert") {
-
-    }
-    return valArr;
-}
-
-// mozna zmenit
-function getRandomInt(max) {
-    return Math.floor(Math.random() * max) + 1;
 }
