@@ -491,20 +491,7 @@
     // pridat aktivity z db do init
     init(states, activities, "{{projectType}}", translations, "{{graphSettings}}");
 
-
-    console.log("PROJECT")
-    console.log("Project ID")
-    console.log("{{projectID}}")
-    console.log("Aktivity")
-    console.log(activities)
-    console.log("Stavy")
-    console.log(states)
-    console.log("konec vypisu")
-
     // TODO check form before add/edit activity 
-
-
-
 
     document.getElementById("saveButton").addEventListener("click", function(event) {
         event.preventDefault();
@@ -653,50 +640,61 @@
     document.getElementById('addActivityForm').addEventListener('submit', function(event) {
         // TODO
         event.preventDefault();
-        let valid = true;
-        var activityName = document.getElementById('activityNameInput');
-        var activityType = document.getElementById('activityTypeSelect');
-        var activityDescription = document.getElementById('activityDescription');
-        var activityTimeUnit = document.getElementById('activityTimeUnit');
-        var valuesArr = []; 
-        
-        var formAction = ($('#addActivityForm').attr('action')).split('&');
 
-        console.log("JSEM TU")
+        var valid = true;
+            activityName = document.getElementById('activityNameInput'),
+            activityType = document.getElementById('activityTypeSelect'),
+            activityDescription = document.getElementById('activityDescription'),
+            activityTimeUnit = document.getElementById('activityTimeUnit'),
+            valuesArr = [], 
+            length, optimisticValue, mostExpectedValue, pessimisticValue,
+            formAction = ($('#addActivityForm').attr('action')).split('&');
+        
+        var a, m, b;
 
         if ("{{projectType}}" == "cpm") {
-            var length = document.getElementById("lengthOfActivity");
+            length = document.getElementById("lengthOfActivity");
             valuesArr.push(length.value);
-
-            length.value = 0;
         } else {
-            var optimisticValue = document.getElementById("optimisticValue");
-            var mostExpectedValue = document.getElementById("mostExpectedValue");
-            var pessimisticValue = document.getElementById("pessimisticValue");
-            if(!(mostExpectedValue.value >= optimisticValue.value)) {
-                alert("C")
+            optimisticValue = document.getElementById("optimisticValue");
+            mostExpectedValue = document.getElementById("mostExpectedValue");
+            pessimisticValue = document.getElementById("pessimisticValue");
+            
+            a = parseInt(optimisticValue.value);
+            m = parseInt(mostExpectedValue.value);
+            b = parseInt(pessimisticValue.value);
+
+            if(m < a) {
                 valid = false;
-                // TODO FORM VALIDATION
+                mostExpectedValue.style.background = "#ffb8b8";
+                setTimeout(function() {
+                    mostExpectedValue.style.background = "white";
+                }, 3000);
             }
 
-            if(!(pessimisticValue.value >= mostExpectedValue.value)) {
-                alert("C1")
+            if(b < m) {
                 valid = false;
-                // TODO FORM VALIDATION
+                pessimisticValue.style.background = "#ffb8b8";
+                setTimeout(function() {
+                    pessimisticValue.style.background = "white";
+                }, 3000);
             }
-
             valuesArr.push(optimisticValue.value, mostExpectedValue.value, pessimisticValue.value);       
-        
-            optimisticValue.value = 0;
-            mostExpectedValue.value = 0;
-            pessimisticValue.value = 0;
-
         }
 
         if(valid){
+            if("{{projectType}}" == "cpm") {
+                length.value = 0;
+            } else {
+                optimisticValue.value = 0;
+                mostExpectedValue.value = 0;
+                pessimisticValue.value = 0;
+            }
             socket.emit("new activity", activityName.value, activityType.value, formAction[0], formAction[1], activityTimeUnit.value, valuesArr, activityDescription.value, "{{projectID}}");
+            
             activityName.value = '';
             activityDescription.value = '';
+            
             $('#addActivityModal').modal('toggle');
         }
     });
@@ -706,12 +704,12 @@
         event.preventDefault();
 
         var activityID = this.getAttribute("name");
-        
         var activityName = document.getElementById('editedActivityName').value;
         var editedActivityType = document.getElementById('editedActivityType').value;
         var editedTimeUnit = document.getElementById('editedTimeUnit');
         var editedActivityDescription = document.getElementById('editedActivityDescription');
-
+        var editedActivityOptimistic, editedActivityMost, editedActivityPessimistic, a, m, b;
+        var valid = true;
         var activityValues = [];
 
         if("{{projectType}}" == "cpm" && editedActivityType == "dummy") {
@@ -722,20 +720,41 @@
         } else if("{{projectType}}" == "pert" && editedActivityType == "dummy") {
             activityValues = ['0', '0', '0'];
         } else if("{{projectType}}" == "pert" && editedActivityType == "normal") {
-            var editedActivityOptimistic = document.getElementById('editedActivityOptimistic').value;
-            var editedActivityMost = document.getElementById('editedActivityMost').value;
-            var editedActivityPessimistic = document.getElementById('editedActivityPessimistic').value;
-            activityValues = [editedActivityOptimistic, editedActivityMost, editedActivityPessimistic];
+            editedActivityOptimistic = document.getElementById('editedActivityOptimistic');
+            editedActivityMost = document.getElementById('editedActivityMost');
+            editedActivityPessimistic = document.getElementById('editedActivityPessimistic');
+            
+            a = parseInt(editedActivityOptimistic.value);
+            m = parseInt(editedActivityMost.value);
+            b = parseInt(editedActivityPessimistic.value);
+
+            if(m < a) {
+                valid = false;
+                editedActivityMost.style.background = "#ffb8b8";
+                setTimeout(function() {
+                    editedActivityMost.style.background = "white";
+                }, 3000);
+            }
+
+            if(b < m) {
+                valid = false;
+                editedActivityPessimistic.style.background = "#ffb8b8";
+                setTimeout(function() {
+                    editedActivityPessimistic.style.background = "white";
+                }, 3000);
+            }
+
+            if(valid == true) {
+                activityValues = [editedActivityOptimistic.value, editedActivityMost.value, editedActivityPessimistic.value];
+            }
         }
 
-        // socket
-        
-        socket.emit("edit activity", activityID, activityName, editedActivityType, editedActivityDescription.value, editedTimeUnit.value, activityValues);
-
-
-        editedActivityDescription.value = '';
-
-        $('#editActivityModal').modal('toggle');
+        if(valid) {
+            socket.emit("edit activity", activityID, activityName, editedActivityType, editedActivityDescription.value, editedTimeUnit.value, activityValues);
+            editedActivityDescription.value = '';
+            $('#editActivityModal').modal('toggle');        
+        }
+    
     });
 
 

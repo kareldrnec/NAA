@@ -15,10 +15,8 @@ exports.addActivity = async(activityName, activityType, fromState, toState, time
             description: description,
             projectID: projectID
         })
-
         // ukladam aktivitu
         await activity.save();
-
         app.io.emit('new activity', activity);
     } catch (err) {
         app.io.emit('error activity');
@@ -26,6 +24,8 @@ exports.addActivity = async(activityName, activityType, fromState, toState, time
 }
 
 // TODO
+
+// ceknout zda mohu zmenit aktivitu na dummy nebo ne, pripadne vyvolat error!!!
 exports.editActivity = async(activityID, activityName, activityType, activityDescription, editedTimeUnit, activityValues) => {
     try {
         console.log("Edituju")

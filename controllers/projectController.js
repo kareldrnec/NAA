@@ -112,13 +112,13 @@ exports.editProject = async (req, res, next) => {
             projectName: projectName,
             projectInfo: projectInfo
         });
-
         req.session.flash = { type: 'success', text: req.__('project updated') };
-
         return res.redirect("/projects/projectsDirectory");
     } catch (err) {
         if (err.code == 11000) {
             req.session.flash = { type: 'danger', text: req.__('project exists with this name') };
+        } else {
+            req.session.flash = { type: 'danger', text: req.__('error') };
         }
         return next(err);
     }
@@ -148,6 +148,7 @@ exports.getProjectForEdit = async (req, res, next) => {
             navColor: req.cookies.navColor
         })
     } catch (err) {
+        req.session.flash = { type: 'danger', text: req.__('error') };
         return next(err);
     }
 }
@@ -234,20 +235,17 @@ exports.loadProject = async (req, res, next) => {
 exports.deleteProject = async (req, res, next) => {
     try {
         const project = await ProjectModel.findById(req.params.id);
-        // Delete all States of Project
         await StateModel.deleteMany({
             projectID: req.params.id
         });
-        // Delete all Activities of Project
         await ActivityModel.deleteMany({
             projectID: req.params.id
         });
-        // Delete Project
         await ProjectModel.findByIdAndDelete(req.params.id);
-        // message (success) with redirection
         req.session.flash = { type: 'success', text: req.__("project") + " " + project.projectName + req.__("project deleted") };
         return res.redirect("/projects/projectsDirectory");
     } catch (err) {
+        req.session.flash = { type: 'danger', text: req.__('error') };
         return next(err);
     }
 }

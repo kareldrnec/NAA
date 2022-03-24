@@ -45,7 +45,6 @@ exports.deleteState = async(stateID) => {
     //
     try {
         // mazani aktivit
-
         await ActivityModel.deleteMany({
             $or: [
                 { fromState: stateID },
@@ -54,7 +53,6 @@ exports.deleteState = async(stateID) => {
         });
         // mazani stavu
         await StateModel.findByIdAndDelete(stateID)
-
         app.io.emit('delete state', stateID);
     } catch (err) {
         app.io.emit("error state", 0);

@@ -11,7 +11,6 @@ function init(states, activities, projectT, translations, graphSettings) {
     _activitiesData = activities;
     projectType = projectT;
     _translationsData = translations;
-
     /**
      * Překlad
      * translationsData
@@ -38,33 +37,21 @@ function init(states, activities, projectT, translations, graphSettings) {
      * [20]-- Weeks, Týdny
      * [21]-- Months, Měsíce
      */
-
-    // pridat do prekladu
-    // name, type, values, time unit
-
-    console.log(_translationsData)
-
     if (graphSettings) {
         graphSettingsData = graphSettings.replace(/&quot;/g, '"');
         graphSettingsData = JSON.parse(graphSettingsData);
     }
-
-
     graphInit(graphSettingsData);
-
     document.getElementById("exportButton").addEventListener("click", exportDiagram);
 }
 
 function graphInit(graphSettingsData) {
-
     //init grafu
     var $ = go.GraphObject.make;
-
     var edgeFill, nodeFill;
     var pink = "#B71C1C";
     var pinkFill = "#F8BBD0";
     var grayFill = "#D3D3D3";
-
     // nastaveni barev
     if (graphSettingsData.length == 0) {
         nodeFill = "#B3E5FC";
@@ -73,14 +60,11 @@ function graphInit(graphSettingsData) {
         nodeFill = graphSettingsData[0];
         edgeFill = graphSettingsData[1];
     }
-
-
     myDiagram =
         $(go.Diagram, "myDiagramDiv", {
             initialAutoScale: go.Diagram.Uniform,
-            layout: $(go.LayeredDigraphLayout)
+            layout: $(go.LayeredDigraphLayout, {layerSpacing: 200}),
         });
-
     // node Template
     myDiagram.nodeTemplate =
         $(go.Node, "Auto",
@@ -161,7 +145,7 @@ function graphInit(graphSettingsData) {
             $(go.Shape, { strokeWidth: 4 },
                 new go.Binding("stroke", "color", function(c) { return linkColors[c] || "blue"; }),
                 new go.Binding("strokeDashArray", "dash")),
-            $(go.TextBlock, { segmentOffset: new go.Point(0, -20) },
+            $(go.TextBlock, { segmentOffset: new go.Point(0, -7), segmentOrientation: go.Link.OrientUpright },
                 new go.Binding("text", "text")),
 
             $(go.Shape, // arrowhead
@@ -176,7 +160,7 @@ function graphInit(graphSettingsData) {
                 )
             }, {
                 toolTip: $("ToolTip",
-                    $(go.TextBlock, { margin: 4 },
+                    $(go.TextBlock, { margin: 10 },
                         new go.Binding("text", "tooltip")))
             }
         );
@@ -265,6 +249,7 @@ function getLinkDataArray(activities) {
         if (activitiesData[i].activityType == "normal") {
             // parseLinkTextData(activitiesData[i].values)
             linkDataArray.push({
+                "id": activitiesData[i].ID,
                 "from": activitiesData[i].fromState,
                 "to": activitiesData[i].toState,
                 "text": parseLinkTextData(activitiesData[i].values),
@@ -273,6 +258,7 @@ function getLinkDataArray(activities) {
             })
         } else if (activitiesData[i].activityType == "dummy") {
             linkDataArray.push({
+                "id": activitiesData[i].ID,
                 "from": activitiesData[i].fromState,
                 "to": activitiesData[i].toState,
                 "text": parseLinkTextData(activitiesData[i].values),
@@ -401,20 +387,12 @@ function editActivity(e, obj) {
     // TO DO
     var selectedLink = obj.part;
     var linkData = selectedLink.data;
-
     var activities = _activitiesData.activities;
-    var activity = activities.find(element => element.fromState == linkData.from && element.toState == linkData.to);
+    var activity = activities.find(element => element.ID == linkData.id);
     var activityValues = activity.values;
-
-    console.log("Aktivita k uprave")
-    console.log(activity)
-    console.log("///ENDE")
-
 
 
     document.getElementById('editActivityForm').setAttribute('name', activity.ID);
-
-
     document.getElementById('editedActivityName').value = activity.activityName;
     document.getElementById('editedActivityType').value = activity.activityType;
     document.getElementById('editedActivityDescription').value = activity.description;
@@ -445,15 +423,8 @@ function editActivity(e, obj) {
 function deleteActivity(e, obj) {
     var selectedLink = obj.part;
     var linkData = selectedLink.data;
-
     var activities = _activitiesData.activities;
-    var activity = activities.find(element => element.fromState == linkData.from && element.toState == linkData.to);
-    console.log("Nalezena aktivita")
-
-    console.log(activity)
-
-    console.log("ENDE")
-
+    var activity = activities.find(element => element.ID == linkData.id);
     document.getElementById('deleteActivityForm').setAttribute('name', activity.ID)
     $('#deleteActivityModal').modal('show');
 }

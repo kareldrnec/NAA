@@ -5,10 +5,11 @@
 //
 function generateProject(statesCount) {
     var dataJSON = {};
-
-
     // generovani stavu
-    var states = generateStates(statesCount);
+    const states = generateStates(statesCount);
+
+    var activities = [];
+
 
     dataJSON.states = states;
     console.log("DATA JSON")
