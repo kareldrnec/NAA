@@ -10,6 +10,7 @@ function generateProject(statesCount) {
 
     var activities = [];
 
+    //TODO PATEK
 
     dataJSON.states = states;
     console.log("DATA JSON")

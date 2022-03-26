@@ -233,12 +233,10 @@ function getLinkDataArray(activities) {
     var nodeColor;
     var currentProject = sessionStorage.getItem("currentProject");
     var calculatedProject = sessionStorage.getItem("calculatedProject");
-
     var resActivities = JSON.parse(sessionStorage.getItem("activities"))
     if (resActivities && currentProject == calculatedProject) {
         activitiesData = resActivities;
     }
-
     for (var i = 0; i < activitiesData.length; i++) {
         if (activitiesData[i].critical) {
             nodeColor = "R"
@@ -316,7 +314,6 @@ function parseLinkTextTooltip(activityName, activityType, valuesArr, timeUnit, l
             result += _translationsData[21];
             break;
     } 
-
     // Dodelat s preklady a jestli je critical nebo ne
     return result;
 }
@@ -356,15 +353,23 @@ function deleteState(e, obj) {
 //
 // TODO
 function addActivity(e, obj) {
+    // TODO
     var selectedNode = obj.part;
 
+    console.log("Selected Node")
+    console.log(selectedNode.data)
+    console.log("ENDE")
+    // add Selected State 
     selectedStates.push(selectedNode.data)
 
     if (selectedStates.length == 2) {
 
         // TODO jestli mohu takhle spojit
-
+        if (selectedStates[0].text == "Start") {
+            console.log("Prvni je start")
+        }
         $('#addActivityForm').attr('action', selectedStates[0].key + "&" + selectedStates[1].key);
+        document.getElementById('addActError').style.display = "none";
         selectedStates = [];
         $('#addActivityModal').modal('show');
     }
@@ -414,7 +419,7 @@ function editActivity(e, obj) {
     }
 
     document.getElementById('editedTimeUnit').value = activity.timeUnit;
-
+    document.getElementById('editError').style.display = "none";
 
     $('#editActivityModal').modal('show');
     // asi hotovo

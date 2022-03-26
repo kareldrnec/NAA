@@ -15,24 +15,21 @@ exports.addActivity = async(activityName, activityType, fromState, toState, time
             description: description,
             projectID: projectID
         })
-        // ukladam aktivitu
         await activity.save();
         app.io.emit('new activity', activity);
     } catch (err) {
-        app.io.emit('error activity');
+        if (err.code == 11000) {
+            app.io.emit('error activity', 1, 'add');
+        } else {
+            app.io.emit('error activity', 0, 'add');
+        }
     }
 }
 
 // TODO
-
 // ceknout zda mohu zmenit aktivitu na dummy nebo ne, pripadne vyvolat error!!!
 exports.editActivity = async(activityID, activityName, activityType, activityDescription, editedTimeUnit, activityValues) => {
     try {
-        console.log("Edituju")
-
-        console.log(editedTimeUnit)
-
-        console.log("/////")
         await ActivityModel.findByIdAndUpdate(activityID, {
             activityName: activityName,
             activityType: activityType,
@@ -40,10 +37,13 @@ exports.editActivity = async(activityID, activityName, activityType, activityDes
             timeUnit: editedTimeUnit,
             values: activityValues
         });
-        console.log("Editovano")
         app.io.emit('edit activity', activityID, activityName, activityType, activityDescription, editedTimeUnit, activityValues);
     } catch (err) {
-        app.io.emit('error activity');
+        if(err.code == 11000) {
+            app.io.emit('error activity', 1, 'edit');
+        } else {
+            app.io.emit('error activity', 0, 'edit');
+        }
     }
 }
 
@@ -53,6 +53,6 @@ exports.deleteActivity = async(activityID) => {
         await ActivityModel.findByIdAndDelete(activityID);
         app.io.emit('delete activity', activityID);
     } catch (err) {
-        app.io.emit('error activity');
+        app.io.emit('error activity', 0, 'delete');
     }
 }

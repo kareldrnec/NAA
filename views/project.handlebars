@@ -85,7 +85,7 @@
             <form method="post" action="/projects/delete/{{projectID}}/?_method=DELETE">
                 <div class="modal-body">
                     <div class="text-center">
-                        {{__ "delete project"}}
+                        {{__ "delete project"}}?
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -179,6 +179,12 @@
                         <label for="stateInfo">{{__ "information"}}</label>
                         <input type="text" class="form-control" id="stateInfoInput" name="stateInfoInput">
                     </div>
+                    <div style="background-color: #ffb8b8; display: none" id="addStateError">
+                        <button type="button" class="close" onclick="closeAddStateError()" style="margin-right: 5px;">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        <div id="addStateErrMsg" style="margin-left: 5px;"></div>
+                    </div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">{{__ "close"}}</button>
@@ -209,6 +215,12 @@
                     <div class="form-group">
                         <label for="editStateInfo">{{__ "information"}}</label>
                         <input type="text" class="form-control" id="editStateInfo" name="editStateInfo">
+                    </div>
+                    <div style="background-color: #ffb8b8; display: none" id="editStateError">
+                        <button type="button" class="close" onclick="closeEditStateError()" style="margin-right: 5px;">
+                            <span aria-hidden="true">&times;</span>
+                        </button>
+                        <div id="editStateErrMsg" style="margin-left: 5px;"></div>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -313,6 +325,12 @@
                                 <option value="months">{{__ "months"}}</option>
                             </select>
                         </div>
+                        <div style="background-color: #ffb8b8; display: none;" id="addActError">
+                            <button type="button" class="close" onclick="closeAddActivityError()" style="margin-right: 5px;">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                            <div id="addActErrMsg" style="margin-left: 5px;"></div>
+                        </div>
                     </div>
                 </div>
                 <div class="modal-footer">
@@ -392,6 +410,12 @@
                                 <option value="weeks">{{__ "weeks"}}</option>
                                 <option value="months">{{__ "months"}}</option>
                             </select>
+                        </div>
+                        <div style="background-color: #ffb8b8; display: none;" id="editError">
+                            <button type="button" class="close" onclick="closeEditActivityError()" style="margin-right: 5px;">
+                                <span aria-hidden="true">&times;</span>
+                            </button>
+                            <div id="editErrMsg" style="margin-left: 5px;"></div>
                         </div>
                     </div>
                 </div>
@@ -496,7 +520,7 @@
     document.getElementById("saveButton").addEventListener("click", function(event) {
         event.preventDefault();
         //const
-        const filename = document.getElementById('nameOfSavedFile').value;
+        var filename = document.getElementById('nameOfSavedFile').value;
         var jsonFile = {};
         var statesJSON = [];
         var activitiesJSON = [];
@@ -531,9 +555,8 @@
         jsonFile.project = projectJSON;
         jsonFile.states = statesJSON;
         jsonFile.activities = activitiesJSON;
-
+        // check filename
         if(!filename) filename = project.projectName;
-
         // download file
         var a = document.createElement("a");
         a.href = URL.createObjectURL(
@@ -544,7 +567,6 @@
         // delete value of nameOfSavedFile element and close modal
         document.getElementById('nameOfSavedFile').value = '';
         $('#saveProjectModal').modal('toggle');
-        
     });
 
 
@@ -559,31 +581,66 @@
     // addStateForm - submit - add state
     document.getElementById('addStateForm').addEventListener('submit', function(event) {
         event.preventDefault();
-        var stateName = document.getElementById('stateNameInput');
-        var stateInfo = document.getElementById('stateInfoInput');
-        
+        var stateName = document.getElementById('stateNameInput'),
+            stateInfo = document.getElementById('stateInfoInput');
         socket.emit("new state", stateName.value, "{{projectID}}", stateInfo.value); 
+    });
 
-        stateName.value = '';
-        stateInfo.value = '';
-
+    // add state to diagram
+    socket.on('new state', function(state) {
+        // idk jestli osetrit aby nechodilo vsem
+        addCreatedState(state);
+        document.getElementById('stateNameInput').value = '';
+        document.getElementById('stateInfoInput').value = '';
         $('#addStateModal').modal('toggle');
     });
+
 
     // editStateForm - submit - edit state
     document.getElementById('editStateForm').addEventListener('submit', function(event) {
         event.preventDefault();
-        var stateName = document.getElementById('editStateName');
-        var stateInfo = document.getElementById('editStateInfo');
-        var stateID = this.getAttribute("name");
-
+        var stateName = document.getElementById('editStateName'),
+            stateInfo = document.getElementById('editStateInfo'),
+            stateID = this.getAttribute("name");
         socket.emit("edit state", stateID, stateName.value, stateInfo.value, "{{projectID}}");
+    });
 
-        stateName.value = '';
-        stateInfo.value = '';
-
+    // edit state in diagram
+    socket.on('edit state', function(stateID, stateName, stateInfo, projectID) {
+        //edit
+        editSelectedState(stateID, projectID, stateName, stateInfo);
+        document.getElementById('editStateName').value = '';
+        document.getElementById('editStateInfo').value = '';
         $('#editStateModal').modal('toggle');
     });
+    
+    socket.on('error state', function(errCode, element) {
+        var stateName;
+        var err = "{{__ "error"}}!";
+        if (element == 'add') {
+            stateName = document.getElementById('stateNameInput');
+            if (errCode == 1) {
+                err += "<br> {{__ "state already exists"}}";
+            }
+            stateName.style.background = "#ffb8b8";
+            setTimeout(function() {
+                stateName.style.background = "white";
+            }, 3000);
+            document.getElementById('addStateErrMsg').innerHTML = err;
+            document.getElementById('addStateError').style.display = 'block';
+        } else if (element = 'edit') {
+            stateName = document.getElementById('editStateName');
+            if (errCode == 1) {
+                err += "<br> {{__ "state already exists"}}";
+            }
+            stateName.style.background = "#ffb8b8";
+            setTimeout(function() {
+                stateName.style.background = "white";
+            }, 3000);
+            document.getElementById('editStateErrMsg').innerHTML = err;
+            document.getElementById('editStateError').style.display = 'block';
+        }
+    })
 
     // deleteStateForm - submit - delete state
     document.getElementById('deleteStateForm').addEventListener('submit', function(event) {
@@ -648,8 +705,8 @@
             activityTimeUnit = document.getElementById('activityTimeUnit'),
             valuesArr = [], 
             length, optimisticValue, mostExpectedValue, pessimisticValue,
-            formAction = ($('#addActivityForm').attr('action')).split('&');
-        
+            formAction = ($('#addActivityForm').attr('action')).split('&'),
+            err = "{{__ "error"}}! <br>"; 
         var a, m, b;
 
         if ("{{projectType}}" == "cpm") {
@@ -666,6 +723,7 @@
 
             if(m < a) {
                 valid = false;
+                err += "{{__ "mostExpectedValue err"}} <br>";
                 mostExpectedValue.style.background = "#ffb8b8";
                 setTimeout(function() {
                     mostExpectedValue.style.background = "white";
@@ -674,6 +732,7 @@
 
             if(b < m) {
                 valid = false;
+                err += "{{__ "pessimisticValue err"}} <br>";
                 pessimisticValue.style.background = "#ffb8b8";
                 setTimeout(function() {
                     pessimisticValue.style.background = "white";
@@ -681,7 +740,6 @@
             }
             valuesArr.push(optimisticValue.value, mostExpectedValue.value, pessimisticValue.value);       
         }
-
         if(valid){
             if("{{projectType}}" == "cpm") {
                 length.value = 0;
@@ -691,18 +749,25 @@
                 pessimisticValue.value = 0;
             }
             socket.emit("new activity", activityName.value, activityType.value, formAction[0], formAction[1], activityTimeUnit.value, valuesArr, activityDescription.value, "{{projectID}}");
-            
-            activityName.value = '';
-            activityDescription.value = '';
-            
-            $('#addActivityModal').modal('toggle');
+        } else {
+            document.getElementById('addActErrMsg').innerHTML = err;
+            document.getElementById('addActError').style.display = "block";
         }
     });
+
+    // TODO - activity pres socket.io
+    // add activity to diagram
+    socket.on('new activity', function(activity) {
+        addCreatedActivity(activity);
+        activityName.value = '';
+        activityDescription.value = '';
+        $('#addActivityModal').modal('toggle');
+    })
+
 
     document.getElementById('editActivityForm').addEventListener('submit', function(event) {
         // TODO
         event.preventDefault();
-
         var activityID = this.getAttribute("name");
         var activityName = document.getElementById('editedActivityName').value;
         var editedActivityType = document.getElementById('editedActivityType').value;
@@ -711,6 +776,7 @@
         var editedActivityOptimistic, editedActivityMost, editedActivityPessimistic, a, m, b;
         var valid = true;
         var activityValues = [];
+        var err = "{{__ "error"}}! <br>";
 
         if("{{projectType}}" == "cpm" && editedActivityType == "dummy") {
             activityValues.push('0');
@@ -730,6 +796,7 @@
 
             if(m < a) {
                 valid = false;
+                err += "{{__ "mostExpectedValue err"}} <br>";
                 editedActivityMost.style.background = "#ffb8b8";
                 setTimeout(function() {
                     editedActivityMost.style.background = "white";
@@ -738,6 +805,7 @@
 
             if(b < m) {
                 valid = false;
+                err += "{{__ "pessimisticValue err"}} <br>";
                 editedActivityPessimistic.style.background = "#ffb8b8";
                 setTimeout(function() {
                     editedActivityPessimistic.style.background = "white";
@@ -750,13 +818,55 @@
         }
 
         if(valid) {
-            socket.emit("edit activity", activityID, activityName, editedActivityType, editedActivityDescription.value, editedTimeUnit.value, activityValues);
-            editedActivityDescription.value = '';
-            $('#editActivityModal').modal('toggle');        
+            socket.emit("edit activity", activityID, activityName, editedActivityType, editedActivityDescription.value, editedTimeUnit.value, activityValues);       
+        } else {
+            document.getElementById('editErrMsg').innerHTML = err;
+            document.getElementById('editError').style.display = "block";
         }
-    
+    });
+    // edit activity in diagram
+    socket.on('edit activity', function(activityID, activityName, activityType, activityDescription, timeUnit, activityValues) {
+        // TODO 
+
+        editSelectedActivity(activityID, activityName, activityType, activityDescription, timeUnit, activityValues);
+
+        document.getElementById('editedActivityDescription').value = '';
+        
+        $('#editActivityModal').modal('toggle'); 
     });
 
+    socket.on('error activity', function(errCode, element) {
+        var err = "{{__ "error"}}!";
+        var activityName;
+
+        console.log("ERR CODE")
+        console.log(errCode)
+        console.log("END")
+
+        if (element == "add") {
+            activityName = document.getElementById('activityNameInput');
+            if(errCode == 1) {
+                err += "<br> {{__ "activity exists"}}";
+            }
+            document.getElementById('addActErrMsg').innerHTML = err;
+            document.getElementById('addActError').style.display = 'block';
+            activityName.style.background = "#ffb8b8";
+            setTimeout(function() {
+                activityName.style.background = "white";
+            }, 3000);
+        } else if (element == "edit") {
+            activityName = document.getElementById('editedActivityName');
+            if(errCode == 1) {
+                err += "<br> {{__ "activity exists"}}";
+            }
+            document.getElementById('editErrMsg').innerHTML = err;
+            document.getElementById('editError').style.display = 'block';
+            activityName.style.background = "#ffb8b8";
+            setTimeout(function() {
+                activityName.style.background = "white";
+            }, 3000);
+        }
+    });
 
     // mozna doplnit echa o uspesnem smazani atak...
     document.getElementById('deleteActivityForm').addEventListener('submit', function(event){
@@ -768,52 +878,11 @@
         $("#deleteActivityModal").modal('toggle'); 
     });
 
-    // add state to diagram
-    socket.on('new state', function(state) {
-        // idk jestli osetrit aby nechodilo vsem
-
-        addCreatedState(state);
-    });
-
-    // edit state in diagram
-    socket.on('edit state', function(stateID, stateName, stateInfo, projectID) {
-        //edit
-        editSelectedState(stateID, projectID, stateName, stateInfo);
-    });
-
     // delete state from diagram
     socket.on('delete state', function(stateID) {
         deleteSelectedState(stateID);
     });
 
-    socket.on('error state', function(errCode) {
-        if(errCode == 11000) {
-            alert("{{__ "state already exists"}}");
-        } else {
-            alert("{{__ "error"}}" + "!");
-        }
-    })
-
-    // TODO - activity pres socket.io
-    // add activity to diagram
-    socket.on('new activity', function(activity) {
-        addCreatedActivity(activity);
-    })
-
-    // edit activity in diagram
-    socket.on('edit activity', function(activityID, activityName, activityType, activityDescription, timeUnit, activityValues) {
-
-        // TODO 
-        //editSelectedActivity
-        // Dodelat tohle
-        // dodelat tooltip pro cinnosti + zobrazeni dummy aktivity
-        // zeptat se na dummy aktivitu z obou stran, jak upravit?
-        // udelat generator .. 
-        console.log("Budu editovat")
-
-        editSelectedActivity(activityID, activityName, activityType, activityDescription, timeUnit, activityValues)
-
-    })
 
     // delete activity from diagram
     socket.on('delete activity', function(activity) {
@@ -836,6 +905,22 @@
         let valid = true;
 
         return valid;
+    }
+
+    function closeAddActivityError() {
+        document.getElementById('addActError').style.display = 'none';
+    }
+
+    function closeEditActivityError() {
+        document.getElementById('editError').style.display = 'none';
+    }
+
+    function closeAddStateError() {
+        document.getElementById('addStateError').style.display = 'none';
+    } 
+
+    function closeEditStateError() {
+        document.getElementById('editStateError').style.display = 'none';
     }
 </script>
 
