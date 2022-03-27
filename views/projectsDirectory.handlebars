@@ -190,26 +190,18 @@
     var generateButton = document.getElementById('generateButton');
 
     generateButton.addEventListener('click', function(){
-        //
-        // TODO
-        //
-        //
-        const projectName = document.getElementById('projectName');
+        const projectName = document.getElementById('projectName'),
             analysisType = document.getElementById('typeOfProject'),
             numberOfStates = document.getElementById('numberOfStates');
         var hiddenInfo = document.getElementById('hiddenInfo'),
             projectInfo = document.getElementById('generatedProjectInfo');
 
-
         var submitButton = document.getElementById('submitGeneratedProject');
-
         //Generating
         var dataJSON = generateProject(numberOfStates.value, analysisType.value);
+        var numberOfActivities = (dataJSON.activities).length;
 
-
-        // pridani generovaneho projektu do neviditelneho elementu formulare
         document.getElementById('generatedProjectJSON').value = JSON.stringify(dataJSON);
-
         // display info
         projectInfo.innerHTML = "<h6>{{__ "generated project"}}</h6>";
         if (projectName.value == '') {
@@ -219,18 +211,13 @@
         }
         projectInfo.innerHTML += "{{__ "analysis type"}}: " + (analysisType.value).toUpperCase() + "<br>";
         projectInfo.innerHTML += "{{__ "number of states"}}: " + numberOfStates.value + "<br>";
-        projectInfo.innerHTML += "{{__ "number of activities"}}: "; // Doplnit pocet aktivit z generatoru
+        projectInfo.innerHTML += "{{__ "number of activities"}}: " + numberOfActivities;
 
         hiddenInfo.style.display = 'block';
-        //
 
-        // display add button of form
         submitButton.disabled = false;
         submitButton.title = "{{__ "add generated project"}}"
-        
-    })
-
-
+    });
 
     // pripadne doresit osetreni proti chybam (nahrani projektu ze souboru)
     let loadForm = document.getElementById('loadFileForm');
@@ -261,5 +248,4 @@
         $('#deleteProjectForm').attr("action", "/projects/delete/" + projectID + "/?_method=DELETE");
         $('#deleteProjectModal').modal('show');
     }
-
 </script>

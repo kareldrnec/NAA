@@ -1,3 +1,32 @@
+function checkDiagram(states, activities) {
+    var fromActivity, toActivity;
+    var errState = "";
+    for (var i = 0; i < states.length; i++) {
+        if (states[i].stateName == 'Start') {
+            fromActivity = activities.find(element => element.fromState == states[i].ID);
+            if (!fromActivity) {
+                errState = states[i].stateName;
+                break;
+            }
+        } else if (states[i].stateName == 'Finish') {
+            toActivity = activities.find(element => element.toState == states[i].ID);
+            if (!toActivity) {
+                errState = states[i].stateName;
+                break;
+            }
+        } else {
+            fromActivity = activities.find(element => element.fromState == states[i].ID);
+            toActivity = activities.find(element => element.toState == states[i].ID);
+            if (!(fromActivity && toActivity)) {
+                errState = states[i].stateName;
+                break;
+            }
+        }
+    }
+    return errState;
+}
+
+
 function calculate(states, activities, currentProject) {
     var calculatedActivities;
     var calculatedStates = arrStates(states);

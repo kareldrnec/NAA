@@ -324,37 +324,46 @@ exports.generateProject = async (req, res, next) => {
             projectType = req.body.type,
             projectDescription = req.body.projectInfo,
             generatedProject = JSON.parse(req.body.generatedProjectJSON),
-            generatedStates = generatedProject.states;
+            generatedStates = generatedProject.states,
+            generatedActivities = generatedProject.activities;
 
         var states = [];
         var activities = [];
+        var fromState, toState;
 
-        console.log("generovany projekt")
-        console.log(generatedProject);
-        console.log("Ende")
-
-        // generatedProjectJSON
+        // Project
         let project = new ProjectModel({
             projectName: projectName,
             projectType: projectType,
             projectInfo: projectDescription,
             userId: req.session.userId
         });
-        // ulozeni generovanych stavu
+        // States
         for (var i = 0; i < generatedStates.length; i++) {
             states.push(new StateModel({
                 stateName: generatedStates[i].name,
                 projectID: project._id
             }))
         }
-        // for pro
-
-        // ulozeni do databaze
+        // Activities
+        for (var i = 0; i < generatedActivities.length; i++) {
+            fromState = states.find(element => element.stateName == generatedActivities[i].fromState);
+            toState = states.find(element => element.stateName == generatedActivities[i].toState);
+            activities.push(new ActivityModel({
+                activityName: generatedActivities[i].name,
+                activityType: generatedActivities[i].type,
+                fromState: fromState._id,
+                toState: toState._id,
+                timeUnit: generatedActivities[i].timeUnit,
+                values: generatedActivities[i].values,
+                projectID: project._id
+            }));
+        }
+        // Save to MongoDB...
         await project.save();
         await StateModel.insertMany(states);
-        // TODO
-        // ulozeni aktivity
-        // await ActivityModel.insertMany(activities);
+        await ActivityModel.insertMany(activities);
+       
         req.session.flash = { type: 'success', text: req.__("project") + " " + project.projectName + req.__("project generated") };
         return res.redirect('/projects/projectsDirectory');
     } catch (err) {

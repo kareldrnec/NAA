@@ -8,7 +8,7 @@ exports.addActivity = async(activityName, activityType, fromState, toState, time
     try {
         var state = await StateModel.findById(fromState);
         if (state.stateName == "Start" && activityType == "dummy") {
-            throw new Error("dummyErr");
+            throw new Error("dummyErr1");
         }
         var activity = new ActivityModel({
             activityName: activityName,
@@ -26,7 +26,7 @@ exports.addActivity = async(activityName, activityType, fromState, toState, time
         if (err.code == 11000) {
             app.io.emit('error activity', 1, 'add');
         } else {
-            if (err.message == "dummyErr") {
+            if (err.message == "dummyErr1") {
                 app.io.emit('error activity', 2, 'add');
             } else {
                 app.io.emit('error activity', 0, 'add');
@@ -42,7 +42,7 @@ exports.editActivity = async(activityID, activityName, activityType, activityDes
         var activity = await ActivityModel.findById(activityID);
         var state = await StateModel.findById(activity.fromState);
         if (state.stateName == "Start" && activityType == "dummy") {
-            throw new Error("dummyErr");
+            throw new Error("dummyErr1");
         }
         await ActivityModel.findByIdAndUpdate(activityID, {
             activityName: activityName,
@@ -56,7 +56,7 @@ exports.editActivity = async(activityID, activityName, activityType, activityDes
         if (err.code == 11000) {
             app.io.emit('error activity', 1, 'edit');
         } else {
-            if (err.message == "dummyErr") {
+            if (err.message == "dummyErr1") {
                 app.io.emit('error activity', 2, 'edit');
             } else {
                 app.io.emit('error activity', 0, 'edit');

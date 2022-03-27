@@ -9,6 +9,9 @@
 
 <div id="myDiagramDiv" style="width: 99%; height: 50vw;"></div>
 
+<!-- 50vw -->
+
+
 <!-- Modal Export -->
 <div class="modal fade" id="exportProjectModal" tabindex="-1" role="dialog" aria-labelledby="exportProjectModalLabel"
     aria-hidden="true">
@@ -134,7 +137,10 @@
                                 </div>
                             </div>
                         </div>
-                        <div id="secondRow">
+                        <div class="text-center" style="margin-top: 5px;">
+                            <button type="button" class="btn btn-secondary" onclick="showSecondRow()" id="addRow"><i class="fas fa-plus-square"></i></button>
+                        </div> 
+                        <div id="secondRow" style="display: none;">
                             <div class="row g-2">
                                 <div class="col-sm">
                                 </div> 
@@ -146,11 +152,20 @@
                                 </div>
                             </div>
                         </div>
+                        <div class="text-center" style="margin-top: 5px;">
+                            <button type="button" class="btn btn-secondary" style="display: none;" onclick="hideSecondRow()" id="removeRow"><i class="fas fa-minus-square"></i></button>
+                        </div>
                     {{/ifEquals}}
                 </div>
+                <div style="background-color: #ffb8b8; display: none;" id="calculationErrDiv">
+                    <button type="button" class="close" onclick="closeErrDiv('calculationErrDiv')" style="margin-right: 5px">
+                        <span aria-hidden="true">&times;</span>
+                    </button>
+                    <div id="calculationErrMsg" style="margin-left: 5px;"></div>
+                </div> 
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">{{__ "close"}}</button>
-                    <input type="submit" value="{{__ "run"}}" id="calculationSubmit" name="calculationSubmit" class="btn btn-primary">
+                    <input type="button" value="{{__ "run"}}" id="calculationSubmit" name="calculationSubmit" class="btn btn-primary">
                 </div>
             </form>
         </div>
@@ -179,8 +194,8 @@
                         <label for="stateInfo">{{__ "information"}}</label>
                         <input type="text" class="form-control" id="stateInfoInput" name="stateInfoInput">
                     </div>
-                    <div style="background-color: #ffb8b8; display: none" id="addStateError">
-                        <button type="button" class="close" onclick="closeAddStateError()" style="margin-right: 5px;">
+                    <div style="background-color: #ffb8b8; display: none;" id="addStateError">
+                        <button type="button" class="close" onclick="closeErrDiv('addStateError')" style="margin-right: 5px;">
                             <span aria-hidden="true">&times;</span>
                         </button>
                         <div id="addStateErrMsg" style="margin-left: 5px;"></div>
@@ -217,7 +232,7 @@
                         <input type="text" class="form-control" id="editStateInfo" name="editStateInfo">
                     </div>
                     <div style="background-color: #ffb8b8; display: none" id="editStateError">
-                        <button type="button" class="close" onclick="closeEditStateError()" style="margin-right: 5px;">
+                        <button type="button" class="close" onclick="closeErrDiv('editStateError')" style="margin-right: 5px;">
                             <span aria-hidden="true">&times;</span>
                         </button>
                         <div id="editStateErrMsg" style="margin-left: 5px;"></div>
@@ -326,7 +341,7 @@
                             </select>
                         </div>
                         <div style="background-color: #ffb8b8; display: none;" id="addActError">
-                            <button type="button" class="close" onclick="closeAddActivityError()" style="margin-right: 5px;">
+                            <button type="button" class="close" onclick="closeErrDiv('addActError')" style="margin-right: 5px;">
                                 <span aria-hidden="true">&times;</span>
                             </button>
                             <div id="addActErrMsg" style="margin-left: 5px;"></div>
@@ -412,7 +427,7 @@
                             </select>
                         </div>
                         <div style="background-color: #ffb8b8; display: none;" id="editError">
-                            <button type="button" class="close" onclick="closeEditActivityError()" style="margin-right: 5px;">
+                            <button type="button" class="close" onclick="closeErrDiv('editError')" style="margin-right: 5px;">
                                 <span aria-hidden="true">&times;</span>
                             </button>
                             <div id="editErrMsg" style="margin-left: 5px;"></div>
@@ -570,11 +585,21 @@
     });
 
 
-    document.getElementById('calculationForm').addEventListener('submit', function() {
-        // TODO 
-        calculate(states.states, activities.activities, "{{projectID}}");
-
+    document.getElementById('calculationSubmit').addEventListener('click', function() {
+        var errState = checkDiagram(states.states, activities.activities);
+        if(errState != "") {
+            var calculationErrDiv = document.getElementById('calculationErrDiv');
+            var calculationErrMsg = document.getElementById('calculationErrMsg');
+            calculationErrMsg.innerHTML = "{{__ "error"}}!<br>";
+            calculationErrMsg.innerHTML += "{{__ "check state"}} &#8216;" + errState + "&#8216;!";
+            calculationErrDiv.style.display = 'block';
+        }
     });
+
+
+
+    // zkontrolovat, zda funguje zavirani erroru u ostatnich elementu
+
 
     var socket = io();
 
@@ -708,11 +733,10 @@
             activityType = document.getElementById('activityTypeSelect'),
             activityDescription = document.getElementById('activityDescription'),
             activityTimeUnit = document.getElementById('activityTimeUnit'),
-            valuesArr = [], 
-            length, optimisticValue, mostExpectedValue, pessimisticValue,
+            valuesArr = []; 
             formAction = ($('#addActivityForm').attr('action')).split('&'),
             err = "{{__ "error"}}! <br>"; 
-        var a, m, b;
+        var length, optimisticValue, mostExpectedValue, pessimisticValue, a, m, b;
 
         if ("{{projectType}}" == "cpm") {
             length = document.getElementById("lengthOfActivity");
@@ -919,20 +943,20 @@
     }
     // END TODO?
 
-    function closeAddActivityError() {
-        document.getElementById('addActError').style.display = 'none';
+    function closeErrDiv(divName) {
+        document.getElementById(divName).style.display = 'none';
     }
 
-    function closeEditActivityError() {
-        document.getElementById('editError').style.display = 'none';
+    function showSecondRow() {
+        document.getElementById('secondRow').style.display = 'inline';
+        document.getElementById('addRow').style.display = 'none';
+        document.getElementById('removeRow').style.display = 'inline';
     }
 
-    function closeAddStateError() {
-        document.getElementById('addStateError').style.display = 'none';
-    } 
-
-    function closeEditStateError() {
-        document.getElementById('editStateError').style.display = 'none';
+    function hideSecondRow() {
+        document.getElementById('secondRow').style.display = 'none';
+        document.getElementById('addRow').style.display = 'inline';
+        document.getElementById('removeRow').style.display = 'none';
     }
 </script>
 
