@@ -640,7 +640,7 @@
             document.getElementById('editStateErrMsg').innerHTML = err;
             document.getElementById('editStateError').style.display = 'block';
         }
-    })
+    });
 
     // deleteStateForm - submit - delete state
     document.getElementById('deleteStateForm').addEventListener('submit', function(event) {
@@ -650,6 +650,11 @@
         socket.emit("delete state", stateID);
 
         $('#deleteStateModal').modal('toggle');
+    });
+
+    // delete state from diagram
+    socket.on('delete state', function(stateID) {
+        deleteSelectedState(stateID);
     });
 
     // activityTypeSelect - onchange display/hide values of activity
@@ -837,34 +842,43 @@
 
     socket.on('error activity', function(errCode, element) {
         var err = "{{__ "error"}}!";
-        var activityName;
-
-        console.log("ERR CODE")
-        console.log(errCode)
-        console.log("END")
-
+        var activityName, activityType;
         if (element == "add") {
-            activityName = document.getElementById('activityNameInput');
-            if(errCode == 1) {
+            if (errCode == 1) {
                 err += "<br> {{__ "activity exists"}}";
+                activityName = document.getElementById('activityNameInput');
+                activityName.style.background = "#ffb8b8";
+                setTimeout(function() {
+                    activityName.style.background = "white";
+                }, 3000);
+            } else if (errCode == 2) {
+                err += "<br> {{__ "cannot be dummy"}}";
+                activityType = document.getElementById('activityTypeSelect');
+                activityType.style.background = "#ffb8b8";
+                setTimeout(function() {
+                    activityType.style.background = "white";
+                }, 3000);
             }
             document.getElementById('addActErrMsg').innerHTML = err;
             document.getElementById('addActError').style.display = 'block';
-            activityName.style.background = "#ffb8b8";
-            setTimeout(function() {
-                activityName.style.background = "white";
-            }, 3000);
         } else if (element == "edit") {
-            activityName = document.getElementById('editedActivityName');
-            if(errCode == 1) {
+            if (errCode == 1) {
                 err += "<br> {{__ "activity exists"}}";
+                activityName = document.getElementById('editedActivityName');
+                activityName.style.background = "#ffb8b8";
+                setTimeout(function() {
+                    activityName.style.background = "white";
+                }, 3000);
+            } else if (errCode == 2) {
+                err += "<br> {{__ "cannot be dummy"}}";
+                activityType = document.getElementById('editedActivityType');
+                activityType.style.background = "#ffb8b8";
+                setTimeout(function() {
+                    activityType.style.background = "white";
+                }, 3000);
             }
             document.getElementById('editErrMsg').innerHTML = err;
             document.getElementById('editError').style.display = 'block';
-            activityName.style.background = "#ffb8b8";
-            setTimeout(function() {
-                activityName.style.background = "white";
-            }, 3000);
         }
     });
 
@@ -872,23 +886,20 @@
     document.getElementById('deleteActivityForm').addEventListener('submit', function(event){
         event.preventDefault();
         var activityID = this.getAttribute("name");
-
         socket.emit("delete activity", activityID);
-
         $("#deleteActivityModal").modal('toggle'); 
     });
-
-    // delete state from diagram
-    socket.on('delete state', function(stateID) {
-        deleteSelectedState(stateID);
-    });
-
 
     // delete activity from diagram
     socket.on('delete activity', function(activity) {
         deleteSelectedActivity(activity);
     })
 
+
+
+
+
+    // TODO
     function canAddActivity(e) {
         let valid = true;
         console.log("Kontroluji form...")
@@ -906,6 +917,7 @@
 
         return valid;
     }
+    // END TODO?
 
     function closeAddActivityError() {
         document.getElementById('addActError').style.display = 'none';
