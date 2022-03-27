@@ -68,7 +68,7 @@
                 <div class="modal-body">
                     <div class="form-group">
                         <label for="projectName">{{__ "project name"}}</label>
-                        <input type="text" class="form-control" name="projectName" placeholder="{{__ "enter project name"}}" required>
+                        <input type="text" class="form-control" id="projectName" name="projectName" placeholder="{{__ "enter project name"}}" required>
                     </div>
                     <div class="form-group">
                         <label for="type">{{__ "type of project"}}</label>
@@ -85,24 +85,16 @@
                         <label for="numberOfStates">{{__ "number of states"}}</label>
                         <input type="number" class="form-control" id="numberOfStates" name="numberOfStates" min="2" max="20" value="2" required>
                     </div>
-                    <div class="form-group">
-                        <label for="numberOfActivities">{{__ "number of activities"}}</label>
-                        <input type="number" class="form-control" id="numberOfActivities" name="numberOfActivities" min="1" value="1" title="Pocet stavu - 1" required>
-                    </div>
-                    <div class="form-group">
-                        <label for="maxLengthOfActivity">{{__ "max length of activity"}}</label>
-                        <input type="range" id="maxLengthOfActivity" name="maxLengthOfActivity" class="form-control" value="50" min="10" max="100" oninput="this.nextElementSibling.value = this.value">
-                        <output>50</output>
-                    </div>
                     <div class="text-center" style="padding-bottom: 5px;">
-                        <button type="button" class="btn btn-primary" id="generateButton">{{__ "generate"}}</button>
+                        <button type="button" class="btn btn-primary" id="generateButton" title="{{__ "generate random project"}}">{{__ "generate"}}</button>
                     </div>
                     <input type="text" id="generatedProjectJSON" name="generatedProjectJSON" style="display: none;">
-                    <p id="done" style="display: none;">{{__ "done"}}</p>
-                    <div class="spinner-border text-primary" id="spinner" role="status" style="display: none;">
-                        <span class="sr-only">Loading...</span>
+                    <div id="hiddenInfo" style="display: none;">
+                        <hr class="solid">  
+                        <div style="margin-top: 5px;" id="generatedProjectInfo"></div>
+                        <hr class="solid">
+                        <div class="text-center">{{__ "add by add button"}}</div>
                     </div>
-                    <p id="generatingProject" style="display: none;">{{__ "generating project"}}</p>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">{{__ "close"}}</button>
@@ -202,24 +194,40 @@
         // TODO
         //
         //
-        const numberOfStates = document.getElementById('numberOfStates').value;
+        const projectName = document.getElementById('projectName');
+            analysisType = document.getElementById('typeOfProject'),
+            numberOfStates = document.getElementById('numberOfStates');
+        var hiddenInfo = document.getElementById('hiddenInfo'),
+            projectInfo = document.getElementById('generatedProjectInfo');
+
+
         var submitButton = document.getElementById('submitGeneratedProject');
 
-
         //Generating
-        var dataJSON = generateProject(numberOfStates);
+        var dataJSON = generateProject(numberOfStates.value, analysisType.value);
 
 
         // pridani generovaneho projektu do neviditelneho elementu formulare
         document.getElementById('generatedProjectJSON').value = JSON.stringify(dataJSON);
 
+        // display info
+        projectInfo.innerHTML = "<h6>{{__ "generated project"}}</h6>";
+        if (projectName.value == '') {
+            projectInfo.innerHTML += "{{__ "project name"}}: {{__ "not defined"}} <br>";
+        } else {
+            projectInfo.innerHTML += "{{__ "project name"}}: " + projectName.value + "<br>";
+        }
+        projectInfo.innerHTML += "{{__ "analysis type"}}: " + (analysisType.value).toUpperCase() + "<br>";
+        projectInfo.innerHTML += "{{__ "number of states"}}: " + numberOfStates.value + "<br>";
+        projectInfo.innerHTML += "{{__ "number of activities"}}: "; // Doplnit pocet aktivit z generatoru
+
+        hiddenInfo.style.display = 'block';
+        //
+
+        // display add button of form
         submitButton.disabled = false;
         submitButton.title = "{{__ "add generated project"}}"
         
-        document.getElementById('spinner').style.display = 'flex';
-        document.getElementById('generatingProject').style.display = 'flex';
-
-
     })
 
 
@@ -246,10 +254,6 @@
             alert("{{__ "invalid extension of file"}}" + " (" + file.type + "). " + "{{__ "please load JSON file"}}");
             input.value = '';
         }
-    });
-
-    document.getElementById("numberOfStates").addEventListener('change', function() {
-        document.getElementById("numberOfActivities").value = this.value - 1;
     });
 
     function deleteModal(projectID, projectName) {
