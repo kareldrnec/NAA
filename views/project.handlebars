@@ -528,7 +528,7 @@
    // sessionStorage.setItem("activities", JSON.stringify(activities));
 
     // pridat aktivity z db do init
-    init(states, activities, "{{projectType}}", translations, "{{graphSettings}}");
+    init(states, activities, project, "{{projectType}}", translations, "{{graphSettings}}");
 
     // TODO check form before add/edit activity 
 
@@ -593,6 +593,10 @@
             calculationErrMsg.innerHTML = "{{__ "error"}}!<br>";
             calculationErrMsg.innerHTML += "{{__ "check state"}} &#8216;" + errState + "&#8216;!";
             calculationErrDiv.style.display = 'block';
+        } else {
+            calculate(states.states, activities.activities, project);
+            $('#calculationModal').modal('toggle');
+            calculationDone();
         }
     });
 

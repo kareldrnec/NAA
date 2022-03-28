@@ -1,4 +1,4 @@
-var _statesData, _activitiesData, projectType, _translationsData;
+var _statesData, _activitiesData, projectType, _translationsData, _project, result;
 var statesArray = [];
 var activitiesArray = [];
 var myDiagram;
@@ -6,11 +6,13 @@ var selectedStates = [];
 var graphSettingsData = [];
 
 
-function init(states, activities, projectT, translations, graphSettings) {
+function init(states, activities, project, projectT, translations, graphSettings) {
     _statesData = states;
     _activitiesData = activities;
     projectType = projectT;
+    _project = project;
     _translationsData = translations;
+    result = JSON.parse(sessionStorage.getItem(project._id));
     /**
      * Překlad
      * translationsData
@@ -197,12 +199,14 @@ function getNodeDataArray(states) {
     var nodeDataArray = [];
     var statesData = states.states;
     var currentNode, criticalState;
-    var resArr = JSON.parse(sessionStorage.getItem("resultArr"));
-    var currentProject = sessionStorage.getItem("currentProject");
-    var calculatedProject = sessionStorage.getItem("calculatedProject");
-    if (resArr && currentProject == calculatedProject) {
+    var resNodes;
+    
+    if(result) {
+        resNodes = result.states;
+    }
+    if (resNodes) {
         for (var i = 0; i < statesData.length; i++) {
-            currentNode = resArr.find(element => element.ID == statesData[i].ID);
+            currentNode = resNodes.find(element => element.ID == statesData[i].ID);
             if (currentNode.slack == 0) {
                 criticalState = true;
             } else {
@@ -230,18 +234,20 @@ function getLinkDataArray(activities) {
     // dodelat
     var linkDataArray = [];
     var activitiesData = activities.activities;
-    var nodeColor;
-    var currentProject = sessionStorage.getItem("currentProject");
-    var calculatedProject = sessionStorage.getItem("calculatedProject");
-    var resActivities = JSON.parse(sessionStorage.getItem("activities"))
-    if (resActivities && currentProject == calculatedProject) {
-        activitiesData = resActivities;
+    var linkColor;
+    var currentLink;
+    var resLinks;
+
+    if(result) {
+        resLinks = result.activities;
     }
     for (var i = 0; i < activitiesData.length; i++) {
-        if (activitiesData[i].critical) {
-            nodeColor = "R"
-        } else {
-            nodeColor = "N"
+        linkColor = "N";
+        if (resLinks) {
+            currentLink = resLinks.find(element => element.ID == activitiesData[i].ID);
+            if (currentLink.critical == true) {
+                linkColor = "R";
+            }
         }
 
         if (activitiesData[i].activityType == "normal") {
@@ -251,7 +257,7 @@ function getLinkDataArray(activities) {
                 "from": activitiesData[i].fromState,
                 "to": activitiesData[i].toState,
                 "text": parseLinkTextData(activitiesData[i].values),
-                "color": nodeColor,
+                "color": linkColor,
                 "tooltip": parseLinkTextTooltip(activitiesData[i].activityName, activitiesData[i].activityType, activitiesData[i].values, activitiesData[i].timeUnit, "B")
             })
         } else if (activitiesData[i].activityType == "dummy") {
@@ -261,7 +267,7 @@ function getLinkDataArray(activities) {
                 "to": activitiesData[i].toState,
                 "text": parseLinkTextData(activitiesData[i].values),
                 "dash": [3, 4],
-                "color": nodeColor,
+                "color": linkColor,
                 "tooltip": parseLinkTextTooltip(activitiesData[i].activityName, activitiesData[i].activityType, activitiesData[i].values, activitiesData[i].timeUnit, "B")
             })
         }
@@ -518,8 +524,17 @@ function addCreatedActivity(activity) {
     reload();
 }
 
+function calculationDone() {
+    result = JSON.parse(sessionStorage.getItem(project._id));
+    statesArray = getNodeDataArray(_statesData);
+    activitiesArray = getLinkDataArray(_activitiesData);
+    myDiagram.model = new go.GraphLinksModel(statesArray, activitiesArray);
+}
+
 
 function reload() {
+    sessionStorage.removeItem(_project._id);
+    result = null;
     statesArray = getNodeDataArray(_statesData);
     activitiesArray = getLinkDataArray(_activitiesData);
     myDiagram.model = new go.GraphLinksModel(statesArray, activitiesArray);
