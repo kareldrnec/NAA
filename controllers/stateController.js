@@ -1,6 +1,6 @@
-const StateModel = require('../models/state');
 const ActivityModel = require('../models/activity');
 const ProjectModel = require('../models/project');
+const StateModel = require('../models/state');
 
 var app = require('../app');
 

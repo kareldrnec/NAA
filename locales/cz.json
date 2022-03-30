@@ -52,6 +52,7 @@
 	"download graph": "Stáhnout graf",
 	"dummy": "Fiktivní",
 	"dummy activity": "Fiktivní činnost",
+	"dummy activity already exists": "Fiktivní činnost mezi těmito stavy již existuje!",
 	"earliest start time": "Nejdříve možný začátek činnosti",
 	"edit": "Upravit",
 	"edit activity": "Editace činnosti",

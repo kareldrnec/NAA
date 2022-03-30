@@ -1,3 +1,8 @@
+function simulationMonteCarlo() {
+    // TODO
+
+}
+
 function checkDiagram(states, activities) {
     var fromActivity, toActivity;
     var errState = "";
@@ -25,7 +30,6 @@ function checkDiagram(states, activities) {
     }
     return errState;
 }
-
 
 function calculate(states, activities, currentProject) {
     var result = {};

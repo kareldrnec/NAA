@@ -520,45 +520,61 @@
 <script src="/javascripts/calculations.js"></script>
 <script src="/javascripts/ParallelRouteLink.js"></script>
 <script src="/socket.io/socket.io.js"></script>
+<script src="/javascripts/jstat.min.js"></script>
 <script>
-    var activities, states, translations;
-
+    console.log(jStat.normal.pdf(29,5,2))
     var activities = JSON.parse("{{activities}}".replace(/&quot;/g, '"'));
     var states = JSON.parse("{{states}}".replace(/&quot;/g, '"'));
     var project = JSON.parse("{{project}}".replace(/&quot;/g, '"'));
     var translations = JSON.parse("{{translations}}".replace(/&quot;/g, '"'));
-
+    var socket = io();
     sessionStorage.setItem("currentProject", "{{projectID}}");
 
-   // sessionStorage.setItem("activities", JSON.stringify(activities));
-
-    // pridat aktivity z db do init
+    // INIT GRAFU
     init(states, activities, project, "{{projectType}}", translations, "{{graphSettings}}");
 
-    // delete changes when form is close
+    // delete changes when form is close ---------------------
     $('#addStateModal').on('hidden.bs.modal', function () {
         document.getElementById('stateNameInput').value = '';
         document.getElementById('stateInfoInput').value = '';
     });
-
+    // SNAD CAJK ?
     $('#addActivityModal').on('hidden.bs.modal', function () {
+        var activityType = document.getElementById('activityTypeSelect');
         document.getElementById('activityNameInput').value = '';
-        document.getElementById('activityTypeSelect').value = 'normal';
         document.getElementById('activityDescription').value = '';
         document.getElementById('activityTimeUnit').value = 'hours';
         if ("{{projectType}}" == "cpm") {
+            if (activityType.value == 'dummy') $('#lengthOfActivity').removeAttr('disabled');
             document.getElementById('lengthOfActivity').value = 0;
         } else {
+            if (activityType.value == 'dummy') {
+                $('#optimisticValue').removeAttr('disabled');
+                $('#mostExpectedValue').removeAttr('disabled');
+                $('#pessimisticValue').removeAttr('disabled');
+            }
             document.getElementById('optimisticValue').value = 0;
             document.getElementById('mostExpectedValue').value = 0;
             document.getElementById('pessimisticValue').value = 0;
         }
+        activityType.value = 'normal';
     });
-    //
+
+    $('#editActivityModal').on('hidden.bs.modal', function ()  {
+        var activityType = document.getElementById('editedActivityType');
+        if ("{{projectType}}" == "cpm" && activityType.value == "dummy") {
+            $('#editedActivityLength').removeAttr('disabled');
+        } else if ("{{projectType}}" == "pert" && activityType.value == "dummy") {
+            $('#editedActivityOptimistic').removeAttr('disabled');
+            $('#editedActivityMost').removeAttr('disabled');
+            $('#editedActivityPessimistic').removeAttr('disabled');
+        }
+        document.getElementById('editedActivityDescription').value = '';
+    });
+    // -------------------------------------------------------
 
     document.getElementById("saveButton").addEventListener("click", function(event) {
         event.preventDefault();
-        //const
         var filename = document.getElementById('nameOfSavedFile').value;
         var jsonFile = {};
         var statesJSON = [];
@@ -624,12 +640,6 @@
         }
     });
 
-
-
-    // zkontrolovat, zda funguje zavirani erroru u ostatnich elementu
-
-
-    var socket = io();
 
     // addStateForm - submit - add state
     document.getElementById('addStateForm').addEventListener('submit', function(event) {
@@ -897,6 +907,7 @@
         var activityName, activityType;
         if (element == "add") {
             if (errCode == 1) {
+                // activity with this name already exists
                 err += "<br> {{__ "activity exists"}}";
                 activityName = document.getElementById('activityNameInput');
                 activityName.style.background = "#ffb8b8";
@@ -904,7 +915,16 @@
                     activityName.style.background = "white";
                 }, 3000);
             } else if (errCode == 2) {
+                // this activity cannot be dummy
                 err += "<br> {{__ "cannot be dummy"}}";
+                activityType = document.getElementById('activityTypeSelect');
+                activityType.style.background = "#ffb8b8";
+                setTimeout(function() {
+                    activityType.style.background = "white";
+                }, 3000);
+            } else if (errCode == 3) {
+                // dummy already exists
+                err += "<br> {{__ "dummy activity already exists"}}";
                 activityType = document.getElementById('activityTypeSelect');
                 activityType.style.background = "#ffb8b8";
                 setTimeout(function() {
@@ -938,7 +958,7 @@
     document.getElementById('deleteActivityForm').addEventListener('submit', function(event){
         event.preventDefault();
         var activityID = this.getAttribute("name");
-        socket.emit("delete activity", activityID);
+        socket.emit("delete activity", activityID, project._id);
         $("#deleteActivityModal").modal('toggle'); 
     });
 

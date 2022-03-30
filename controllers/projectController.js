@@ -1,9 +1,8 @@
 // Project Controller
-const UserModel = require('../models/user');
+const ActivityModel = require('../models/activity');
 const ProjectModel = require('../models/project');
 const StateModel = require('../models/state');
-const ActivityModel = require('../models/activity');
-
+const UserModel = require('../models/user');
 //gets project directory
 exports.getProjectsDirectory = async (req, res, next) => {
     try {

@@ -52,6 +52,7 @@
 	"download graph": "Download Graph",
 	"dummy": "Dummy",
 	"dummy activity": "Dummy Activity",
+	"dummy activity already exists": "Dummy Activity already exists between these two States!",
 	"earliest start time": "Earliest Start Time",
 	"edit": "Edit",
 	"edit activity": "Edit Activity",
