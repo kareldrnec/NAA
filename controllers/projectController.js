@@ -8,18 +8,20 @@ const ActivityModel = require('../models/activity');
 exports.getProjectsDirectory = async (req, res, next) => {
     try {
         var user = await UserModel.findById(req.session.userId);
-        projects = await ProjectModel.find({ userId: req.session.userId }),
-            projectsToSend = {},
+        var projects = await ProjectModel.find({ userId: req.session.userId });
+        var projectsToSend = {},
             projectsPrep = [];
 
         for (var i in projects) {
-            var item = projects[i],
-                date = item.createdAt;
+            var project = projects[i],
+                date = project.createdAt,
+                modified = project.lastModified;
             projectsPrep.push({
-                "projectName": item.projectName,
-                "projectType": item.projectType,
-                "ID": item._id,
-                "created": date.getDate() + "/" + (date.getMonth() + 1) + "/" + date.getFullYear()
+                "projectName": project.projectName,
+                "projectType": project.projectType,
+                "ID": project._id,
+                "created": date.getDate() + "/" + (date.getMonth() + 1) + "/" + date.getFullYear(),
+                "modified": modified.getDate() + "/" + (modified.getMonth() + 1) + "/" + modified.getFullYear()
             });
         }
 

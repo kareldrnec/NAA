@@ -1,10 +1,11 @@
-const StateModel = require('../models/state'),
-    ActivityModel = require('../models/activity');
+const StateModel = require('../models/state');
+const ActivityModel = require('../models/activity');
+const ProjectModel = require('../models/project');
 
 var app = require('../app');
 
 //socket.io
-exports.addState = async(stateName, projectID, stateInfo) => {
+exports.addState = async (stateName, projectID, stateInfo) => {
     try {
         var state = new StateModel({
             stateName: stateName,
@@ -12,6 +13,9 @@ exports.addState = async(stateName, projectID, stateInfo) => {
             description: stateInfo
         });
         await state.save();
+        await ProjectModel.findByIdAndUpdate(projectID, {
+            lastModified: Date.now()
+        });
         app.io.emit('new state', state);
     } catch (err) {
         if (err.code == 11000) {
@@ -23,12 +27,15 @@ exports.addState = async(stateName, projectID, stateInfo) => {
 }
 
 //edit
-exports.editState = async(stateID, stateName, stateInfo, projectID) => {
+exports.editState = async (stateID, stateName, stateInfo, projectID) => {
     try {
         await StateModel.findByIdAndUpdate(stateID, {
             stateName: stateName,
             description: stateInfo
-        })
+        });
+        await ProjectModel.findByIdAndUpdate(projectID, {
+            lastModified: Date.now()
+        });
         app.io.emit('edit state', stateID, stateName, stateInfo, projectID);
     } catch (err) {
         if (err.code == 11000) {
@@ -40,7 +47,7 @@ exports.editState = async(stateID, stateName, stateInfo, projectID) => {
 }
 
 // TODO -- zkontrolovat, zda funguje spravne i pro vice aktivit
-exports.deleteState = async(stateID) => {
+exports.deleteState = async (stateID, projectID) => {
     // mazani podle id
     //
     try {
@@ -50,9 +57,11 @@ exports.deleteState = async(stateID) => {
                 { fromState: stateID },
                 { toState: stateID }
             ]
-        });
-        // mazani stavu
+        })
         await StateModel.findByIdAndDelete(stateID)
+        await ProjectModel.findByIdAndUpdate(projectID, {
+            lastModified: Date.now()
+        });
         app.io.emit('delete state', stateID);
     } catch (err) {
         app.io.emit("error state", 0, 'delete');

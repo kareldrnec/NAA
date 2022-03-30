@@ -15,6 +15,8 @@
                     <th scope="col">#</th>
                     <th scope="col">{{__ "project name"}}</th>
                     <th scope="col">{{__ "type of project"}}</th>
+                    <th scope="col">{{__ "created"}}</th>
+                    <th scope="col">{{__ "last modified"}}</th>
                     <th scope="col">{{__ "action"}}</th>
                 </tr>
             </thead>
@@ -25,6 +27,8 @@
                     <th scope="row">{{inc @index}}</th>
                     <td>{{this.projectName}}</td>
                     <td>{{upper this.projectType}}</td>
+                    <td>{{this.created}}</td>
+                    <td>{{this.modified}}</td>
                     <td>
                         <a href="/projects/select/{{this.ID}}" title="{{../../__ "select"}}"><i class="fas fa-check-square"></i></a>
                         <a href="/projects/edit/{{this.ID}}" title="{{../../__ "edit"}}"><i class="fas fa-edit"></i></a>
@@ -68,7 +72,8 @@
                 <div class="modal-body">
                     <div class="form-group">
                         <label for="projectName">{{__ "project name"}}</label>
-                        <input type="text" class="form-control" id="projectName" name="projectName" placeholder="{{__ "enter project name"}}" required>
+                        <input type="text" class="form-control" id="projectName" name="projectName" placeholder="{{__ "enter project name"}}"
+                            title="{{__ "required information"}}" required>
                     </div>
                     <div class="form-group">
                         <label for="type">{{__ "type of project"}}</label>
@@ -79,7 +84,8 @@
                     </div>
                     <div class="form-group">
                         <label for="projectInfo">{{__ "information"}}</label>
-                        <textarea name="projectInfo" class="form-control" placeholder="{{__ "enter project description"}}"></textarea>
+                        <textarea name="projectInfo" class="form-control" placeholder="{{__ "enter project description"}}"
+                            title="{{__ "optional information"}}"></textarea>
                     </div>
                     <div class="form-group">
                         <label for="numberOfStates">{{__ "number of states"}}</label>
@@ -120,7 +126,8 @@
                 <div class="modal-body">
                     <div class="form-group">
                         <label for="projectName">{{__ "project name"}}</label>
-                        <input type="text" name="projectName" class="form-control" placeholder="{{__ "enter project name"}}" required>
+                        <input type="text" name="projectName" class="form-control" placeholder="{{__ "enter project name"}}"
+                            title="{{__ "required information"}}" required>
                     </div>
                     <div class="form-group">
                         <label for="myFile">{{__ "select a file"}} (.json)</label><br>

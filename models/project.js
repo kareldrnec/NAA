@@ -21,6 +21,10 @@ var projectSchema = new Schema({
         type: Date,
         default: Date.now()
     },
+    lastModified: {
+        type: Date,
+        default: Date.now()
+    },
     userId: {
         type: String,
         required: true

@@ -17,7 +17,8 @@
                     <h2 class="text-center">{{__ "add project"}}</h2>
                     <div class="form-group">
                         <label for="projectName">{{__ "project name"}}</label>
-                        <input type="text" class="form-control" name="projectName" required placeholder="{{__ "enter project name"}}">
+                        <input type="text" class="form-control" name="projectName" placeholder="{{__ "enter project name"}}"
+                        title="{{__ "required information"}}" required>
                     </div>
                     <div class="form-group">
                         <label for="type">{{__ "type of project"}}</label>
@@ -28,7 +29,8 @@
                     </div>
                     <div class="form-group">
                         <label for="projectInfo">{{__ "information"}}</label>
-                        <textarea name="projectInfo" class="form-control" placeholder="{{__ "enter project description"}}"></textarea>
+                        <textarea name="projectInfo" class="form-control" placeholder="{{__ "enter project description"}}"
+                            title="{{__ "optional information"}}"></textarea>
                     </div>
                     <div class="text-center">
                         <button type="submit" class="btn btn-primary btn-block">{{__ "add project"}}</button>

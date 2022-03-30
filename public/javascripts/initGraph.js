@@ -133,10 +133,14 @@ function graphInit(graphSettingsData) {
             $("ContextMenuButton",
                 $(go.TextBlock, _translationsData[8]), {
                     click:
-                    // napoveda
                         displayHelp
-
-                }))
+                }),
+            $("ContextMenuButton",
+                $(go.TextBlock, _translationsData[1]), {
+                    click: function() {
+                        jQuery('#addStateModal').modal('show');
+                    }
+                }));
 
     // link (activities) colors
     var linkColors = { "R": pink, "N": edgeFill };

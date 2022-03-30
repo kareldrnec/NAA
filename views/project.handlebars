@@ -188,11 +188,12 @@
                     <div class="form-group">
                         <label for="stateName">{{__ "state name"}}</label>
                         <input type="text" class="form-control" id="stateNameInput" name="stateNameInput"
-                            aria-describedby="stateNameHelp" placeholder="{{__ "enter state name"}}" required>
+                            aria-describedby="stateNameHelp" placeholder="{{__ "enter state name"}}" title="{{__ "required information"}}" required>
                     </div>
                     <div class="form-group">
                         <label for="stateInfo">{{__ "information"}}</label>
-                        <input type="text" class="form-control" id="stateInfoInput" name="stateInfoInput">
+                        <input type="text" class="form-control" id="stateInfoInput" name="stateInfoInput"
+                            placeholder="{{__ "enter state description"}}" title="{{__ "optional information"}}">
                     </div>
                     <div style="background-color: #ffb8b8; display: none;" id="addStateError">
                         <button type="button" class="close" onclick="closeErrDiv('addStateError')" style="margin-right: 5px;">
@@ -225,11 +226,13 @@
                 <div class="modal-body">
                     <div class="form-group">
                         <label for="editStateName">{{__ "state name"}}</label>
-                        <input type="text" class="form-control" id="editStateName" name="editStateName" required>
+                        <input type="text" class="form-control" id="editStateName" name="editStateName" 
+                        placeholder="{{__ "enter state name"}}" title="{{__ "required information"}}" required>
                     </div>
                     <div class="form-group">
                         <label for="editStateInfo">{{__ "information"}}</label>
-                        <input type="text" class="form-control" id="editStateInfo" name="editStateInfo">
+                        <input type="text" class="form-control" id="editStateInfo" name="editStateInfo"
+                            placeholder="{{__ "enter state description"}}" title="{{__ "optional information"}}">
                     </div>
                     <div style="background-color: #ffb8b8; display: none" id="editStateError">
                         <button type="button" class="close" onclick="closeErrDiv('editStateError')" style="margin-right: 5px;">
@@ -290,7 +293,7 @@
                     <div class="form-group">
                         <label for="activityNameInput">{{__ "activity name"}}</label>
                         <input type="text" class="form-control" id="activityNameInput" name="activityNameInput"
-                            placeholder="{{__ "enter activity name"}}" required>
+                            placeholder="{{__ "enter activity name"}}" title="{{__ "required information"}}" required>
                     </div>
                     <div class="form-group">
                         <label for="analysisType">{{__ "analysis type"}}</label>
@@ -305,7 +308,8 @@
                     </div>
                     <div class="form-group">
                         <label for="activityDescription">{{__ "description"}}</label>
-                        <input type="text" class="form-control" name="activityDescription" id="activityDescription" placeholder="{{__ "enter activity description"}}">
+                        <input type="text" class="form-control" name="activityDescription" id="activityDescription" 
+                            placeholder="{{__ "enter activity description"}}" title="{{__ "optional information"}}">
                     </div>
                     <div id="activityValues">
                         <hr class="solid">
@@ -373,7 +377,7 @@
                     <div class="form-group">
                         <label for="editedActivityName">{{__ "activity name"}}</label>
                         <input type="text" class="form-control" id="editedActivityName" name="editedActivityName"
-                            placeholder="{{__ "enter activity name"}}" required>
+                            placeholder="{{__ "enter activity name"}}" title="{{__ "required information"}}" required>
                     </div>
                     <div class="form-group">
                         <label for="analysisType">{{__ "analysis type"}}</label>
@@ -388,7 +392,8 @@
                     </div>
                     <div class="form-group">
                         <label for="editedActivityDescription">{{__ "description"}}</label>
-                        <input type="text" class="form-control" id="editedActivityDescription" name="editedActivityDescription" placeholder="{{__ "enter activity description"}}">
+                        <input type="text" class="form-control" id="editedActivityDescription" name="editedActivityDescription"
+                            placeholder="{{__ "enter activity description"}}" title="{{__ "optional information"}}">
                     </div>
                     <div id="editedActivityValues">
                         <hr class="solid">
@@ -530,7 +535,26 @@
     // pridat aktivity z db do init
     init(states, activities, project, "{{projectType}}", translations, "{{graphSettings}}");
 
-    // TODO check form before add/edit activity 
+    // delete changes when form is close
+    $('#addStateModal').on('hidden.bs.modal', function () {
+        document.getElementById('stateNameInput').value = '';
+        document.getElementById('stateInfoInput').value = '';
+    });
+
+    $('#addActivityModal').on('hidden.bs.modal', function () {
+        document.getElementById('activityNameInput').value = '';
+        document.getElementById('activityTypeSelect').value = 'normal';
+        document.getElementById('activityDescription').value = '';
+        document.getElementById('activityTimeUnit').value = 'hours';
+        if ("{{projectType}}" == "cpm") {
+            document.getElementById('lengthOfActivity').value = 0;
+        } else {
+            document.getElementById('optimisticValue').value = 0;
+            document.getElementById('mostExpectedValue').value = 0;
+            document.getElementById('pessimisticValue').value = 0;
+        }
+    });
+    //
 
     document.getElementById("saveButton").addEventListener("click", function(event) {
         event.preventDefault();
@@ -676,7 +700,7 @@
         event.preventDefault();
         var stateID = this.getAttribute("name");
 
-        socket.emit("delete state", stateID);
+        socket.emit("delete state", stateID, project._id);
 
         $('#deleteStateModal').modal('toggle');
     });
