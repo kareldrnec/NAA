@@ -522,13 +522,14 @@
 <script src="/socket.io/socket.io.js"></script>
 <script src="/javascripts/jstat.min.js"></script>
 <script>
-    console.log(jStat.normal.pdf(29,5,2))
     var activities = JSON.parse("{{activities}}".replace(/&quot;/g, '"'));
     var states = JSON.parse("{{states}}".replace(/&quot;/g, '"'));
     var project = JSON.parse("{{project}}".replace(/&quot;/g, '"'));
     var translations = JSON.parse("{{translations}}".replace(/&quot;/g, '"'));
     var socket = io();
     sessionStorage.setItem("currentProject", "{{projectID}}");
+
+    simulationMonteCarlo()
 
     // INIT GRAFU
     init(states, activities, project, "{{projectType}}", translations, "{{graphSettings}}");
@@ -1006,6 +1007,7 @@
         document.getElementById('addRow').style.display = 'inline';
         document.getElementById('removeRow').style.display = 'none';
     }
+
 </script>
 
 

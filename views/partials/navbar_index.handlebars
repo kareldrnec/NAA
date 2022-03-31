@@ -42,7 +42,7 @@
           <a class="dropdown-item" href="/calculations/monteCarlo"><i class="fas fa-chart-bar"></i> Monte Carlo</a>
           <div class="dropdown-divider"></div>
           <h6 class="dropdown-header">{{__ "results"}}</h6>
-          <a class="dropdown-item" href="/calculations/results"><i class="fas fa-poll-h"></i> {{__ "results"}}</a>
+          <a class="dropdown-item" onclick="redirectToResults();" style="cursor: pointer;"><i class="fas fa-poll-h"></i> {{__ "results"}}</a>
         </div>
       </li>
       <li class="nav-item dropdown">
@@ -84,5 +84,13 @@
   function logout() {
     sessionStorage.clear();
     window.location.href = "/users/logout";
+  }
+
+  function redirectToResults() {
+    if (sessionStorage.getItem("{{projectID}}")) {
+      window.location.href = "/projects/{{projectID}}/results";
+    } else {
+      alert("{{__ "have to perform analysis"}}");
+    }
   }
 </script>

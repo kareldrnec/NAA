@@ -1,6 +1,6 @@
 function simulationMonteCarlo() {
     // TODO
-
+    console.log(jStat.normal.pdf(29,5,2))
 }
 
 function checkDiagram(states, activities) {

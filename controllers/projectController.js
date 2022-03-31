@@ -159,6 +159,50 @@ exports.selectProject = async (req, res) => {
     res.redirect("/projects/" + encodeURIComponent(req.params.id));
 }
 
+exports.results = async (req, res, next) => {
+    try {
+        const user = await UserModel.findById(req.session.userId);
+        const project = await ProjectModel.findById(req.params.id);
+        const states = await StateModel.find({ projectID: project._id });
+        const activities = await ActivityModel.find({ projectID: project._id });
+        var projectData = {};
+        var statesData = [];
+        var activitiesData = [];
+
+        // naplneni projectData
+        for (var i in states) {
+            statesData.push({
+                "ID": states[i]._id,
+                "name": states[i].stateName,
+                "description": states[i].description
+            });
+        }
+        for (var i in activities) {
+            activitiesData.push({
+                "ID": activities[i]._id,
+                "name": activities[i].activityName,
+                "values": activities[i].values,
+                "timeUnit": activities[i].timeUnit,
+                "description": activities[i].description
+            });
+        }
+        projectData.states = statesData;
+        projectData.activities = activitiesData;
+
+        res.render('results', {
+            title: req.__('results'),
+            projectName: project.projectName,
+            projectType: project.projectType,
+            projectInfo: project.projectInfo,
+            projectData: JSON.stringify(projectData),
+            username: user.userName + " " + user.userSurname
+        });
+    } catch (err) {
+        req.session.flash = { type: 'danger', text: req.__('error') };
+        return next(err);
+    }
+}
+
 //load project after selection
 exports.loadProject = async (req, res, next) => {
     try {

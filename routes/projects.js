@@ -23,7 +23,6 @@ router.post("/loadFile", auth.requiresLogin, project_controller.loadProjectFromF
 router.get("/edit/:id", auth.requiresLogin, project_controller.getProjectForEdit);
 
 
-
 // PUT - router Edit Project
 router.put("/edit/:id", auth.requiresLogin, project_controller.editProject);
 
@@ -40,5 +39,7 @@ router.get("/:id", auth.requiresLogin, project_controller.loadProject);
 // POST - generate project
 router.post("/generate", auth.requiresLogin, project_controller.generateProject);
 
+
+router.get("/:id/results", auth.requiresLogin, project_controller.results);
 
 module.exports = router;

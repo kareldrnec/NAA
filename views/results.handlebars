@@ -1,5 +1,19 @@
 {{> navbar}}
 
+<div class="btn-group btn-group-toggle" data-toggle="buttons">
+  <label class="btn btn-secondary active">
+    <input type="radio" name="options" id="option1" autocomplete="off" checked> {{__ "summary"}}
+  </label>
+  <label class="btn btn-secondary">
+    <input type="radio" name="options" id="option2" autocomplete="off"> {{__ "states"}}
+  </label>
+  <label class="btn btn-secondary">
+    <input type="radio" name="options" id="option3" autocomplete="off"> {{__ "activities"}}
+  </label>
+</div>
+
+
+
 <div style="text-align: center;">
     <table class="table table-hover">
         <thead id="tableHead" style="background-color: lightskyblue;">
@@ -12,9 +26,12 @@
 </div>
 
 <script>
+    console.log("VYPIS")
+    console.log("{{projectData}}")
+    console.log("ende")
     //TODO
     // dodelat MODAL pro results
-
+/*
     var expectedValue, standardDeviation, variance;
     var totalExpectedValue = 0,
         totalStandardDeviation = 0,
@@ -105,6 +122,6 @@
 
     }
 
-
+*/
 
 </script>

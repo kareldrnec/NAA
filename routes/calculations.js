@@ -8,7 +8,7 @@ const view_controller = require('../controllers/viewController');
 router.get("/monteCarlo", auth.requiresLogin, view_controller.monteCarlo);
 
 // GET - router Results
-router.get("/results", auth.requiresLogin, view_controller.results);
+// router.get("/results", auth.requiresLogin, view_controller.results);
 
 
 module.exports = router;

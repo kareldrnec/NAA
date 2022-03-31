@@ -26,6 +26,7 @@ exports.helpPage = async(req, res, next) => {
     }
 }
 
+/*
 exports.results = async(req, res, next) => {
     try {
         var user = await UserModel.findById(req.session.userId);
@@ -38,6 +39,7 @@ exports.results = async(req, res, next) => {
         return next(err);
     }
 }
+*/
 
 exports.monteCarlo = async(req, res, next) => {
     try {

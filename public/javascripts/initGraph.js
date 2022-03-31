@@ -203,7 +203,7 @@ function getNodeDataArray(states) {
     var nodeDataArray = [];
     var statesData = states.states;
     var currentNode, criticalState;
-    var resNodes;
+    var resNodes, slack;
     
     if(result) {
         resNodes = result.states;
@@ -213,8 +213,10 @@ function getNodeDataArray(states) {
             currentNode = resNodes.find(element => element.ID == statesData[i].ID);
             if (currentNode.slack == 0) {
                 criticalState = true;
+                slack = 0;
             } else {
                 criticalState = false;
+                slack = currentNode.slack + "/6";
             }
             nodeDataArray.push({
                 "key": statesData[i].ID,
@@ -222,7 +224,7 @@ function getNodeDataArray(states) {
                 critical: criticalState,
                 earliestStart: currentNode.ES + "/6",
                 latestStart: currentNode.LS + "/6",
-                slack: currentNode.slack
+                slack: slack
             })
         }
     } else {
