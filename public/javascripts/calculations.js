@@ -229,6 +229,7 @@ function pertActivities(activities) {
             fromState: activities[i].fromState,
             toState: activities[i].toState,
             value: parseInt(activities[i].values[0]) + 4 * parseInt(activities[i].values[1]) + parseInt(activities[i].values[2]),
+            std: parseInt(activities[i].values[2]) - parseInt(activities[i].values[0]), 
             critical: false
         });
     }

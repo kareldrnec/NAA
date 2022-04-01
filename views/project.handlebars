@@ -119,20 +119,36 @@
                     </div>            
                     {{#ifEquals projectType "pert"}}
                     <!-- Set PERT Calculation -->
+                    <div class="form-group">
+                        <label>{{__ "find"}}</label>
+                        <select name="typeOfCalculation" class="form-control"  onchange="changeCalculationType(this)">
+                            <option value="P" title="{{__ "probability"}}">P ({{__ "probability"}})</option>
+                            <option value="T" title="{{__ "time"}}">T ({{__ "time"}})</option>
+                        </select>
+                    </div>
+                    <div id="probRow">
                         <div id="firstRow">
                             <div class="row g-2">
-                                <div class="col-sm">
-                                    <label for="typeOfCalculation">{{__ "find"}}</label>
-                                    <select name="typeOfCalculation" class="form-control">
-                                        <option value="P" title="">P ({{__ "probability"}})</option>
-                                        <option value="T" title="">T ({{__ "time"}})</option>
-                                    </select>
-                                </div>
                                 <div class="col-sm">
                                     <label for="pertSelect1">{{__ "option"}}</label>
                                     <select name="pertSelect1" class="form-control">
                                         <option value="lt">&lt;</option>
                                         <option value="gt">&gt;</option>
+                                    </select>
+                                </div>
+                                <div class="col-sm">
+                                    <label>{{__ "value"}}</label>
+                                    <input type="number" class="form-control" min="0" value="0">
+                                </div>
+                                <div class="col-sm">
+                                    <label>{{__ "time unit"}}</label>
+                                    <select class="form-control">
+                                        <option value="seconds">{{__ "seconds"}}</option>
+                                        <option value="minutes">{{__ "minutes"}}</option>
+                                        <option value="hours" selected>{{__ "hours"}}</option>
+                                        <option value="days">{{__ "days"}}</option>
+                                        <option value="weeks">{{__ "weeks"}}</option>
+                                        <option value="months">{{__ "months"}}</option>
                                     </select>
                                 </div>
                             </div>
@@ -143,18 +159,33 @@
                         <div id="secondRow" style="display: none;">
                             <div class="row g-2">
                                 <div class="col-sm">
-                                </div> 
-                                <div class="col-sm">
                                     <select name="pertSelect2" class="form-control">
                                         <option value="lt">&lt;</option>
                                         <option value="gt">&lt;</option>
                                     </select>
                                 </div>
+                                <div class="col-sm">
+                                    <input type="number" class="form-control" min="0" value="0">
+                                </div>
+                                <div class="col-sm"></div>
                             </div>
                         </div>
                         <div class="text-center" style="margin-top: 5px;">
                             <button type="button" class="btn btn-secondary" style="display: none;" onclick="hideSecondRow()" id="removeRow"><i class="fas fa-minus-square"></i></button>
                         </div>
+                    </div>
+                    <div id="timeRow" style="display: none;">
+                        <div class="row g-2">
+                            <div class="col-sm">
+                                <label>{{__ "option"}}</label>
+                                <input type="text" class="form-control" value="=" readonly>
+                            </div>
+                            <div class="col-sm">
+                                <label>{{__ "value"}}</label>
+                                <input type="number" class="form-control" min="0" value="0">
+                            </div>
+                        </div>
+                    </div>
                     {{/ifEquals}}
                 </div>
                 <div style="background-color: #ffb8b8; display: none;" id="calculationErrDiv">
@@ -528,8 +559,6 @@
     var translations = JSON.parse("{{translations}}".replace(/&quot;/g, '"'));
     var socket = io();
     sessionStorage.setItem("currentProject", "{{projectID}}");
-
-    simulationMonteCarlo()
 
     // INIT GRAFU
     init(states, activities, project, "{{projectType}}", translations, "{{graphSettings}}");
@@ -1006,6 +1035,16 @@
         document.getElementById('secondRow').style.display = 'none';
         document.getElementById('addRow').style.display = 'inline';
         document.getElementById('removeRow').style.display = 'none';
+    }
+
+    function changeCalculationType(obj) {
+        if(obj.value == 'T') {
+            document.getElementById('probRow').style.display = 'none';
+            document.getElementById('timeRow').style.display = 'inline';
+        } else {
+            document.getElementById('timeRow').style.display = 'none';
+            document.getElementById('probRow').style.display = 'inline';
+        }
     }
 
 </script>

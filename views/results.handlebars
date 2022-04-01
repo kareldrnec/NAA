@@ -27,6 +27,8 @@
 <script>
     var tableBody;
     var results = JSON.parse(sessionStorage.getItem("{{projectID}}"))
+
+    console.log(results)
     var thead;
 
     function displaySummary() {
@@ -172,9 +174,9 @@
                 + "<td>" + activitiesDB[i].values[0] + "</td>"
                 + "<td>" + activitiesDB[i].values[1] + "</td>"
                 + "<td>" + activitiesDB[i].values[2] + "</td>"
-                + "<td>" + resultActivity.value + "</td>"
-                + "<td>" + 0 + "</td>"// doplnit std
-                + "<td>" + 0 + "</td>"// doplnit std
+                + "<td>" + resultActivity.value + "/6" + "</td>"
+                + "<td>" + resultActivity.std + "/6" + "</td>"// doplnit std
+                + "<td>" + (resultActivity.std * resultActivity.std) + "/36" + "</td>"// doplnit std
                 + "<td>" + getTimeUnit(activitiesDB[i].timeUnit) + "</td>" + "</tr>";
             if (resultActivity.critical == true) {
                 row.className = "table-danger";

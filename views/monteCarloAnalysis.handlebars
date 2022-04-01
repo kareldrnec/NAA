@@ -16,13 +16,16 @@
                 </div>
                 <div class="form-group">
                     <label for="numberOfIterations">{{__ "number of iterations"}}</label>
-                    <input type="number" class="form-control" placeholder="{{__ "enter number of iterations"}}">
+                    <input type="number" class="form-control" placeholder="{{__ "enter number of iterations"}}" min="10" value="10">
                 </div>
                 <div class="text-center">
                     <button type="submit" class="btn btn-primary">{{__ "run simulation"}}</button>
                     <button type="button" class="btn btn-secondary" onclick="history.back()">{{__ "back"}}</button>
                 </div>
             </form>
+            <div>
+                AAAAATAtgea
+            </div>
         </div>
         <div class="col-md-8 col-sm-8 col-xs-24">
             <canvas id="myChart" width="800px" height="300px"></canvas>
@@ -33,8 +36,32 @@
     </div>
 </div>
 
-
+<script src="/javascripts/jstat.min.js"></script>
 <script>
+    var lambda = 4;
+    var min = 2;
+    var med = 5;
+    var max = 9;
+    var alpha = 1 + lambda * ((med - min) / (max - min));
+    var beta = 1 + lambda * ((max - med) / (max - min));
+    var randNum = Math.random() * (1 - 0) + 0;
+    var cdf = jStat.beta.cdf(randNum, alpha, beta);
+    var time = min + (max - min) * cdf;
+    console.log("RAND NUM")
+    console.log(randNum)
+    console.log("BETA ROZDELENI")
+    console.log("Alpha")
+    console.log(alpha)
+    console.log("BETA")
+    console.log(beta)
+    console.log("ENDE")    
+    console.log("CDF")
+    console.log(cdf)
+    console.log("Time")
+    console.log(time)
+
+
+
     const ctx = document.getElementById('myChart').getContext('2d');
     const myChart = new Chart(ctx, {
         type: 'bar',
