@@ -1,105 +1,214 @@
 {{> navbar}}
 
 <div class="btn-group btn-group-toggle" data-toggle="buttons">
-  <label class="btn btn-secondary active">
+  <label class="btn btn-secondary active" onclick="displaySummary();">
     <input type="radio" name="options" id="option1" autocomplete="off" checked> {{__ "summary"}}
   </label>
-  <label class="btn btn-secondary">
+  <label class="btn btn-secondary" onclick="displayStates();">
     <input type="radio" name="options" id="option2" autocomplete="off"> {{__ "states"}}
   </label>
-  <label class="btn btn-secondary">
+  <label class="btn btn-secondary" onclick="displayActivities()">
     <input type="radio" name="options" id="option3" autocomplete="off"> {{__ "activities"}}
   </label>
 </div>
 
+<div id="resultsContent">
+    <div style="text-align: center;">
 
-
-<div style="text-align: center;">
-    <table class="table table-hover">
-        <thead id="tableHead" style="background-color: lightskyblue;">
-
-        </thead>
-        <tbody id="tableBody">
-
-        </tbody>
-    </table>
+        <table class="table table-hover" id="table" style="display: none">
+            <thead id="tableHead" style="background-color: lightskyblue;">
+            </thead>
+            <tbody id="tableBody">
+            </tbody>
+        </table>
+    </div>
 </div>
 
 <script>
-    console.log("VYPIS")
-    console.log("{{projectData}}")
-    console.log("ende")
-    //TODO
-    // dodelat MODAL pro results
-/*
-    var expectedValue, standardDeviation, variance;
-    var totalExpectedValue = 0,
-        totalStandardDeviation = 0,
-        totalVariance = 0;
-    createTableHeadPERT();
+    var tableBody;
+    var results = JSON.parse(sessionStorage.getItem("{{projectID}}"))
+    var thead;
+
+    function displaySummary() {
+        console.log("CLICK NA SUMMARY")
+        document.getElementById("table").style.display = "none";
+    }
+    function displayStates() {
+        createHeadStates();
+        createBodyStates();
+        document.getElementById("table").style.display = "table";
+    }
+    function displayActivities() {
+        // dodelat pro cpm
+        if ("{{projectType}}" == "cpm") {
+            createHeadActivitiesCPM();
+            createBodyActivitiesCPM();
+        } else {
+            createHeadActivitiesPERT();
+            createBodyActivitiesPERT();
+        }
+        document.getElementById("table").style.display = "table";
+    }
+
+    function createHeadStates() {
+        thead = document.getElementById("tableHead");
+        thead.innerHTML = 
+        "<th>" + "#" + "</th>"
+        + "<th>" + "{{__ "state name"}}" + "</th>"
+        + "<th>" + "ES" + "</th>"
+        + "<th>" + "LS" + "</th>"
+        + "<th>" + "{{__ "slack"}}" + "</th>";
+       // + "<th>" + "{{__ "time unit"}}" + "</th>";
+    }
+
+    function createHeadActivitiesCPM() {
+        thead = document.getElementById("tableHead");
+        thead.innerHTML =
+            "<th>" + "#" + "</th>"
+            + "<th>" + "{{__ "activity name"}}" + "</th>"
+            + "<th>" + "{{__ "activity type"}}" + "</th>"
+            + "<th>" + "y" + "<sub>ij</sub>" + "</th>"
+            + "<th>" + "{{__ "time unit"}}" + "</th>";
+    }
+
+    function createHeadActivitiesPERT() {
+        thead = document.getElementById("tableHead");
+        thead.innerHTML = 
+            "<th>" + "#" + "</th>"
+            + "<th>" + "{{__ "activity name"}}" + "</th>"
+            + "<th>" + "{{__ "activity type"}}" + "</th>"
+            + "<th>" + "a" + "<sub>ij</sub>" + "</th>"
+            + "<th>" + "m" + "<sub>ij</sub>" +"</th>"
+            + "<th>" + "b" + "<sub>ij</sub>" + "</th>"
+            + "<th>" + "&mu;" + "<sub>ij</sub>" + "</th>"
+            + "<th>" + "&sigma;" + "<sub>ij</sub>" + "</th>"
+            + "<th>" + "&sigma;" + "<sub>ij</sub>" + "<sup>2</sup>" + "</th>"
+            + "<th>" + "{{__ "time unit"}}" + "</th>";
+    }
 
 
-    var activities = JSON.parse(sessionStorage.getItem("activities"));
-    
-    createBodyPERT(activities);
-    
-
-    var tbody = document.getElementById("tableBody");
-
-    // createBodyCPM()
-
-    function createBodyPERT(activities) {
-        var a, m, b;
-        var tbody = document.getElementById('tableBody');
-        for(var i = 0; i < activities.length; i++) {
-            a = parseInt(activities[i].values[0]);
-            m = parseInt(activities[i].values[1]);
-            b = parseInt(activities[i].values[2]);
-            
-            expectedValue = a + 4 * m + b;
-            standardDeviation = b - a;
-            variance = standardDeviation * standardDeviation;
-            // deleni sesti zkusit vyresit
-            var row = tbody.insertRow();
-            row.innerHTML =
-                "<tr>" + "<td>" + activities[i].activityName + "</td>"
-                + "<td>" + activities[i].values[0] + "</td>"
-                + "<td>" + activities[i].values[1] + "</td>"
-                + "<td>" + activities[i].values[2] + "</td>"
-                + "<td>" + expectedValue + "/6" + "</td>"
-                + "<td>" + standardDeviation + "/6" + "</td>"
-                + "<td>" + variance + "/36" + "</td>"
-                + "</tr>";
-            if(activities[i].critical == true) {
+    function createBodyStates() {
+        const states = results.states;
+        var ES, LS, slack;
+        var row;
+       // $("#tableBody").empty();
+        tableBody = document.getElementById("tableBody");
+        tableBody.innerHTML = "";
+        for (var i = 0; i < states.length; i++) {
+            if (states[i].slack == 0) {
+                slack = 0;
+            } else {
+                slack = states[i].slack + "/6";
+            }
+            if (states[i].ES == 0) {
+                ES = 0;
+            } else {
+                ES = states[i].ES + "/6";
+            }
+            if (states[i].LS == 0) {
+                LS = 0;
+            } else {
+                LS = states[i].LS + "/6"
+            }
+            row = tableBody.insertRow();
+            row.innerHTML = 
+                "<tr>" + "<td>" + (i + 1) + "</td>"
+                + "<td>" + states[i].name + "</td>"
+                + "<td>" + ES + "</td>"
+                + "<td>" + LS + "</td>"
+                + "<td>" + slack + "</td>" + "</tr>";
+            if (states[i].slack == 0) {
                 row.className = "table-danger";
-                totalExpectedValue += expectedValue;
-                totalStandardDeviation += standardDeviation;
-                totalVariance += variance;
             }
         }
-        createTableBottomPERT(totalExpectedValue, totalStandardDeviation, totalVariance);
     }
 
-    function createTableHeadCPM() {
-        var thead = document.getElementById("tableHead");
-        thead.insertRow().innerHTML =
-            "<th>" + "{{__ "activity name"}}" + "</th>"
-            + "<th>" + "Activity Type" + "</th>"
-            + "<th>" + "Time" + "</th>"
+    function createBodyActivitiesCPM() {
+        const activitiesDB = JSON.parse("{{activitiesData}}".replace(/&quot;/g, '"'));
+        const activities = results.activities;
+        var type;
+        var row;
+        var resultActivity;
+        tableBody = document.getElementById("tableBody");
+        tableBody.innerHTML = "";
+        for (var i = 0; i < activitiesDB.length; i++) {
+            resultActivity = activities.find(element => element.ID == activitiesDB[i].ID);
+            if (activitiesDB[i].type == "normal") {
+                type = "{{__ "normal"}}";
+            } else {
+                type = "{{__ "dummy"}}";
+            }
+            row = tableBody.insertRow();
+            row.innerHTML =
+                "<tr>" + "<td>" + (i + 1) + "</td>"
+                + "<td>" + activitiesDB[i].name + "</td>"
+                + "<td>" + type + "</td>"
+                + "<td>" + activitiesDB[i].values[0] + "</td>"
+                + "<td>" + getTimeUnit(activitiesDB[i].timeUnit) + "</td>" + "</tr>";
+            if (resultActivity.critical == true) {
+                row.className = "table-danger";
+            }
+        }
     }
 
-    function createTableHeadPERT() {
-        var thead = document.getElementById("tableHead");
-        thead.insertRow().innerHTML = 
-            "<th>" + "{{__ "activity name"}}" + "</th>"
-            + "<th>" + "{{__ "optimistic value"}}" + "</th>"
-            + "<th>" + "{{__ "modal time"}}" + "</th>"
-            + "<th>" + "{{__ "pessimistic value"}}" + "</th>"
-            + "<th>" + "{{__ "expected value"}}" + "</th>"
-            + "<th>" + "{{__ "standard deviation"}}" + "</th>"
-            + "<th>" + "{{__ "variance"}}" + "</th>"
+    function createBodyActivitiesPERT() {
+        const activitiesDB = JSON.parse("{{activitiesData}}".replace(/&quot;/g, '"'));
+        const activities = results.activities;
+        var type, resultActivity;
+        tableBody = document.getElementById("tableBody");
+        tableBody.innerHTML = "";
+        for (var i = 0; i < activitiesDB.length; i++) {
+            resultActivity = activities.find(element => element.ID == activitiesDB[i].ID);
+            if (activitiesDB[i].type == "normal") {
+                type = "{{__ "normal"}}";
+            } else {
+                type = "{{__ "dummy"}}";
+            }
+            row = tableBody.insertRow();
+            row.innerHTML = 
+                "<tr>" + "<td>" + (i + 1) + "</td>"
+                + "<td>" + activitiesDB[i].name + "</td>"
+                + "<td>" + type + "</td>"
+                + "<td>" + activitiesDB[i].values[0] + "</td>"
+                + "<td>" + activitiesDB[i].values[1] + "</td>"
+                + "<td>" + activitiesDB[i].values[2] + "</td>"
+                + "<td>" + resultActivity.value + "</td>"
+                + "<td>" + 0 + "</td>"// doplnit std
+                + "<td>" + 0 + "</td>"// doplnit std
+                + "<td>" + getTimeUnit(activitiesDB[i].timeUnit) + "</td>" + "</tr>";
+            if (resultActivity.critical == true) {
+                row.className = "table-danger";
+            }
+        }
     }
 
+    function getTimeUnit(timeUnit) {
+        var time;
+        switch (timeUnit) {
+            case "seconds":
+                time = "{{__ "seconds"}}";
+                break;
+            case "minutes":
+                time = "{{__ "minutes"}}";
+                break;
+            case "hours":
+                time = "{{__ "hours"}}";
+                break;
+            case "days":
+                time = "{{__ "days"}}";
+                break;
+            case "weeks":
+                time = "{{__ "weeks"}}";
+                break;
+            case "months":
+                time = "{{__ "months"}}";
+                break;
+        }
+        return time;
+    }
+
+
+/*
     function createTableBottomPERT(expectedValue, standardDeviation, variance) {
         var tbody = document.getElementById("tableBody");
         var row = tbody.insertRow();
@@ -116,10 +225,6 @@
     // suma "&#8721;"
     //doplnit totalMeanValue, totalvariance ...
     
-    }
-
-    function createTableBottomCPM() {
-
     }
 
 */

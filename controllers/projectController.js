@@ -165,36 +165,26 @@ exports.results = async (req, res, next) => {
         const project = await ProjectModel.findById(req.params.id);
         const states = await StateModel.find({ projectID: project._id });
         const activities = await ActivityModel.find({ projectID: project._id });
-        var projectData = {};
-        var statesData = [];
         var activitiesData = [];
 
-        // naplneni projectData
-        for (var i in states) {
-            statesData.push({
-                "ID": states[i]._id,
-                "name": states[i].stateName,
-                "description": states[i].description
-            });
-        }
         for (var i in activities) {
             activitiesData.push({
                 "ID": activities[i]._id,
                 "name": activities[i].activityName,
+                "type": activities[i].activityType,
                 "values": activities[i].values,
                 "timeUnit": activities[i].timeUnit,
                 "description": activities[i].description
             });
         }
-        projectData.states = statesData;
-        projectData.activities = activitiesData;
 
         res.render('results', {
             title: req.__('results'),
+            projectID: project._id,
             projectName: project.projectName,
             projectType: project.projectType,
             projectInfo: project.projectInfo,
-            projectData: JSON.stringify(projectData),
+            activitiesData: JSON.stringify(activitiesData),
             username: user.userName + " " + user.userSurname
         });
     } catch (err) {
