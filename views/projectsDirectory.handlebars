@@ -84,7 +84,7 @@
                     </div>
                     <div class="form-group">
                         <label for="projectInfo">{{__ "information"}}</label>
-                        <textarea name="projectInfo" class="form-control" placeholder="{{__ "enter project description"}}"
+                        <textarea id="projectInfo" name="projectInfo" class="form-control" placeholder="{{__ "enter project description"}}"
                             title="{{__ "optional information"}}"></textarea>
                     </div>
                     <div class="form-group">
@@ -93,11 +93,11 @@
                     </div>
                     <div class="form-group">
                         <label>{{__ "min length of activity"}}</label>
-                        <input type="number" class="form-control" min="0" value="0" required>
+                        <input type="number" class="form-control" id="minimalLength" name="minimalLength" onchange="changeMaximalLength(this)" min="1" value="1" required>
                     </div>
                     <div class="form-group">
                         <label>{{__ "max length of activity"}}</label>
-                        <input type="number" class="form-control" min="0" value="0" required>
+                        <input type="number" class="form-control" id="maximalLength" name="maximalLength" onchange="changeMinimalLength(this)" min="1" value="1" required>
                     </div>
                     <div class="text-center" style="padding-bottom: 5px;">
                         <button type="button" class="btn btn-primary" id="generateButton" title="{{__ "generate random project"}}">{{__ "generate"}}</button>
@@ -207,13 +207,16 @@
     generateButton.addEventListener('click', function(){
         const projectName = document.getElementById('projectName'),
             analysisType = document.getElementById('typeOfProject'),
-            numberOfStates = document.getElementById('numberOfStates');
+            numberOfStates = document.getElementById('numberOfStates'),
+            minimalLength = document.getElementById('minimalLength'),
+            maximalLength = document.getElementById('maximalLength');
         var hiddenInfo = document.getElementById('hiddenInfo'),
             projectInfo = document.getElementById('generatedProjectInfo');
 
         var submitButton = document.getElementById('submitGeneratedProject');
         //Generating
-        var dataJSON = generateProject(numberOfStates.value, analysisType.value);
+
+        var dataJSON = generateProject(numberOfStates.value, analysisType.value, parseInt(minimalLength.value), parseInt(maximalLength.value));
         var numberOfActivities = (dataJSON.activities).length;
 
         document.getElementById('generatedProjectJSON').value = JSON.stringify(dataJSON);
@@ -234,6 +237,20 @@
         submitButton.title = "{{__ "add generated project"}}"
     });
 
+    $('#generateProjectModal').on('hidden.bs.modal', function() {
+        var submitButton = document.getElementById('submitGeneratedProject');
+        document.getElementById('projectName').value = '';
+        document.getElementById('typeOfProject').value = 'cpm';
+        document.getElementById('projectInfo').value = '';
+        document.getElementById('numberOfStates').value = '2';
+        document.getElementById('minimalLength').value = '1';
+        document.getElementById('maximalLength').value = '1';
+        document.getElementById('generatedProjectInfo').innerHTML = '';
+        document.getElementById('hiddenInfo').style.display = 'none';
+        submitButton.disabled = true;
+        submitButton.title = '';
+    })
+
     // pripadne doresit osetreni proti chybam (nahrani projektu ze souboru)
     let loadForm = document.getElementById('loadFileForm');
     let input = document.getElementById('myFile');
@@ -247,8 +264,10 @@
             let reader = new FileReader();
             reader.onload = (e) => {
                 const file = e.target.result;
-                dataJSON = JSON.parse(file)
-                document.getElementById('loadedFileInput').value = JSON.stringify(dataJSON);
+                // dataJSON = JSON.parse(file)
+                // document.getElementById('loadedFileInput').value = JSON.stringify(dataJSON);
+                // console.log(file)
+                document.getElementById('loadedFileInput').value = file;
             };
             reader.onerror = (e) => alert(e.target.error.name);
             reader.readAsText(file);
@@ -263,4 +282,17 @@
         $('#deleteProjectForm').attr("action", "/projects/delete/" + projectID + "/?_method=DELETE");
         $('#deleteProjectModal').modal('show');
     }
+
+    function changeMaximalLength(obj) {
+        var maxValue = document.getElementById('maximalLength');
+        if (obj.value > maxValue.value) maxValue.value = obj.value;
+    }
+
+    function changeMinimalLength(obj) {
+        var minValue = document.getElementById('minimalLength');
+        if (obj.value < minValue.value) minValue.value = obj.value;
+    }
+
+    // dodelat cookies info?
+
 </script>

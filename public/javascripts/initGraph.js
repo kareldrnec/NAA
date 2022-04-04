@@ -571,11 +571,11 @@ function downloadBlob(blob) {
     var filename, a;
     var url = window.URL.createObjectURL(blob);
     var selectedFormat = document.getElementById("typeOfFile").value;
-    var inputName = document.getElementById("nameOfFile").value;
-    if (inputName = "") {
+    var inputName = document.getElementById("nameOfFile");
+    if (inputName.value == "") {
         filename = "myDiagram." + selectedFormat;
     } else {
-        filename = inputName + "." + selectedFormat;
+        filename = inputName.value + "." + selectedFormat;
     }
     a = document.createElement('a');
     a.style = "display: none";
@@ -591,5 +591,6 @@ function downloadBlob(blob) {
         window.URL.revokeObjectURL(url);
         document.body.removeChild(a);
     });
+    inputName.value = '';
     $('#exportProjectModal').modal('toggle');
 }

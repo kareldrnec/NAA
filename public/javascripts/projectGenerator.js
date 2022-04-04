@@ -1,12 +1,13 @@
 // Generator skript
 //
 
-function generateProject(statesCount, analysisType) {
+
+function generateProject(statesCount, analysisType, min, max) {
     var dataJSON = {};
     
     const states = generateStates(statesCount);
     const layers = getStatesParts(states);
-    var activities = createActivities(layers, analysisType);
+    var activities = createActivities(layers, analysisType, min, max);
 
     dataJSON.states = states;
     dataJSON.activities = activities;
@@ -44,14 +45,14 @@ function getStatesParts(states) {
 }
 
 
-function createActivities(layers, analysisType) {
+function createActivities(layers, analysisType, min, max) {
     var activities = [];
     var currentLayer, nextLayer, tmpActivities;
     var idx = 0;
     for (var i = 0; i < layers.length - 1; i++) {
         currentLayer = layers[i];
         nextLayer = layers[i + 1];
-        tmpActivities = connectLayers(idx, currentLayer, nextLayer, analysisType);
+        tmpActivities = connectLayers(idx, currentLayer, nextLayer, analysisType, min, max);
         console.log("TMPACTIVITIES")
         console.log(tmpActivities)
         console.log("ENDE")
@@ -62,29 +63,29 @@ function createActivities(layers, analysisType) {
     return activities;
 }
 
-function connectLayers(idx, currentLayer, nextLayer, analysisType) {
+function connectLayers(idx, currentLayer, nextLayer, analysisType, minimal, maximal) {
     var index = idx;
     var activities = [];
     var min = Math.min(currentLayer.length, nextLayer.length);
     var random;
     if (currentLayer.length == min) {
         for (var j = 0; j < currentLayer.length; j++) {
-            activities.push(generateActivity(index, analysisType, currentLayer[j].name, nextLayer[j].name));
+            activities.push(generateActivity(index, analysisType, currentLayer[j].name, nextLayer[j].name, minimal, maximal));
             index++;
         }
         for (var j = currentLayer.length; j < nextLayer.length; j++) {
             random = Math.floor(Math.random() * currentLayer.length);
-            activities.push(generateActivity(index, analysisType, currentLayer[random].name, nextLayer[j].name));
+            activities.push(generateActivity(index, analysisType, currentLayer[random].name, nextLayer[j].name, minimal, maximal));
             index++;
         }
     } else {
         for (var j = 0; j < nextLayer.length; j++) {
-            activities.push(generateActivity(index, analysisType, currentLayer[j].name, nextLayer[j].name));
+            activities.push(generateActivity(index, analysisType, currentLayer[j].name, nextLayer[j].name, minimal, maximal));
             index++;
         }
         for (var j = nextLayer.length; j < currentLayer.length; j++) {
             random = Math.floor(Math.random() * nextLayer.length);
-            activities.push(generateActivity(index, analysisType, currentLayer[j].name, nextLayer[random].name));
+            activities.push(generateActivity(index, analysisType, currentLayer[j].name, nextLayer[random].name, minimal, maximal));
             index++;
         }
     }
@@ -92,12 +93,11 @@ function connectLayers(idx, currentLayer, nextLayer, analysisType) {
 }
 
 // generate activities
-function generateActivity(idx, analysisType, fromState, toState) {
-    const max = 100;
+function generateActivity(idx, analysisType, fromState, toState, min, max) {
     return {
         "name": "A" + (idx+1),
         "type": "normal",
-        "values": generateValuesForActivity(analysisType, max),
+        "values": generateValuesForActivity(analysisType, min, max),
         "timeUnit": "hours",
         "fromState": fromState,
         "toState": toState
@@ -116,10 +116,13 @@ function generateStates(count) {
 }
 
 // generate values for activities
-function generateValuesForActivity(analysisType, max) {
+function generateValuesForActivity(analysisType, min, max) {
+    // TODO 
     var values = [];
+    var value;
     if (analysisType == "cpm") {
-        values.push((Math.floor(Math.random() * max) + 1).toString());
+        value = Math.floor(Math.random() * (max - min + 1)) + min;
+        values.push(value.toString());
     } else {
         var a, m, b;
         a = Math.floor(Math.random() * max) + 1;
