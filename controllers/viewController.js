@@ -41,19 +41,6 @@ exports.results = async(req, res, next) => {
 }
 */
 
-exports.monteCarlo = async(req, res, next) => {
-    try {
-        var user = await UserModel.findById(req.session.userId);
-        return res.render("monteCarloAnalysis", {
-            title: req.__("monte carlo analysis"),
-            username: user.userName + " " + user.userSurname,
-            navColor: req.cookies.navColor
-        })
-    } catch (err) {
-        return next(err);
-    }
-}
-
 exports.renderSettings = async(req, res, next) => {
     try {
         var user = await UserModel.findById(req.session.userId);

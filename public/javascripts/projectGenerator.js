@@ -119,16 +119,18 @@ function generateStates(count) {
 function generateValuesForActivity(analysisType, min, max) {
     // TODO 
     var values = [];
-    var value;
     if (analysisType == "cpm") {
-        value = Math.floor(Math.random() * (max - min + 1)) + min;
-        values.push(value.toString());
+        values.push(generateValue(min, max).toString());
     } else {
         var a, m, b;
-        a = Math.floor(Math.random() * max) + 1;
-        m = a + (Math.floor(Math.random() * 10) + 1);
-        b = m + (Math.floor(Math.random() * 10) + 1);
+        a = generateValue(min, max);
+        m = generateValue(a, max);
+        b = generateValue(m, max);
         values.push(a.toString(), m.toString(), b.toString());
     }
     return values;
+}
+
+function generateValue(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
 }

@@ -16,15 +16,19 @@
                 </div>
                 <div class="form-group">
                     <label for="numberOfIterations">{{__ "number of iterations"}}</label>
-                    <input type="number" class="form-control" placeholder="{{__ "enter number of iterations"}}" min="10" value="10">
+                    <input type="number" class="form-control" id="numberOfIterations" placeholder="{{__ "enter number of iterations"}}" min="10" value="10">
                 </div>
                 <div class="text-center">
-                    <button type="submit" class="btn btn-primary">{{__ "run simulation"}}</button>
+                    <button type="button" class="btn btn-primary" onclick="runMonteCarlo();">{{__ "run simulation"}}</button>
                     <button type="button" class="btn btn-secondary" onclick="history.back()">{{__ "back"}}</button>
                 </div>
             </form>
-            <div>
-                AAAAATAtgea
+            <div style="background-color: #ffb8b8; margin-top: 10px; display: none;" id="monteCarloErrDiv">
+                <button type="button" class="close" onclick="closeMonteCarloErr()" style="margin-right: 5px;">
+                    <span aria-hidden="true">&times;</span>
+                </button>
+                <div id="monteCarloErrMsg" style="margin-left: 5px;">
+                </div>
             </div>
         </div>
         <div class="col-md-8 col-sm-8 col-xs-24">
@@ -36,29 +40,29 @@
     </div>
 </div>
 
+<script src="/javascripts/calculations.js"></script>
 <script src="/javascripts/jstat.min.js"></script>
 <script>
-    var lambda = 4;
-    var min = 2;
-    var med = 5;
-    var max = 9;
-    var alpha = 1 + lambda * ((med - min) / (max - min));
-    var beta = 1 + lambda * ((max - med) / (max - min));
-    var randNum = Math.random() * (1 - 0) + 0;
-    var cdf = jStat.beta.cdf(randNum, alpha, beta);
-    var time = min + (max - min) * cdf;
-    console.log("RAND NUM")
-    console.log(randNum)
-    console.log("BETA ROZDELENI")
-    console.log("Alpha")
-    console.log(alpha)
-    console.log("BETA")
-    console.log(beta)
-    console.log("ENDE")    
-    console.log("CDF")
-    console.log(cdf)
-    console.log("Time")
-    console.log(time)
+
+    var activities = JSON.parse(sessionStorage.getItem("activities"));
+    var states = JSON.parse(sessionStorage.getItem("states"));
+
+
+    function runMonteCarlo() {
+       // console.log(checkDiagram(states, activities));
+
+    // simulationMonteCarlo(numberOfIterations, states, activities)
+        const numberOfIterations = parseInt(document.getElementById("numberOfIterations").value);
+
+        console.log("Jde se na monte carlo")
+        simulateMonteCarlo(numberOfIterations, states, activities);
+
+    }
+
+    //
+    function closeMonteCarloErr() {
+        document.getElementById('monteCarloErrDiv').style.display = 'none';
+    }
 
 
 
@@ -97,4 +101,5 @@
             }
         }
     });
+
 </script>

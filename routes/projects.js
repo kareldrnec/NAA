@@ -42,4 +42,7 @@ router.post("/generate", auth.requiresLogin, project_controller.generateProject)
 
 router.get("/:id/results", auth.requiresLogin, project_controller.results);
 
+
+router.get("/:id/monteCarlo", auth.requiresLogin, project_controller.monteCarlo);
+
 module.exports = router;

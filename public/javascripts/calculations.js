@@ -1,6 +1,22 @@
-function simulationMonteCarlo() {
+function simulateMonteCarlo(numberOfIterations, states, activities) {
     // TODO
-    console.log(jStat.normal.pdf(29,5,2))
+    var calculatedStates, calculatedActivities;
+
+
+    calculatedStates = arrStates(states.states);
+    calculatedActivities = monteCarloActivities(activities.activities);
+
+    console.log("STATES")
+    console.log(calculatedStates)
+    console.log(calculatedActivities)
+    console.log("ENDE")
+
+    calculatedStates = forwardCalculation(calculatedStates, calculatedActivities);
+    calculatedStates = backwardCalculation(calculatedStates, calculatedActivities);
+
+    console.log("Po jedne iteraci")
+    console.log(calculatedStates)
+    
 }
 
 function checkDiagram(states, activities) {
@@ -235,3 +251,41 @@ function pertActivities(activities) {
     }
     return activitiesArr;
 }
+
+function monteCarloActivities(activities) {
+    var min, med, max, alpha, beta, randNum, cdf, time;
+    var activitiesArr = [];
+    const lambda = 4;
+    for (var i = 0; i < activities.length; i++) {
+        min = parseInt(activities[i].values[0]);
+        med = parseInt(activities[i].values[1]);
+        max = parseInt(activities[i].values[2]);
+        alpha = 1 + lambda * ((med - min) / (max - min));
+        beta = 1 + lambda * ((max - med) / (max - min));
+        randNum = Math.random() * (1 - 0) + 0;
+        cdf = jStat.beta.cdf(randNum, alpha, beta);
+        time = min + (max - min) * cdf;
+        activitiesArr.push({
+            ID: activities[i].ID,
+            fromState: activities[i].fromState,
+            toState: activities[i].toState,
+            value: time,
+            critical: false
+        })
+    }
+    return activitiesArr;
+}
+
+/**
+ * 
+ *     
+    var lambda = 4;
+    var min = 2;
+    var med = 5;
+    var max = 9;
+    var alpha = 1 + lambda * ((med - min) / (max - min));
+    var beta = 1 + lambda * ((max - med) / (max - min));
+    var randNum = Math.random() * (1 - 0) + 0;
+    var cdf = jStat.beta.cdf(randNum, alpha, beta);
+    var time = min + (max - min) * cdf;
+ */
