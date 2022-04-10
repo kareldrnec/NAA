@@ -209,7 +209,7 @@
     <div class="modal-dialog" role="document">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title" id="addStateModalLabel">{{__ "new state"}}</h5>
+                <h5 class="modal-title" id="addStateModalLabel">{{__ "add state"}}</h5>
                 <button type="button" class="close" data-dismiss="modal" aria-label="Close">
                     <span aria-hidden="true">&times;</span>
                 </button>
@@ -222,7 +222,7 @@
                             aria-describedby="stateNameHelp" placeholder="{{__ "enter state name"}}" title="{{__ "required information"}}" required>
                     </div>
                     <div class="form-group">
-                        <label for="stateInfo">{{__ "information"}}</label>
+                        <label for="stateInfo">{{__ "description"}}</label>
                         <input type="text" class="form-control" id="stateInfoInput" name="stateInfoInput"
                             placeholder="{{__ "enter state description"}}" title="{{__ "optional information"}}">
                     </div>
@@ -357,7 +357,7 @@
                             <div class="form-group">
                                 <label for="optimisticValue">{{__ "optimistic value"}}</label>
                                 <input type="number" class="form-control" name="optimisticValue" id="optimisticValue" min="0" value="0" step="1">
-                                <label for="mostExpectedValue">{{__ "most expected value"}}</label>
+                                <label for="mostExpectedValue">{{__ "modal time"}}</label>
                                 <input type="number" class="form-control" name="mostExpectedValue" id="mostExpectedValue" min="0" value="0" step="1">
                                 <label for="pessimisticValue">{{__ "pessimistic value"}}</label>
                                 <input type="number" class="form-control" name="pessimisticValue" id="pessimisticValue" min="0" value="0" step="1">
