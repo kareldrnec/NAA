@@ -12,8 +12,6 @@ router.get('/', auth.requiresLogin, function(req, res) {
 
 router.get('/about', auth.requiresLogin, view_controller.aboutApp);
 
-router.get('/help', auth.requiresLogin, view_controller.helpPage);
-
 // GET - settings
 router.get('/settings', auth.requiresLogin, view_controller.renderSettings);
 

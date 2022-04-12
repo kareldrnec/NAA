@@ -13,19 +13,6 @@ exports.aboutApp = async(req, res, next) => {
     }
 }
 
-exports.helpPage = async(req, res, next) => {
-    try {
-        var user = await UserModel.findById(req.session.userId);
-        return res.render("help", {
-            title: req.__("help"),
-            username: user.userName + " " + user.userSurname,
-            navColor: req.cookies.navColor
-        })
-    } catch (err) {
-        return next(err);
-    }
-}
-
 /*
 exports.results = async(req, res, next) => {
     try {
