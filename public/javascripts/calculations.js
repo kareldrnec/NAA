@@ -6,17 +6,11 @@ function simulateMonteCarlo(numberOfIterations, states, activities) {
     calculatedStates = arrStates(states.states);
     calculatedActivities = monteCarloActivities(activities.activities);
 
-    console.log("STATES")
-    console.log(calculatedStates)
-    console.log(calculatedActivities)
-    console.log("ENDE")
 
     calculatedStates = forwardCalculation(calculatedStates, calculatedActivities);
     calculatedStates = backwardCalculation(calculatedStates, calculatedActivities);
-
-    console.log("Po jedne iteraci")
-    console.log(calculatedStates)
-
+    var finishState = calculatedStates.find(element => element.name == "Finish");
+    return finishState.ES;
 }
 
 function checkDiagram(states, activities) {

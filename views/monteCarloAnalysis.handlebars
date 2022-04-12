@@ -16,7 +16,7 @@
                 </div>
                 <div class="form-group">
                     <label for="numberOfIterations">{{__ "number of iterations"}}</label>
-                    <input type="number" class="form-control" id="numberOfIterations" placeholder="{{__ "enter number of iterations"}}" min="10" value="10">
+                    <input type="number" class="form-control" id="numberOfIterations" placeholder="{{__ "enter number of iterations"}}" min="100" value="100">
                 </div>
                 <div class="text-center">
                     <button type="button" class="btn btn-primary" onclick="runMonteCarlo();">{{__ "run simulation"}}</button>
@@ -49,21 +49,32 @@
     var activities = JSON.parse(sessionStorage.getItem("activities"));
     var states = JSON.parse(sessionStorage.getItem("states"));
 
+    console.log("HW")
+    console.log(navigator.hardwareConcurrency);
+    console.log("ENDE")
 
     function runMonteCarlo() {
        // console.log(checkDiagram(states, activities));
 
     // simulationMonteCarlo(numberOfIterations, states, activities)
         const numberOfIterations = parseInt(document.getElementById("numberOfIterations").value);
-
+        /*
         console.log("Jde se na monte carlo")
-        //simulateMonteCarlo(numberOfIterations, states, activities);
 
+        var res = simulateMonteCarlo(numberOfIterations, states, activities);
 
-
+        console.log("RES JE")
+        console.log(Math.round((res + Number.EPSILON) * 100) / 100);
+        console.log("ENDE")
+        */
         if (window.Worker) {
-            var myWorker = new Worker('worker.js');
-            console.log("JDE UZIT WORKER")
+            var myWorker = new Worker('/javascripts/monteCarlo.js');
+            myWorker.postMessage(numberOfIterations);
+            myWorker.onmessage = function(event) {
+                console.log("VYPIS WORKERU");
+                console.log(event.data);
+                console.log("ENDE");
+            }
         } else {
             console.log("NEJDE")
         }
