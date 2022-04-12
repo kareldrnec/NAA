@@ -16,7 +16,7 @@ function simulateMonteCarlo(numberOfIterations, states, activities) {
 
     console.log("Po jedne iteraci")
     console.log(calculatedStates)
-    
+
 }
 
 function checkDiagram(states, activities) {
@@ -123,7 +123,7 @@ function forwardCalculation(states, activities) {
         for (var i = 0; i < nextStates.length; i++) {
             currentState = nextStates[i];
             activitiesToState = activities.filter(element => element.toState == currentState.ID);
-            if(canForward(states, activitiesToState)) {
+            if (canForward(states, activitiesToState)) {
                 max = findMaxValue(states, activitiesToState);
                 currentState.ES = max;
                 tmpStates = findNextStates(currentState, states, activities, tmpStates);
@@ -245,7 +245,7 @@ function pertActivities(activities) {
             fromState: activities[i].fromState,
             toState: activities[i].toState,
             value: parseInt(activities[i].values[0]) + 4 * parseInt(activities[i].values[1]) + parseInt(activities[i].values[2]),
-            std: parseInt(activities[i].values[2]) - parseInt(activities[i].values[0]), 
+            std: parseInt(activities[i].values[2]) - parseInt(activities[i].values[0]),
             critical: false
         });
     }
@@ -263,7 +263,7 @@ function monteCarloActivities(activities) {
         alpha = 1 + lambda * ((med - min) / (max - min));
         beta = 1 + lambda * ((max - med) / (max - min));
         randNum = Math.random() * (1 - 0) + 0;
-        cdf = jStat.beta.cdf(randNum, alpha, beta);
+        cdf = jStat.beta.inv(randNum, alpha, beta);
         time = min + (max - min) * cdf;
         activitiesArr.push({
             ID: activities[i].ID,
