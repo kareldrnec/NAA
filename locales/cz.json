@@ -25,6 +25,7 @@
 	"analysis type": "Typ analýzy",
 	"back": "Zpět",
 	"blue": "Modrá",
+	"this browser does not support workers": "Tento prohlížeč nepodporuje Web Workers API!",
 	"calculate": "Výpočet",
 	"cannot be dummy": "Tato činnost nemůže být fiktivní!",
 	"change": "Změnit",

@@ -16,7 +16,7 @@
                 </div>
                 <div class="form-group">
                     <label for="numberOfIterations">{{__ "number of iterations"}}</label>
-                    <input type="number" class="form-control" id="numberOfIterations" placeholder="{{__ "enter number of iterations"}}" min="100" value="100">
+                    <input type="number" class="form-control" id="numberOfIterations" placeholder="{{__ "enter number of iterations"}}" min="10000" value="10000" step="10000">
                 </div>
                 <div class="text-center">
                     <button type="button" class="btn btn-primary" onclick="runMonteCarlo();">{{__ "run simulation"}}</button>
@@ -39,76 +39,83 @@
         </div>
     </div>
 </div>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.6.0/chart.min.js"
+<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.6.0/chart.min.js"
     integrity="sha512-GMGzUEevhWh8Tc/njS0bDpwgxdCJLQBWG3Z2Ct+JGOpVnEmjvNx6ts4v6A2XJf1HOrtOsfhv3hBKpK9kE5z8AQ=="
     crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-<script src="/javascripts/calculations.js"></script>
 <script src="/javascripts/jstat.min.js"></script>
 <script>
-
     var activities = JSON.parse(sessionStorage.getItem("activities"));
     var states = JSON.parse(sessionStorage.getItem("states"));
 
-    console.log("HW")
-    console.log(navigator.hardwareConcurrency);
-    console.log("ENDE")
-
-    function runMonteCarlo() {
-       // console.log(checkDiagram(states, activities));
-
-    // simulationMonteCarlo(numberOfIterations, states, activities)
-        const numberOfIterations = parseInt(document.getElementById("numberOfIterations").value);
-        /*
-        console.log("Jde se na monte carlo")
-
-        var res = simulateMonteCarlo(numberOfIterations, states, activities);
-
-        console.log("RES JE")
-        console.log(Math.round((res + Number.EPSILON) * 100) / 100);
-        console.log("ENDE")
-        */
-        if (window.Worker) {
-            var myWorker = new Worker('/javascripts/monteCarlo.js');
-            myWorker.postMessage(numberOfIterations);
-            myWorker.onmessage = function(event) {
-                console.log("VYPIS WORKERU");
-                console.log(event.data);
-                console.log("ENDE");
-            }
-        } else {
-            console.log("NEJDE")
-        }
-
-
-    }
-
-    //
-    function closeMonteCarloErr() {
-        document.getElementById('monteCarloErrDiv').style.display = 'none';
-    }
-
-
-
     const ctx = document.getElementById('myChart').getContext('2d');
-    const myChart = new Chart(ctx, {
-        type: 'line',
+    var myChart = new Chart(ctx, {
+        type: 'line', 
         data: {
-            labels: ['Red', 'Blue', 'Yellow', 'Green', 'Purple', 'Orange'],
-            datasets: [{
-                label: '# of Votes',
-                data: [12, 19, 3, 5, 2, 3],
-                backgroundColor: 'rgba(255, 99, 132, 0.2)',
-                borderColor: 'rgba(255, 99, 132, 1)',
-                borderWidth: 1
-            }]
-        },
+        labels: [],
+        datasets: [{
+            label: '',
+            data: [],
+            backgroundColor: 'rgba(255, 99, 132, 0.2)',
+            borderColor: 'rgba(255, 99, 132, 1)',
+            borderWidth: 1
+        }]
+    },
         options: {
             scales: {
                 y: {
-                    beginAtZero: true
+                    suggestedMin: 0,
+                    suggestedMax: 0.02
                 }
             }
         }
     });
+
+    function runMonteCarlo() {
+        const numberOfIterations = parseInt(document.getElementById("numberOfIterations").value);
+
+        if (myChart.data.labels.length != 0) {
+            myChart.data.labels = [];
+            myChart.data.datasets[0].data = [];
+            myChart.data.datasets[0].label = 0
+            myChart.update();
+        }
+
+        if (window.Worker) {
+            var myWorker = new Worker('/javascripts/monteCarlo.js');
+            var data = [];
+            
+            data.push(numberOfIterations)
+            data.push(activities)
+            data.push(states);
+
+            myWorker.postMessage(data);
+            
+            myWorker.onmessage = function(event) {
+                var labels = [];
+                var dataN = [];
+                var num = 0;
+                var arr = event.data.resultArr;
+
+                arr.sort((a, b) => a.value - b.value);
+                
+                for (var i = 0; i < arr.length; i++) {
+                    labels.push(arr[i].value);
+                    dataN.push(arr[i].count / event.data.count);
+                }
+
+                myChart.data.labels = labels;
+                myChart.data.datasets[0].data = dataN;
+                myChart.data.datasets[0].label = event.data.count
+                myChart.update();
+            }
+        } else {
+            // Web Workers API is not supported!
+            alert("{{__ "this browser does not support workers"}}");
+        }
+    }
+
+    function closeMonteCarloErr() {
+        document.getElementById('monteCarloErrDiv').style.display = 'none';
+    }
 
 </script>

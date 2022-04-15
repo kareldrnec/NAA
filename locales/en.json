@@ -25,6 +25,7 @@
 	"analysis type": "Analysis Type",
 	"back": "Back",
 	"blue": "Blue",
+	"this browser does not support workers": "This Browser does not support Web Workers API!",
 	"calculate": "Calculate",
 	"cannot be dummy": "This Activity cannot be dummy!",
 	"change": "Change",

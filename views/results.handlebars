@@ -14,7 +14,9 @@
 
 <div id="resultsContent">
     <div style="text-align: center;">
-
+        <div id="summaryText">
+            {{__ "analysis type"}}
+        </div>
         <table class="table table-hover" id="table" style="display: none">
             <thead id="tableHead" style="background-color: lightskyblue;">
             </thead>
@@ -34,10 +36,12 @@
     function displaySummary() {
         console.log("CLICK NA SUMMARY")
         document.getElementById("table").style.display = "none";
+        document.getElementById("summaryText").style.display = "inline";
     }
     function displayStates() {
         createHeadStates();
         createBodyStates();
+        document.getElementById("summaryText").style.display = "none";
         document.getElementById("table").style.display = "table";
     }
     function displayActivities() {
@@ -49,6 +53,7 @@
             createHeadActivitiesPERT();
             createBodyActivitiesPERT();
         }
+        document.getElementById("summaryText").style.display = "none";
         document.getElementById("table").style.display = "table";
     }
 

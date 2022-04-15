@@ -523,9 +523,23 @@
                     <li>State Name - {{__ "state name"}}</li>
                     <li>Slack - {{__ "time reserve"}}</li>
                 </ul>
+                {{#ifEquals projectType "cpm"}}
                 <div class="text-center">
                     <h6>{{__ "normal activity"}}</h6>
-                    <img src="/images/normal_activity.png" width="250" height="100">
+                    <img src="/images/normal_activity_cpm.png" width="250" height="100">
+                </div>
+                <ul>
+                    <li>y - {{__ "length of activity"}}</li>
+                </ul>
+                <div class="text-center">
+                    <h6>{{__ "dummy activity"}}</h6>
+                    <img src="/images/dummy_activity_cpm.png" width="250" height="100">
+                </div>
+                {{/ifEquals}}
+                {{#ifEquals projectType "pert"}}
+                <div class="text-center">
+                    <h6>{{__ "normal activity"}}</h6>
+                    <img src="/images/normal_activity_pert.png" width="250" height="100">
                 </div>
                 <ul>
                     <li>a - {{__ "optimistic value"}}</li>
@@ -534,8 +548,9 @@
                 </ul>
                 <div class="text-center">
                     <h6>{{__ "dummy activity"}}</h6>
-                    <img src="/images/dummy_activity.png" width="250" height="100">
+                    <img src="/images/dummy_activity_pert.png" width="250" height="100">
                 </div>
+                {{/ifEquals}}
                 <div class="text-center">
                     <a href="/files/test.pdf" target="_blank">{{__ "complete user manual"}}</a>
                 </div>

@@ -1,17 +1,3 @@
-function simulateMonteCarlo(numberOfIterations, states, activities) {
-    // TODO
-    var calculatedStates, calculatedActivities;
-
-
-    calculatedStates = arrStates(states.states);
-    calculatedActivities = monteCarloActivities(activities.activities);
-
-
-    calculatedStates = forwardCalculation(calculatedStates, calculatedActivities);
-    calculatedStates = backwardCalculation(calculatedStates, calculatedActivities);
-    var finishState = calculatedStates.find(element => element.name == "Finish");
-    return finishState.ES;
-}
 
 function checkDiagram(states, activities) {
     var fromActivity, toActivity;
@@ -41,6 +27,48 @@ function checkDiagram(states, activities) {
     return errState;
 }
 
+function simulateMonteCarlo(activities, states) {
+    // TODO
+        // TODO
+        var calculatedStates, calculatedActivities;
+        calculatedStates = arrStates(states.states);
+        calculatedActivities = monteCarloActivities(activities.activities);
+        calculatedStates = forwardCalculation(calculatedStates, calculatedActivities);
+        calculatedStates = backwardCalculation(calculatedStates, calculatedActivities);
+        var finishState = calculatedStates.find(element => element.name == "Finish");
+        // Math.round((num + Number.EPSILON) * 100) / 100
+        //return Math.round((finishState.ES + Number.EPSILON) * 100) / 100;
+        return (finishState.ES).toFixed(1);
+}
+
+function monteCarloActivities(activities) {
+    var min, med, max, alpha, beta, randNum, cdf, time;
+    var activitiesArr = [];
+    const lambda = 4;
+    for (var i = 0; i < activities.length; i++) {
+        min = parseInt(activities[i].values[0]);
+        med = parseInt(activities[i].values[1]);
+        max = parseInt(activities[i].values[2]);
+        alpha = 1 + lambda * ((med - min) / (max - min));
+        beta = 1 + lambda * ((max - med) / (max - min));
+        randNum = Math.random() * (1 - 0) + 0;
+        cdf = jStat.beta.inv(randNum, alpha, beta);
+        time = min + (max - min) * cdf;
+        activitiesArr.push({
+            ID: activities[i].ID,
+            fromState: activities[i].fromState,
+            toState: activities[i].toState,
+            value: time,
+            critical: false
+        })
+    }
+    return activitiesArr;
+}
+
+
+
+
+
 function calculate(states, activities, currentProject) {
     var result = {};
     var calculatedActivities;
@@ -56,9 +84,20 @@ function calculate(states, activities, currentProject) {
 
     calculatedActivities = findCriticalActivities(calculatedStates, calculatedActivities);
 
+    if (projectType == 'cpm') {
+        var finishState = calculatedStates.find(element => element.name == "Finish");
+        result.project = {"length": finishState.ES, "projectType": projectType, "calculationDate": Date.now()};
+    } else {
+        // PERT VALUES
+        // CALCULATION
+
+
+    }
+
+
     result.states = calculatedStates;
     result.activities = calculatedActivities;
-    // ulozit
+
     sessionStorage.setItem(currentProject._id, JSON.stringify(result));
 }
 
@@ -74,8 +113,6 @@ function findCriticalActivities(states, activities) {
     }
     return activities;
 }
-
-
 
 function backwardCalculation(states, activities) {
     var nextStates, activitiesFromState, min;
@@ -104,7 +141,6 @@ function backwardCalculation(states, activities) {
     }
     return states;
 }
-
 
 function forwardCalculation(states, activities) {
     var nextStates, activitiesToState, max;
@@ -178,7 +214,6 @@ function canBackward(states, activitiesFromState) {
     return can;
 }
 
-
 function findNextStates(currentState, states, activities, resultStates) {
     var tmpState;
     var tempActivities = activities.filter(element => element.fromState == currentState.ID);
@@ -199,7 +234,6 @@ function findPreviousStates(currentState, states, activities, resultStates) {
     return resultStates;
 }
 
-
 function arrStates(states) {
     var statesArr = [];
     for (var i = 0; i < states.length; i++) {
@@ -213,8 +247,6 @@ function arrStates(states) {
     }
     return statesArr;
 }
-
-// {ID: '620d90f9586c99ada6ed27d4', stateName: 'Finish', projectID: '620d90f9586c99ada6ed27d1', description: ''}
 
 function cpmActivities(activities) {
     var activitiesArr = [];
@@ -245,41 +277,3 @@ function pertActivities(activities) {
     }
     return activitiesArr;
 }
-
-function monteCarloActivities(activities) {
-    var min, med, max, alpha, beta, randNum, cdf, time;
-    var activitiesArr = [];
-    const lambda = 4;
-    for (var i = 0; i < activities.length; i++) {
-        min = parseInt(activities[i].values[0]);
-        med = parseInt(activities[i].values[1]);
-        max = parseInt(activities[i].values[2]);
-        alpha = 1 + lambda * ((med - min) / (max - min));
-        beta = 1 + lambda * ((max - med) / (max - min));
-        randNum = Math.random() * (1 - 0) + 0;
-        cdf = jStat.beta.inv(randNum, alpha, beta);
-        time = min + (max - min) * cdf;
-        activitiesArr.push({
-            ID: activities[i].ID,
-            fromState: activities[i].fromState,
-            toState: activities[i].toState,
-            value: time,
-            critical: false
-        })
-    }
-    return activitiesArr;
-}
-
-/**
- * 
- *     
-    var lambda = 4;
-    var min = 2;
-    var med = 5;
-    var max = 9;
-    var alpha = 1 + lambda * ((med - min) / (max - min));
-    var beta = 1 + lambda * ((max - med) / (max - min));
-    var randNum = Math.random() * (1 - 0) + 0;
-    var cdf = jStat.beta.cdf(randNum, alpha, beta);
-    var time = min + (max - min) * cdf;
- */

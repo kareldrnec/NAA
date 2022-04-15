@@ -203,7 +203,7 @@ function getNodeDataArray(states) {
     var nodeDataArray = [];
     var statesData = states.states;
     var currentNode, criticalState;
-    var resNodes, slack;
+    var resNodes, slack, earliestStart, latestStart;
     
     if(result) {
         resNodes = result.states;
@@ -211,19 +211,26 @@ function getNodeDataArray(states) {
     if (resNodes) {
         for (var i = 0; i < statesData.length; i++) {
             currentNode = resNodes.find(element => element.ID == statesData[i].ID);
+            earliestStart = currentNode.ES;
+            latestStart = currentNode.LS;
             if (currentNode.slack == 0) {
                 criticalState = true;
                 slack = 0;
             } else {
                 criticalState = false;
-                slack = currentNode.slack + "/6";
+                slack = currentNode.slack;
+                if (projectType == "pert") slack += "/6";
+            }
+            if (projectType == "pert") {
+                if (earliestStart != 0) earliestStart += "/6";
+                if (latestStart != 0) latestStart += "/6";
             }
             nodeDataArray.push({
                 "key": statesData[i].ID,
                 "text": statesData[i].stateName,
                 critical: criticalState,
-                earliestStart: currentNode.ES + "/6",
-                latestStart: currentNode.LS + "/6",
+                earliestStart: earliestStart,
+                latestStart: latestStart,
                 slack: slack
             })
         }
@@ -358,12 +365,6 @@ function deleteState(e, obj) {
     $('#deleteStateModal').modal('show');
 }
 
-//
-//
-//
-//
-//
-// TODO
 function addActivity(e, obj) {
     // TODO
     var selectedNode = obj.part;
@@ -374,30 +375,24 @@ function addActivity(e, obj) {
     // add Selected State 
     selectedStates.push(selectedNode.data)
 
-    if (selectedStates.length == 2) {
-
-        // TODO jestli mohu takhle spojit
-        if (selectedStates[0].text == "Start") {
-            console.log("Prvni je start")
-        }
-        $('#addActivityForm').attr('action', selectedStates[0].key + "&" + selectedStates[1].key);
-        document.getElementById('addActError').style.display = "none";
+    if (selectedStates[0].text == "Finish") {
+        alert("TAKY NEMOHU")
         selectedStates = [];
-        $('#addActivityModal').modal('show');
+        // Finish state nemuze byt prvnim 
     }
 
-
-    /**
-     * var data = e.diagram.selection.toArray();
-        if (data.length == 2) {
-        var first_state = data[0].data;
-        var second_state = data[1].data;
-        console.log(first_state)
-        console.log(second_state)
-        $('#addActivityModal').modal('show');
+    if (selectedStates.length == 2) {
+        if (selectedStates[0].text == selectedStates[1].text) {
+            alert("nemohu");
+            // nemohu pojit dva stejne 
+            selectedStates = [];
+        } else {
+            $('#addActivityForm').attr('action', selectedStates[0].key + "&" + selectedStates[1].key);
+            document.getElementById('addActError').style.display = "none";
+            selectedStates = [];
+            $('#addActivityModal').modal('show');
+        }
     }
-     */
-
 }
 
 function editActivity(e, obj) {
