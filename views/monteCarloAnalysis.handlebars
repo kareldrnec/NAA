@@ -22,6 +22,9 @@
                     <button type="button" class="btn btn-primary" onclick="runMonteCarlo();">{{__ "run simulation"}}</button>
                     <button type="button" class="btn btn-secondary" onclick="history.back()">{{__ "back"}}</button>
                 </div>
+                <div class="text-center">
+                    <span id="hour">00</span>:<span id="minute">00</span>:<span id="second">00</span>
+                </div>
             </form>
             <div style="background-color: #ffb8b8; margin-top: 10px; display: none;" id="monteCarloErrDiv">
                 <button type="button" class="close" onclick="closeMonteCarloErr()" style="margin-right: 5px;">
@@ -42,11 +45,9 @@
 <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.6.0/chart.min.js"
     integrity="sha512-GMGzUEevhWh8Tc/njS0bDpwgxdCJLQBWG3Z2Ct+JGOpVnEmjvNx6ts4v6A2XJf1HOrtOsfhv3hBKpK9kE5z8AQ=="
     crossorigin="anonymous" referrerpolicy="no-referrer"></script>
-<script src="/javascripts/jstat.min.js"></script>
 <script>
-    var activities = JSON.parse(sessionStorage.getItem("activities"));
-    var states = JSON.parse(sessionStorage.getItem("states"));
-
+    const activities = JSON.parse(sessionStorage.getItem("activities"));
+    const states = JSON.parse(sessionStorage.getItem("states"));
     const ctx = document.getElementById('myChart').getContext('2d');
     var myChart = new Chart(ctx, {
         type: 'line', 
@@ -64,14 +65,25 @@
             scales: {
                 y: {
                     suggestedMin: 0,
-                    suggestedMax: 0.02
+                    suggestedMax: 0.03
                 }
             }
         }
     });
+    var hour = 0;
+    var minute = 0;
+    var second = 0;
+    var millisecond = 0;
+    var cron;
 
+    /*
+    Run an Monte Carlo Analysis
+    */
     function runMonteCarlo() {
         const numberOfIterations = parseInt(document.getElementById("numberOfIterations").value);
+        
+        resetTimer();
+        startTimer();
 
         if (myChart.data.labels.length != 0) {
             myChart.data.labels = [];
@@ -107,6 +119,10 @@
                 myChart.data.datasets[0].data = dataN;
                 myChart.data.datasets[0].label = event.data.count
                 myChart.update();
+
+                if (event.data.count == numberOfIterations) {
+                    pauseTimer();
+                }
             }
         } else {
             // Web Workers API is not supported!
@@ -116,6 +132,47 @@
 
     function closeMonteCarloErr() {
         document.getElementById('monteCarloErrDiv').style.display = 'none';
+    }
+
+    function startTimer() {
+        pauseTimer();
+        cron = setInterval(() => {timer(); }, 10);
+    }
+
+    function pauseTimer() {
+        clearInterval(cron);
+    }
+
+    function resetTimer() {
+        hour = 0;
+        minute = 0;
+        second = 0;
+        millisecond = 0;
+        document.getElementById('hour').innerText = '00';
+        document.getElementById('minute').innerText = '00';
+        document.getElementById('second').innerText = '00';
+    }
+
+    function timer() {
+        if ((millisecond += 10) == 1000) {
+            millisecond = 0;
+            second++;
+        }
+        if (second == 60) {
+            second = 0;
+            minute++;
+        }
+        if (minute == 60) {
+            minute = 0;
+            hour++;
+        }
+        document.getElementById('hour').innerText = returnData(hour);
+        document.getElementById('minute').innerText = returnData(minute);
+        document.getElementById('second').innerText = returnData(second);
+    }
+
+    function returnData(input) {
+        return input > 10 ? input : `0${input}`
     }
 
 </script>

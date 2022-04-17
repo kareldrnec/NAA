@@ -66,9 +66,6 @@ function monteCarloActivities(activities) {
 }
 
 
-
-
-
 function calculate(states, activities, currentProject) {
     var result = {};
     var calculatedActivities;

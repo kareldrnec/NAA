@@ -33,6 +33,7 @@
     "etag": "^1.8.1",
     "express": "^4.17.1",
     "express-handlebars": "^6.0.1",
+    "express-mongo-sanitize": "^2.2.0",
     "express-session": "^1.17.2",
     "finalhandler": "^1.1.2",
     "forwarded": "^0.2.0",

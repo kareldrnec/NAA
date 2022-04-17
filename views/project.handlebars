@@ -261,7 +261,7 @@
                         placeholder="{{__ "enter state name"}}" title="{{__ "required information"}}" required>
                     </div>
                     <div class="form-group">
-                        <label for="editStateInfo">{{__ "information"}}</label>
+                        <label for="editStateInfo">{{__ "description"}}</label>
                         <input type="text" class="form-control" id="editStateInfo" name="editStateInfo"
                             placeholder="{{__ "enter state description"}}" title="{{__ "optional information"}}">
                     </div>
@@ -1066,12 +1066,16 @@
         if ("{{projectType}}" == "cpm") {
             alert("{{__ "project must be pert"}}")
         } else {
-            sessionStorage.setItem("activities", JSON.stringify(activities));
-            sessionStorage.setItem("states", JSON.stringify(states));
-            window.location.href = "/projects/{{projectID}}/monteCarlo";
+            const errState = checkDiagram(states.states, activities.activities);
+            if (errState != "") {
+                alert("{{__ "error"}}! {{__ "check state"}}" + errState + "!");
+            } else {
+                sessionStorage.setItem("activities", JSON.stringify(activities));
+                sessionStorage.setItem("states", JSON.stringify(states));
+                window.location.href = "/projects/{{projectID}}/monteCarlo";
+            }
         }
     }
-
 </script>
 
 

@@ -76,20 +76,20 @@
                             title="{{__ "required information"}}" required>
                     </div>
                     <div class="form-group">
-                        <label for="type">{{__ "type of project"}}</label>
+                        <label for="type">{{__ "project type"}}</label>
                         <select name="type" class="form-control" id="typeOfProject">
                             <option value="cpm">CPM</option>
                             <option value="pert">PERT</option>
                         </select>
                     </div>
                     <div class="form-group">
-                        <label for="projectInfo">{{__ "information"}}</label>
+                        <label for="projectInfo">{{__ "description"}}</label>
                         <textarea id="projectInfo" name="projectInfo" class="form-control" placeholder="{{__ "enter project description"}}"
                             title="{{__ "optional information"}}"></textarea>
                     </div>
                     <div class="form-group">
                         <label for="numberOfStates">{{__ "number of states"}}</label>
-                        <input type="number" class="form-control" id="numberOfStates" name="numberOfStates" min="2" max="50" value="2" required>
+                        <input type="number" class="form-control" id="numberOfStates" name="numberOfStates" min="2" max="100" value="2" required>
                     </div>
                     <div class="form-group">
                         <label>{{__ "min length of activity"}}</label>
