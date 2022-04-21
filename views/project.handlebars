@@ -747,6 +747,8 @@
             }, 3000);
             document.getElementById('editStateErrMsg').innerHTML = err;
             document.getElementById('editStateError').style.display = 'block';
+        } else {
+            alert("{{__ "error"}}!");
         }
     });
 
@@ -996,6 +998,8 @@
             }
             document.getElementById('editErrMsg').innerHTML = err;
             document.getElementById('editError').style.display = 'block';
+        } else {
+            alert("{{__ "error"}}!");
         }
     });
 
