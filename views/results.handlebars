@@ -1,13 +1,13 @@
 {{> navbar}}
 
 <div class="btn-group btn-group-toggle" data-toggle="buttons">
-  <label class="btn btn-secondary active" onclick="displaySummary();">
+  <label class="btn btn-secondary active" id="summaryLabel">
     <input type="radio" name="options" id="option1" autocomplete="off" checked> {{__ "summary"}}
   </label>
-  <label class="btn btn-secondary" onclick="displayStates();">
+  <label class="btn btn-secondary" id="statesLabel">
     <input type="radio" name="options" id="option2" autocomplete="off"> {{__ "states"}}
   </label>
-  <label class="btn btn-secondary" onclick="displayActivities()">
+  <label class="btn btn-secondary" id="activitiesLabel">
     <input type="radio" name="options" id="option3" autocomplete="off"> {{__ "activities"}}
   </label>
 </div>
@@ -33,18 +33,20 @@
     console.log(results)
     var thead;
 
-    function displaySummary() {
+    document.getElementById("summaryLabel").addEventListener('click', () => {
         console.log("CLICK NA SUMMARY")
         document.getElementById("table").style.display = "none";
         document.getElementById("summaryText").style.display = "inline";
-    }
-    function displayStates() {
+    });
+
+    document.getElementById("statesLabel").addEventListener('click', () => {
         createHeadStates();
         createBodyStates();
         document.getElementById("summaryText").style.display = "none";
         document.getElementById("table").style.display = "table";
-    }
-    function displayActivities() {
+    });
+   
+    document.getElementById("activitiesLabel").addEventListener('click', () => {
         // dodelat pro cpm
         if ("{{projectType}}" == "cpm") {
             createHeadActivitiesCPM();
@@ -55,7 +57,7 @@
         }
         document.getElementById("summaryText").style.display = "none";
         document.getElementById("table").style.display = "table";
-    }
+    })
 
     function createHeadStates() {
         thead = document.getElementById("tableHead");

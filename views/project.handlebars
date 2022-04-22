@@ -1066,20 +1066,6 @@
         }
     }
 
-    function redirectToMonteCarlo() {
-        if ("{{projectType}}" == "cpm") {
-            alert("{{__ "project must be pert"}}")
-        } else {
-            const errState = checkDiagram(states.states, activities.activities);
-            if (errState != "") {
-                alert("{{__ "error"}}! {{__ "check state"}}" + errState + "!");
-            } else {
-                sessionStorage.setItem("activities", JSON.stringify(activities));
-                sessionStorage.setItem("states", JSON.stringify(states));
-                window.location.href = "/projects/{{projectID}}/monteCarlo";
-            }
-        }
-    }
 </script>
 
 

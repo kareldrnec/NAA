@@ -23,10 +23,12 @@
           <a class="dropdown-item" href="/projects/edit/{{projectID}}"><i class="fas fa-edit"></i> {{__ "edit"}}</a>
           <a class="dropdown-item" data-toggle="modal" data-target="#deleteProjectModal" style="cursor: pointer;"><i
               class="fas fa-trash-alt"></i> {{__ "delete"}}</a>
-          <a class="dropdown-item" data-toggle="modal" data-target="#saveProjectModal" style="cursor: pointer;"><i class="fas fa-save"></i> {{__ "save"}}</a>
+          <a class="dropdown-item" data-toggle="modal" data-target="#saveProjectModal" style="cursor: pointer;"><i
+              class="fas fa-save"></i> {{__ "save"}}</a>
           <div class="dropdown-divider"></div>
           <h6 class="dropdown-header">{{__ "export project"}}</h6>
-          <a class="dropdown-item" data-toggle="modal" data-target="#exportProjectModal" style="cursor: pointer;"><i class="fas fa-file-export"></i> {{__ "export"}}</a>
+          <a class="dropdown-item" data-toggle="modal" data-target="#exportProjectModal" style="cursor: pointer;"><i
+              class="fas fa-file-export"></i> {{__ "export"}}</a>
           {{/if}}
         </div>
       </li>
@@ -39,10 +41,11 @@
           <h6 class="dropdown-header">{{__ "analysis"}}</h6>
           <a class="dropdown-item" data-toggle="modal" data-target="#calculationModal" style="cursor: pointer;"><i
               class="fas fa-chart-line"></i> {{__ "calculate"}}</a>
-          <a class="dropdown-item" onclick="redirectToMonteCarlo();" style="cursor: pointer;"><i class="fas fa-chart-bar"></i> Monte Carlo</a>
+          <a class="dropdown-item" id="redirectToMonteCarlo" style="cursor: pointer;"><i class="fas fa-chart-bar"></i>
+            Monte Carlo</a>
           <div class="dropdown-divider"></div>
           <h6 class="dropdown-header">{{__ "results"}}</h6>
-          <a class="dropdown-item" onclick="redirectToResults();" style="cursor: pointer;"><i class="fas fa-poll-h"></i> {{__ "results"}}</a>
+          <a class="dropdown-item" id="redirectToResults" style="cursor: pointer;"><i class="fas fa-poll-h"></i> {{__ "results"}}</a>
         </div>
       </li>
       <li class="nav-item dropdown">
@@ -55,8 +58,10 @@
           <a class="dropdown-item" href="/settings"><i class="fas fa-sliders-h"></i> {{__ "change"}}</a>
           <div class="dropdown-divider"></div>
           <h6 class="dropdown-header">{{__ "help"}}</h6>
-          <a class="dropdown-item" href="/files/test.pdf" target="_blank"><i class="fas fa-book"></i> {{__ "manual"}}</a>
-          <a class="dropdown-item" data-toggle="modal" data-target="#helpModal" style="cursor: pointer;"><i class="far fa-question-circle"></i> {{__ "hint"}}</a>
+          <a class="dropdown-item" href="/files/test.pdf" target="_blank"><i class="fas fa-book"></i> {{__
+            "manual"}}</a>
+          <a class="dropdown-item" data-toggle="modal" data-target="#helpModal" style="cursor: pointer;"><i
+              class="far fa-question-circle"></i> {{__ "hint"}}</a>
           <div class="dropdown-divider"></div>
           <a class="dropdown-item" href="/about"><i class="fas fa-info-circle"></i> {{__ "about app"}}</a>
         </div>
@@ -69,7 +74,7 @@
         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
           <a class="dropdown-item" href="/users/myProfile"><i class="far fa-user-circle"></i> {{__ "my profile"}}</a>
           <div class="dropdown-divider"></div>
-          <a class="dropdown-item" onclick="logout();" style="cursor: pointer;"><i class="fas fa-sign-out-alt"></i> {{__ "log out"}}</a>
+          <a class="dropdown-item" id="logout" style="cursor: pointer;"><i class="fas fa-sign-out-alt"></i> {{__ "log out"}}</a>
         </div>
       </li>
     </ul>
@@ -77,21 +82,37 @@
 </nav>
 
 <script>
-  if(!"{{navColor}}") {
+
+  if (!"{{navColor}}") {
     document.getElementById('navbar').style.backgroundColor = "lightsteelblue";
   }
 
-  function logout() {
+  document.getElementById("logout").addEventListener('click', () => {
     sessionStorage.clear();
     window.location.href = "/users/logout";
-  }
+  });
 
-  function redirectToResults() {
-    // mrknout jeste
+  document.getElementById("redirectToResults").addEventListener('click', () => {
     if (sessionStorage.getItem("{{projectID}}")) {
       window.location.href = "/projects/{{projectID}}/results";
     } else {
       alert("{{__ "have to perform analysis"}}");
     }
-  }
+  });
+
+  document.getElementById("redirectToMonteCarlo").addEventListener('click', () => {
+    if ("{{projectType}}" == "cpm") {
+      alert("{{__ "project must be pert"}}")
+    } else {
+      const errState = checkDiagram(states.states, activities.activities);
+      if (errState != "") {
+        alert("{{__ "error"}}! {{__ "check state"}}" + errState + "!");
+      } else {
+        sessionStorage.setItem("activities", JSON.stringify(activities));
+        sessionStorage.setItem("states", JSON.stringify(states));
+        window.location.href = "/projects/{{projectID}}/monteCarlo";
+      }
+    }
+  });
+
 </script>

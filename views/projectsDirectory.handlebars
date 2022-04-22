@@ -32,7 +32,7 @@
                     <td>
                         <a href="/projects/select/{{this.ID}}" title="{{../../__ "select"}}"><i class="fas fa-check-square"></i></a>
                         <a href="/projects/edit/{{this.ID}}" title="{{../../__ "edit"}}"><i class="fas fa-edit"></i></a>
-                        <a href="#" onclick="deleteModal({{json this.ID}}, {{json this.projectName}})" title="{{../../__ "delete"}}"><i class="fas fa-trash-alt"></i></a>
+                        <a href="#" id="delete_{{this.ID}}" title="{{../../__ "delete"}}"><i class="fas fa-trash-alt"></i></a>
                     </td>
                 </tr>
                 {{/each}}
@@ -179,17 +179,29 @@
 </div>
 
 <script src="/javascripts/projectGenerator.js"></script>
-<script>
+<script>    
+    if("{{projects}}") {
+        var projects = JSON.parse("{{json projects}}".replace(/&quot;/g, '"'));
+        var projectID, projectName;
+        for (var i = 0; i < (projects.projects).length; i++) {
+            projectID = projects.projects[i].ID;
+            projectName = projects.projects[i].projectName;
+            document.getElementById("delete_" + projects.projects[i].ID).addEventListener('click', () => {
+                document.getElementById('deletionText').innerHTML += ' 	&#8216;' + projectName + '&#8217;?';
+                $('#deleteProjectForm').attr("action", "/projects/delete/" + projectID + "/?_method=DELETE");
+                $('#deleteProjectModal').modal('show');
+            });
+        }
+    }
+
     setTimeout(function() {
         $('#flash').fadeOut('fast');
     }, 3000);
-
     $(document).ready(function() {
         $('.table > tbody > tr').dblclick(function(event) {
             window.location.href = "/projects/select/" + $(this).attr('id');
         })
     });
-
     var tableLength = parseInt(sessionStorage.getItem("tableLength"));
     var rowCount = $('#projectsTable tr').length - 1;
     
@@ -199,11 +211,8 @@
             $('#projectsTable tr').last().css('background', 'white');
         }, 3000);
     }
-
     sessionStorage.setItem("tableLength", rowCount);
-
     var generateButton = document.getElementById('generateButton');
-
     generateButton.addEventListener('click', function(){
         const projectName = document.getElementById('projectName'),
             analysisType = document.getElementById('typeOfProject'),
@@ -212,13 +221,10 @@
             maximalLength = document.getElementById('maximalLength');
         var hiddenInfo = document.getElementById('hiddenInfo'),
             projectInfo = document.getElementById('generatedProjectInfo');
-
         var submitButton = document.getElementById('submitGeneratedProject');
         //Generating
-
         var dataJSON = generateProject(numberOfStates.value, analysisType.value, parseInt(minimalLength.value), parseInt(maximalLength.value));
         var numberOfActivities = (dataJSON.activities).length;
-
         document.getElementById('generatedProjectJSON').value = JSON.stringify(dataJSON);
         // display info
         projectInfo.innerHTML = "<h6>{{__ "generated project"}}</h6>";
@@ -230,13 +236,10 @@
         projectInfo.innerHTML += "{{__ "analysis type"}}: " + (analysisType.value).toUpperCase() + "<br>";
         projectInfo.innerHTML += "{{__ "number of states"}}: " + numberOfStates.value + "<br>";
         projectInfo.innerHTML += "{{__ "number of activities"}}: " + numberOfActivities;
-
         hiddenInfo.style.display = 'block';
-
         submitButton.disabled = false;
         submitButton.title = "{{__ "add generated project"}}"
     });
-
     $('#generateProjectModal').on('hidden.bs.modal', function() {
         var submitButton = document.getElementById('submitGeneratedProject');
         document.getElementById('projectName').value = '';
@@ -250,12 +253,10 @@
         submitButton.disabled = true;
         submitButton.title = '';
     })
-
     // pripadne doresit osetreni proti chybam (nahrani projektu ze souboru)
     let loadForm = document.getElementById('loadFileForm');
     let input = document.getElementById('myFile');
     var dataJSON;
-
     input.addEventListener('change', () => {
         let files = input.files;
         if (files.length == 0) return;
@@ -276,23 +277,13 @@
             input.value = '';
         }
     });
-
-    function deleteModal(projectID, projectName) {
-        document.getElementById('deletionText').innerHTML += ' 	&#8216;' + projectName + '&#8217;?';
-        $('#deleteProjectForm').attr("action", "/projects/delete/" + projectID + "/?_method=DELETE");
-        $('#deleteProjectModal').modal('show');
-    }
-
     function changeMaximalLength(obj) {
         var maxValue = document.getElementById('maximalLength');
         if (obj.value > maxValue.value) maxValue.value = obj.value;
     }
-
     function changeMinimalLength(obj) {
         var minValue = document.getElementById('minimalLength');
         if (obj.value < minValue.value) minValue.value = obj.value;
     }
-
     // dodelat cookies info?
-
 </script>

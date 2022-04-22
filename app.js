@@ -145,7 +145,7 @@ const styleSources = ["'self'", "'unsafe-inline'", 'stackpath.bootstrapcdn.com',
 
 
 // TODO
-/*
+
 app.use(helmet({
     contentSecurityPolicy: {
         directives: {
@@ -154,12 +154,12 @@ app.use(helmet({
             styleSrc: styleSources,
             fontSrc: ["'self'", 'https://ka-f.fontawesome.com'],
             connectSrc: ["'self'", 'https://ka-f.fontawesome.com'],
-            imgSrc: ["'self'", 'data:']
+            imgSrc: ["'self'", 'data:'],
+            scriptSrcAttr: ["'self'"]
         }
     }
 }));
 
-*/
 
 // routing 
 app.use('/', require('./routes/index'));
