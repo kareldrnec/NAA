@@ -81,13 +81,31 @@ function calculate(states, activities, currentProject) {
 
     calculatedActivities = findCriticalActivities(calculatedStates, calculatedActivities);
 
+    var lastState = calculatedStates.find(element => element.name == "Finish");
     if (projectType == 'cpm') {
-        var finishState = calculatedStates.find(element => element.name == "Finish");
-        result.project = {"length": finishState.ES, "projectType": projectType, "calculationDate": Date.now()};
+        result.project = {"length": lastState.ES, "projectType": projectType, "calculationDate": Date.now()};
     } else {
         // PERT VALUES
         // CALCULATION
-        calculatePERT();
+        var previousActivity = null;
+        var totalSTD = 0;
+        while(lastState.name != "Start") {
+            previousActivity = calculatedActivities.find(element => element.critical == true && element.toState == lastState.ID);
+            totalSTD += previousActivity.std;
+            lastState = calculatedStates.find(element => element.ID == previousActivity.fromState);
+        }
+
+
+        console.log("Activities")
+        console.log(calculatedActivities)
+        console.log("that state")
+        console.log(previousActivity)
+        console.log("ENDE")
+        console.log("TOTAL STD")
+        console.log(totalSTD)
+        console.log("ENDE")
+
+
 
     }
 
@@ -97,11 +115,6 @@ function calculate(states, activities, currentProject) {
 
     sessionStorage.setItem(currentProject._id, JSON.stringify(result));
 }
-
-function calculatePERT() {
-
-}
-
 
 
 function findCriticalActivities(states, activities) {

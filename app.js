@@ -117,15 +117,12 @@ app.use((req, res, next) => {
 });
 
 // use express-mongo-sanitize
-app.use(
-    mongoSanitize({
-        replaceWith: '_'
-    })
-);
+
 
 // use ? for xss
 
 // use helmet
+
 app.use(helmet({
     contentSecurityPolicy: {
         directives: {
@@ -139,6 +136,12 @@ app.use(helmet({
         }
     }
 }));
+
+app.use(
+    mongoSanitize({
+        replaceWith: '_'
+    })
+);
 
 // routing
 app.use('/', require('./routes/index'));                // index routing
