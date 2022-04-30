@@ -1,33 +1,40 @@
-// express
-const express = require('express');
-const app = express();
+// app server
+const express = require('express');                                         // express
+const { engine } = require('express-handlebars');                           // express-handlebars
+const port = process.env.PORT || 3000;                                      // port settings
+const http = require('http');                                               // http
+const dotenv = require('dotenv').config();                                  // dotenv
+// const morgan = require('morgan'); IDK TODO
+const i18n = require('i18n');                                               // i18n - translations
+var bodyParser = require('body-parser');                                    // body-parser
+const mongoSanitize = require('express-mongo-sanitize');                    // express-mongo-sanitize against NoSQL
+const helmet = require('helmet');                                           // helmet - HTTP header secure, ...
+const path = require('path');                                               // path - for static files
+const state_controller = require('./controllers/stateController');          // stateController
+const activity_controller = require('./controllers/activityController');    // activityController
+const app = express();                                                      // express app
+const server = http.createServer(app);                                      // server
+const { Server } = require('socket.io');                                    // socket.io
+const methodOverride = require('method-override');                          // method-override - setting methods PUT/DELETE correctly
+const cookieParser = require('cookie-parser');                              // cookie-parser
+const session = require('express-session');                                 // express-session
+const MongoStore = require('connect-mongodb-session')(session);             // connect-mongodb-session
+const InitiateMongoServer = require('./config/db');                         // InitiateMongoServer
 
-// handlebars
-const { engine } = require('express-handlebars');
+// session store
+// expires - 1800000 ms = 30 minutes 
+const store = new MongoStore({
+    uri: process.env.MONGO_URI,
+    collection: "mySession",
+    //expires: 1800000
+    // podivat se na expiraci session
+});
 
-// setting port
-const port = process.env.PORT || 3000;
-const http = require('http');
-const dotenv = require('dotenv').config();
-// const morgan = require('morgan');
-
-// i18n - languages
-const i18n = require('i18n');
-// body parser ?? 
-var bodyParser = require('body-parser');
-
-//helmetjs
-const helmet = require('helmet');
-
-// path
-const path = require('path');
-
-const state_controller = require('./controllers/stateController');
-const activity_controller = require('./controllers/activityController');
-
-const server = http.createServer(app);
-const { Server } = require('socket.io');
-const methodOverride = require('method-override');
+// scriptSources for helmet
+const scriptSources = ["'self'", "'unsafe-inline'", "'unsafe-eval'", 'code.jquery.com', 'stackpath.bootstrapcdn.com',
+    'cdnjs.cloudflare.com', 'kit.fontawesome.com'];
+// styleSources for helmet
+const styleSources = ["'self'", "'unsafe-inline'", 'stackpath.bootstrapcdn.com', 'cdnjs.cloudflare.com']
 
 // app listen
 server.listen(port, () => {
@@ -39,41 +46,28 @@ exports.io = io;
 
 io.on("connection", (socket) => {
     //states
-    socket.on('new state', state_controller.addState);
-    socket.on('edit state', state_controller.editState);
-    socket.on('delete state', state_controller.deleteState);
-
+    socket.on('new state', state_controller.addState);                  // create new state
+    socket.on('edit state', state_controller.editState);                // edit state
+    socket.on('delete state', state_controller.deleteState);            // delete state
     //activities
-    socket.on('new activity', activity_controller.addActivity);
-    socket.on('edit activity', activity_controller.editActivity);
-    socket.on('delete activity', activity_controller.deleteActivity);
+    socket.on('new activity', activity_controller.addActivity);         // create new activity
+    socket.on('edit activity', activity_controller.editActivity);       // edit activity
+    socket.on('delete activity', activity_controller.deleteActivity);   // delete activity
 });
 
-// cookieParser
-const cookieParser = require('cookie-parser');
-
-
-// session
-const session = require('express-session');
-const MongoStore = require('connect-mongodb-session')(session);
-
-
+// i18n configuration
 i18n.configure({
-    locales: ['en', 'cz'],
-    cookie: 'locale',
-    directory: path.join(__dirname, '/locales'),
-    defaultLocale: 'en'
+    locales: ['en', 'cz'],                        // language option
+    cookie: 'locale',                             // cookie name
+    directory: path.join(__dirname, '/locales'),  // path to translation files
+    defaultLocale: 'en'                           // default language option
 });
 
-app.set('view engine', 'handlebars');
+app.set('view engine', 'handlebars');             // use express-handlebars
+app.use(cookieParser());                          // use cookie-parser
+app.use(i18n.init);                               // i18n init
 
-// cookie parser
-app.use(cookieParser());
-
-//i18n init
-app.use(i18n.init);
-
-//setting handlebars engine
+// express-handlebars configuration
 app.engine('handlebars', engine({
     defaultLayout: 'main',
     extname: '.handlebars',
@@ -96,32 +90,15 @@ app.engine('handlebars', engine({
     }
 }));
 
-app.use(bodyParser.urlencoded({ extended: false }));
-app.use(bodyParser.json());
+app.use(bodyParser.urlencoded({ extended: false }));        // use body-parser
+app.use(bodyParser.json());                                 // use body-parser
+app.use(methodOverride('_method'));                         // use method-override
+app.use(express.static(path.join(__dirname, '/public')));   // serve static files
 
-// method override
-app.use(methodOverride('_method'));
-
-// express - serving static files
-app.use(express.static(path.join(__dirname, '/public')));
-
-
+// idk
 // app.use(morgan('tiny'));
 
-//mongo
-//
-//
-const InitiateMongoServer = require('./config/db');
-InitiateMongoServer();
-
-// session store
-// expires - 1800000 ms = 30 minutes 
-const store = new MongoStore({
-    uri: process.env.MONGO_URI,
-    collection: "mySession",
-    //expires: 1800000
-    // podivat se na expiraci session
-});
+InitiateMongoServer();          // init mongo server
 
 app.use(session({
     secret: 'SECRET KEY',
@@ -130,6 +107,7 @@ app.use(session({
     store: store
 }));
 
+// use flash messages
 app.use((req, res, next) => {
     if (req.session.flash) {
         res.locals.flash = req.session.flash;
@@ -138,14 +116,16 @@ app.use((req, res, next) => {
     next();
 });
 
-// helmet
-const scriptSources = ["'self'", "'unsafe-inline'", "'unsafe-eval'", 'code.jquery.com', 'stackpath.bootstrapcdn.com',
-    'cdnjs.cloudflare.com', 'kit.fontawesome.com'];
-const styleSources = ["'self'", "'unsafe-inline'", 'stackpath.bootstrapcdn.com', 'cdnjs.cloudflare.com']
+// use express-mongo-sanitize
+app.use(
+    mongoSanitize({
+        replaceWith: '_'
+    })
+);
 
+// use ? for xss
 
-// TODO
-
+// use helmet
 app.use(helmet({
     contentSecurityPolicy: {
         directives: {
@@ -160,15 +140,12 @@ app.use(helmet({
     }
 }));
 
+// routing
+app.use('/', require('./routes/index'));                // index routing
+app.use('/users', require('./routes/users'));           // users routing
+app.use('/projects', require('./routes/projects'));     // projects routing
 
-// routing 
-app.use('/', require('./routes/index'));
-app.use('/users', require('./routes/users'));
-app.use('/projects', require('./routes/projects'));
-
-
-
-
+//
 // Dodelat !! :)
 app.use((err, req, res, next) => {
     console.log("Chyba")

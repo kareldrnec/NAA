@@ -87,7 +87,7 @@ function calculate(states, activities, currentProject) {
     } else {
         // PERT VALUES
         // CALCULATION
-
+        calculatePERT();
 
     }
 
@@ -97,6 +97,11 @@ function calculate(states, activities, currentProject) {
 
     sessionStorage.setItem(currentProject._id, JSON.stringify(result));
 }
+
+function calculatePERT() {
+
+}
+
 
 
 function findCriticalActivities(states, activities) {

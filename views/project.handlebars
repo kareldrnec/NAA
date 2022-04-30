@@ -121,7 +121,7 @@
                     <!-- Set PERT Calculation -->
                     <div class="form-group">
                         <label>{{__ "find"}}</label>
-                        <select name="typeOfCalculation" class="form-control"  onchange="changeCalculationType(this)">
+                        <select name="typeOfCalculation" id="typeOfCalculation" class="form-control">
                             <option value="P" title="{{__ "probability"}}">P ({{__ "probability"}})</option>
                             <option value="T" title="{{__ "time"}}">T ({{__ "time"}})</option>
                         </select>
@@ -154,7 +154,7 @@
                             </div>
                         </div>
                         <div class="text-center" style="margin-top: 5px;">
-                            <button type="button" class="btn btn-secondary" onclick="showSecondRow()" id="addRow"><i class="fas fa-plus-square"></i></button>
+                            <button type="button" class="btn btn-secondary" id="addRow"><i class="fas fa-plus-square"></i></button>
                         </div> 
                         <div id="secondRow" style="display: none;">
                             <div class="row g-2">
@@ -171,7 +171,7 @@
                             </div>
                         </div>
                         <div class="text-center" style="margin-top: 5px;">
-                            <button type="button" class="btn btn-secondary" style="display: none;" onclick="hideSecondRow()" id="removeRow"><i class="fas fa-minus-square"></i></button>
+                            <button type="button" class="btn btn-secondary" style="display: none;" id="removeRow"><i class="fas fa-minus-square"></i></button>
                         </div>
                     </div>
                     <div id="timeRow" style="display: none;">
@@ -685,6 +685,26 @@
         }
     });
 
+    //onchange="changeCalculationType(this)"
+    document.getElementById('typeOfCalculation').addEventListener('change', () => {
+        // TODO DNESKA!
+
+
+    });
+
+    // onclick="showSecondRow()"
+    // addRow
+    document.getElementById('addRow').addEventListener('click', () => {
+        document.getElementById('secondRow').style.display = 'inline';
+        document.getElementById('addRow').style.display = 'none';
+        document.getElementById('removeRow').style.display = 'inline';
+    });
+
+    document.getElementById('removeRow').addEventListener('click', () => {
+        document.getElementById('secondRow').style.display = 'none';
+        document.getElementById('addRow').style.display = 'inline';
+        document.getElementById('removeRow').style.display = 'none';
+    });
 
     // addStateForm - submit - add state
     document.getElementById('addStateForm').addEventListener('submit', function(event) {
@@ -1042,18 +1062,6 @@
 
     function closeErrDiv(divName) {
         document.getElementById(divName).style.display = 'none';
-    }
-
-    function showSecondRow() {
-        document.getElementById('secondRow').style.display = 'inline';
-        document.getElementById('addRow').style.display = 'none';
-        document.getElementById('removeRow').style.display = 'inline';
-    }
-
-    function hideSecondRow() {
-        document.getElementById('secondRow').style.display = 'none';
-        document.getElementById('addRow').style.display = 'inline';
-        document.getElementById('removeRow').style.display = 'none';
     }
 
     function changeCalculationType(obj) {
