@@ -19,8 +19,8 @@
                     <input type="number" class="form-control" id="numberOfIterations" placeholder="{{__ "enter number of iterations"}}" min="10000" value="10000" step="10000">
                 </div>
                 <div class="text-center">
-                    <button type="button" class="btn btn-primary" onclick="runMonteCarlo();">{{__ "run simulation"}}</button>
-                    <button type="button" class="btn btn-secondary" onclick="history.back()">{{__ "back"}}</button>
+                    <button type="button" class="btn btn-primary" id="runSimulationButton">{{__ "run simulation"}}</button>
+                    <button type="button" class="btn btn-secondary" id="backSimulationButton">{{__ "back"}}</button>
                 </div>
                 <div class="text-center">
                     <span id="hour">00</span>:<span id="minute">00</span>:<span id="second">00</span>
@@ -49,6 +49,13 @@
     const activities = JSON.parse(sessionStorage.getItem("activities"));
     const states = JSON.parse(sessionStorage.getItem("states"));
     const ctx = document.getElementById('myChart').getContext('2d');
+
+    /*
+    *
+    *   Chart section
+    *
+    */
+
     var myChart = new Chart(ctx, {
         type: 'line', 
         data: {
@@ -77,8 +84,19 @@
     var cron;
 
     /*
-    Run an Monte Carlo Analysis
+    *
+    *   Monte Carlo section
+    *
     */
+
+    document.getElementById('runSimulationButton').addEventListener('click', () => {
+        runMonteCarlo();
+    });
+    document.getElementById('backSimulationButton').addEventListener('click', () => {
+        history.back();
+    });
+
+
     function runMonteCarlo() {
         const numberOfIterations = parseInt(document.getElementById("numberOfIterations").value);
         
@@ -133,6 +151,13 @@
     function closeMonteCarloErr() {
         document.getElementById('monteCarloErrDiv').style.display = 'none';
     }
+
+
+    /*
+    *
+    *   Timer section
+    *
+    */
 
     function startTimer() {
         pauseTimer();

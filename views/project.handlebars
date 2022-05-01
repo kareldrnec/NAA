@@ -131,18 +131,18 @@
                             <div class="row g-2">
                                 <div class="col-sm">
                                     <label for="pertSelect1">{{__ "option"}}</label>
-                                    <select name="pertSelect1" class="form-control">
+                                    <select name="pertSelect1" id="pertSelect1" class="form-control">
                                         <option value="lt">&lt;</option>
                                         <option value="gt">&gt;</option>
                                     </select>
                                 </div>
                                 <div class="col-sm">
                                     <label>{{__ "value"}}</label>
-                                    <input type="number" class="form-control" min="0" value="0">
+                                    <input type="number" class="form-control" id="firstVal" min="0" value="0">
                                 </div>
                                 <div class="col-sm">
                                     <label>{{__ "time unit"}}</label>
-                                    <select class="form-control">
+                                    <select class="form-control" id="calculationTimeUnit">
                                         <option value="seconds">{{__ "seconds"}}</option>
                                         <option value="minutes">{{__ "minutes"}}</option>
                                         <option value="hours" selected>{{__ "hours"}}</option>
@@ -159,13 +159,13 @@
                         <div id="secondRow" style="display: none;">
                             <div class="row g-2">
                                 <div class="col-sm">
-                                    <select name="pertSelect2" class="form-control">
+                                    <select name="pertSelect2" id="pertSelect2" class="form-control">
                                         <option value="lt">&lt;</option>
-                                        <option value="gt">&lt;</option>
+                                        <option value="gt">&gt;</option>
                                     </select>
                                 </div>
                                 <div class="col-sm">
-                                    <input type="number" class="form-control" min="0" value="0">
+                                    <input type="number" class="form-control" id="secondVal" min="0" value="0">
                                 </div>
                                 <div class="col-sm"></div>
                             </div>
@@ -182,7 +182,7 @@
                             </div>
                             <div class="col-sm">
                                 <label>{{__ "value"}}</label>
-                                <input type="number" class="form-control" min="0" value="0">
+                                <input type="number" class="form-control" min="0" max="100" value="0" id="timeValuePERT">
                             </div>
                         </div>
                     </div>
@@ -677,16 +677,68 @@
 
     document.getElementById('calculationSubmit').addEventListener('click', function() {
         var errState = checkDiagram(states.states, activities.activities);
+        var calculationErrDiv = document.getElementById('calculationErrDiv');
+        var calculationErrMsg = document.getElementById('calculationErrMsg');
         if(errState != "") {
-            var calculationErrDiv = document.getElementById('calculationErrDiv');
-            var calculationErrMsg = document.getElementById('calculationErrMsg');
             calculationErrMsg.innerHTML = "{{__ "error"}}!<br>";
             calculationErrMsg.innerHTML += "{{__ "check state"}} &#8216;" + errState + "&#8216;!";
             calculationErrDiv.style.display = 'block';
         } else {
-            calculate(states.states, activities.activities, project);
-            $('#calculationModal').modal('toggle');
-            calculationDone();
+            if (project.projectType == "pert") {
+                var calculationType = document.getElementById('typeOfCalculation').value;
+                var arguments = [];
+                if (calculationType == "T") {
+                    var timeValue = document.getElementById('timeValuePERT').value;
+                    if (timeValue > 100 || timeValue < 0) {
+                        calculationErrMsg.innerHTML = "{{__ "error"}}!<br>";
+                        calculationErrMsg.innerHTML += "{{__ "probability must be in range"}}";
+                        calculationErrDiv.style.display = 'block';
+                    } else {
+                        arguments.push('T', '=', timeValue);
+                        calculate(states.states, activities.activities, project, arguments);
+                    }
+                } else {
+                    var firstVal = document.getElementById('firstVal');
+                    var firstSelect = document.getElementById('pertSelect1');
+                    var firstOption = firstSelect.options[firstSelect.selectedIndex].value;
+                    var timeUnit = document.getElementById('calculationTimeUnit').value;
+                    if (document.getElementById('secondRow').style.display != 'none') {
+                        var secondVal = document.getElementById('secondVal');
+                        var secondSelect = document.getElementById('pertSelect2');
+                        var secondOption = secondSelect.options[secondSelect.selectedIndex].value;
+                        if (firstVal.value < 0) {
+                            calculationErrMsg.innerHTML = "{{__ "error"}}!<br>";
+                            calculationErrMsg.innerHTML += "{{__ "time value must be >= 0"}}";
+                            calculationErrDiv.style.display = 'block';
+                        } else if (secondVal.value < firstVal.value) {
+                            calculationErrMsg.innerHTML = "{{__ "error"}}!<br>";
+                            calculationErrMsg.innerHTML += "{{__ "second time value must be >= first value"}}";
+                            calculationErrDiv.style.display = 'block';
+                        } else {
+                            arguments.push('P', firstOption, firstVal.value, secondOption, secondVal.value);
+                            console.log(arguments)
+                            calculate(states.states, activities.activities, project, arguments);
+                        }
+                    } else {
+                        if (firstVal.value < 0) {
+                            calculationErrMsg.innerHTML = "{{__ "error"}}!<br>";
+                            calculationErrMsg.innerHTML += "{{__ "time value must be >= 0"}}";
+                            calculationErrDiv.style.display = 'block';
+                        } else {
+                            arguments.push('P', firstOption, firstVal.value, timeUnit);
+                            console.log(arguments)
+                            calculate(states.states, activities.activities, project, arguments);
+                        }
+                    }
+
+                }        
+            } else {
+                calculate(states.states, activities.activities, project, []);
+            }
+
+
+           // $('#calculationModal').modal('toggle');
+            //  calculationDone();
         }
     });
 
@@ -957,7 +1009,7 @@
     *
     */
 
-    
+
     document.getElementById('editActivityForm').addEventListener('submit', function(event) {
         // TODO
         event.preventDefault();

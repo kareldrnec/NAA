@@ -134,7 +134,8 @@ app.use(helmet({
             imgSrc: ["'self'", 'data:'],
             scriptSrcAttr: ["'self'"]
         }
-    }
+    },
+    crossOriginEmbedderPolicy: false
 }));
 
 app.use(

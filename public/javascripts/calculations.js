@@ -66,7 +66,7 @@ function monteCarloActivities(activities) {
 }
 
 
-function calculate(states, activities, currentProject) {
+function calculate(states, activities, currentProject, arguments) {
     var result = {};
     var calculatedActivities;
     var calculatedStates = arrStates(states);
