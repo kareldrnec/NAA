@@ -93,11 +93,11 @@
                     </div>
                     <div class="form-group">
                         <label>{{__ "min length of activity"}}</label>
-                        <input type="number" class="form-control" id="minimalLength" name="minimalLength" onchange="changeMaximalLength(this)" min="1" value="1" required>
+                        <input type="number" class="form-control" id="minimalLength" name="minimalLength" min="1" value="1" required>
                     </div>
                     <div class="form-group">
                         <label>{{__ "max length of activity"}}</label>
-                        <input type="number" class="form-control" id="maximalLength" name="maximalLength" onchange="changeMinimalLength(this)" min="1" value="1" required>
+                        <input type="number" class="form-control" id="maximalLength" name="maximalLength" min="1" value="1" required>
                     </div>
                     <div class="text-center" style="padding-bottom: 5px;">
                         <button type="button" class="btn btn-primary" id="generateButton" title="{{__ "generate random project"}}">{{__ "generate"}}</button>
@@ -277,13 +277,15 @@
             input.value = '';
         }
     });
-    function changeMaximalLength(obj) {
+
+    document.getElementById('minimalLength').addEventListener('change', (event) => {
         var maxValue = document.getElementById('maximalLength');
-        if (obj.value > maxValue.value) maxValue.value = obj.value;
-    }
-    function changeMinimalLength(obj) {
+        if (event.target.value > maxValue.value) maxValue.value = event.target.value;
+    });
+
+    document.getElementById('maximalLength').addEventListener('change', (event) => {
         var minValue = document.getElementById('minimalLength');
-        if (obj.value < minValue.value) minValue.value = obj.value;
-    }
-    // dodelat cookies info?
+        if (event.target.value < minValue.value) minValue.value = event.target.value;
+    });
+
 </script>

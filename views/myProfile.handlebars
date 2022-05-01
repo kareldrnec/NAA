@@ -22,8 +22,8 @@
                 {{ created }}
                 <hr class="solid">
                 <div class="text-center">
-                    <button type="button" class="btn btn-primary btn-block" onclick="updateAccount()"><i class="far fa-edit"></i> {{__ "update"}}</button>
-                    <button type="button" class="btn btn-primary btn-block" onclick="deleteAccount()"><i class="fas fa-trash-alt"></i> {{__ "delete"}}</button>
+                    <button type="button" class="btn btn-primary btn-block" id="updateAccountButton"><i class="far fa-edit"></i> {{__ "update"}}</button>
+                    <button type="button" class="btn btn-primary btn-block" id="deleteAccountButton"><i class="fas fa-trash-alt"></i> {{__ "delete"}}</button>
                 </div>
             </div>
         </div>
@@ -91,16 +91,12 @@
         jQuery('#flash').fadeOut('fast');
     }, 3000);
 
-    // override method POST to DELETE
-    function deleteAccount() {
-       // $("#deleteAccountForm").attr("action", "/users/myProfile" + "/?_method=DELETE");
-        $("#deleteAccountModal").modal('show');
-    }
-
-    // override method POST to PUT
-    function updateAccount() {
-        //$('#updateAccountForm').attr("action", "/users/myProfile" + "/?_method=PUT");
-        // <form method="POST" action="/users/updateAccount" id="updateAccountForm">
+    document.getElementById('updateAccountButton').addEventListener('click', () => {
         $('#updateAccountModal').modal('show');
-    }
+    });
+
+    document.getElementById('deleteAccountButton').addEventListener('click', () => {
+        $("#deleteAccountModal").modal('show');
+    });
+
 </script>
