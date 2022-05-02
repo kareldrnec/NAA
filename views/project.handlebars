@@ -184,6 +184,10 @@
                                 <label>{{__ "value"}}</label>
                                 <input type="number" class="form-control" min="0" max="100" value="0" id="timeValuePERT">
                             </div>
+                            <div class="col-sm">
+                                <label>{{__ "unit"}}</label>
+                                <input type="text" class="form-control" value="%">
+                            </div>
                         </div>
                     </div>
                     {{/ifEquals}}
@@ -193,7 +197,31 @@
                         <span aria-hidden="true">&times;</span>
                     </button>
                     <div id="calculationErrMsg" style="margin-left: 5px;"></div>
-                </div> 
+                </div>
+                <!---->
+                <div style="display: none;" id="resultsDiv">
+                    <hr class="solid">
+                    <div class="text-center">
+                        <h3>{{__ "results"}}</h3>                    
+                    </div>
+                    {{#ifEquals projectType "cpm"}}
+                    <div style="margin-left: 15px; margin-right: 15px; margin-bottom: 15px;">
+                        <label>Project Length</label>
+                        <input class="form-control" id="projectLength" type="text" readonly>
+                    </div>
+                    {{/ifEquals}}
+                    {{#ifEquals projectType "pert"}}
+                    <div style="margin-left: 15px; margin-right: 15px; margin-bottom: 15px;">
+                        <label>Total Mean Value</label>
+                        <input class="form-control" id="totalMeanValue" type="text" readonly>
+                        <label>Totat Variance</label>
+                        <input class="form-control" id="totalVariance" type="text" readonly>
+                        <label>PERT</label>
+                        <input class="form-control" id="pertResult" type="text" readonly> 
+                    </div>
+                    {{/ifEquals}}
+                </div>
+                <!----> 
                 <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" data-dismiss="modal">{{__ "close"}}</button>
                     <input type="button" value="{{__ "run"}}" id="calculationSubmit" name="calculationSubmit" class="btn btn-primary">
@@ -679,6 +707,7 @@
         var errState = checkDiagram(states.states, activities.activities);
         var calculationErrDiv = document.getElementById('calculationErrDiv');
         var calculationErrMsg = document.getElementById('calculationErrMsg');
+        if (calculationErrDiv.style.display != 'none') calculationErrDiv.style.display = 'none';
         if(errState != "") {
             calculationErrMsg.innerHTML = "{{__ "error"}}!<br>";
             calculationErrMsg.innerHTML += "{{__ "check state"}} &#8216;" + errState + "&#8216;!";
@@ -695,7 +724,11 @@
                         calculationErrDiv.style.display = 'block';
                     } else {
                         arguments.push('T', '=', timeValue);
-                        calculate(states.states, activities.activities, project, arguments);
+                        var res = calculate(states.states, activities.activities, project, arguments);
+                        document.getElementById('totalMeanValue').value = res.project.totalVariance + "/6";
+                        document.getElementById('totalVariance').value = res.project.meanValue + "/6";
+                        document.getElementById('pertResult').value = "P(T = " + timeValue + ")=" + (res.project.result[3]).toFixed(2) + " ({{__ "hours res"}})";
+                        document.getElementById('resultsDiv').style.display = 'inline'; 
                     }
                 } else {
                     var firstVal = document.getElementById('firstVal');
@@ -706,72 +739,90 @@
                         var secondVal = document.getElementById('secondVal');
                         var secondSelect = document.getElementById('pertSelect2');
                         var secondOption = secondSelect.options[secondSelect.selectedIndex].value;
-                        if (firstVal.value < 0) {
+                        if (parseFloat(firstVal.value) < 0) {
                             calculationErrMsg.innerHTML = "{{__ "error"}}!<br>";
                             calculationErrMsg.innerHTML += "{{__ "time value must be >= 0"}}";
                             calculationErrDiv.style.display = 'block';
-                        } else if (secondVal.value < firstVal.value) {
+                        } else if (parseFloat(secondVal.value) < parseFloat(firstVal.value)) {
                             calculationErrMsg.innerHTML = "{{__ "error"}}!<br>";
                             calculationErrMsg.innerHTML += "{{__ "second time value must be >= first value"}}";
                             calculationErrDiv.style.display = 'block';
                         } else {
-                            arguments.push('P', firstOption, firstVal.value, secondOption, secondVal.value);
-                            console.log(arguments)
-                            calculate(states.states, activities.activities, project, arguments);
+                            arguments.push('P', firstOption, firstVal.value, secondOption, secondVal.value, timeUnit);
+                            var res = calculate(states.states, activities.activities, project, arguments);
+                            document.getElementById('totalMeanValue').value = res.project.meanValue + "/6";
+                            document.getElementById('totalVariance').value = res.project.totalVariance + "/6";
+                            document.getElementById('pertResult').value = "P(" + firstVal.value + " " + firstSelect.options[firstSelect.selectedIndex].text + " X " + secondSelect.options[secondSelect.selectedIndex].text + " "
+                                + secondVal.value + ")=" + (res.project.result[5] * 100).toFixed(4) + "%";
+
+
+                            document.getElementById('resultsDiv').style.display = 'inline'; 
                         }
                     } else {
-                        if (firstVal.value < 0) {
+                        if (parseFloat(firstVal.value) < 0) {
                             calculationErrMsg.innerHTML = "{{__ "error"}}!<br>";
                             calculationErrMsg.innerHTML += "{{__ "time value must be >= 0"}}";
                             calculationErrDiv.style.display = 'block';
                         } else {
                             arguments.push('P', firstOption, firstVal.value, timeUnit);
-                            console.log(arguments)
-                            calculate(states.states, activities.activities, project, arguments);
+                            var res = calculate(states.states, activities.activities, project, arguments);
+                            document.getElementById('totalMeanValue').value = res.project.meanValue + "/6";
+                            document.getElementById('totalVariance').value = res.project.totalVariance + "/6";
+                            if (res.project.result[1] == 'gt') {
+                                document.getElementById('pertResult').value = "P(X > " + firstVal.value + ")=" + (res.project.result[3] * 100).toFixed(4) + "%";
+                            } else {
+                                document.getElementById('pertResult').value = "P(X < " + firstVal.value + ")=" + (res.project.result[3] * 100).toFixed(4) + "%";
+                            }
+                            document.getElementById('resultsDiv').style.display = 'inline'; 
                         }
                     }
-
-                }        
+                }       
             } else {
-                calculate(states.states, activities.activities, project, []);
+                var res = calculate(states.states, activities.activities, project, []);
+                document.getElementById('projectLength').value = res.project.length;
+                document.getElementById('resultsDiv').style.display = 'inline'; 
             }
 
-
-           // $('#calculationModal').modal('toggle');
-            //  calculationDone();
+            calculationDone();
         }
     });
 
-    // change calculation type
-    document.getElementById('typeOfCalculation').addEventListener('change', (event) => {
-        const calculationType = event.target.value;
-        if (calculationType == "T") {
-            document.getElementById('probRow').style.display = 'none';
-            document.getElementById('timeRow').style.display = 'inline';
-        } else {
-            document.getElementById('timeRow').style.display = 'none';
-            document.getElementById('probRow').style.display = 'inline';
-        }
-    });
+
+    if ("{{projectType}}" == "pert") {
+        // change calculation type (PERT)
+        document.getElementById('typeOfCalculation').addEventListener('change', (event) => {
+            const calculationType = event.target.value;
+            if (calculationType == "T") {
+                document.getElementById('probRow').style.display = 'none';
+                document.getElementById('timeRow').style.display = 'inline';
+            } else {
+                document.getElementById('timeRow').style.display = 'none';
+                document.getElementById('probRow').style.display = 'inline';
+            }
+            if (document.getElementById('resultsDiv').style.display != 'none') document.getElementById('resultsDiv').style.display = 'none';
+        });
+        
+        // on click add second row
+        document.getElementById('addRow').addEventListener('click', () => {
+            document.getElementById('secondRow').style.display = 'inline';
+            document.getElementById('addRow').style.display = 'none';
+            document.getElementById('removeRow').style.display = 'inline';
+        });
+
+        // on click remove second row
+        document.getElementById('removeRow').addEventListener('click', () => {
+            document.getElementById('secondRow').style.display = 'none';
+            document.getElementById('addRow').style.display = 'inline';
+            document.getElementById('removeRow').style.display = 'none';
+        });
+    }
 
     // on click close calculation error message
     document.getElementById('calcErrClose').addEventListener('click', () => {
         document.getElementById('calculationErrDiv').style.display = 'none';
     })
 
-    // on click add second row
-    document.getElementById('addRow').addEventListener('click', () => {
-        document.getElementById('secondRow').style.display = 'inline';
-        document.getElementById('addRow').style.display = 'none';
-        document.getElementById('removeRow').style.display = 'inline';
-    });
 
-    // on click remove second row
-    document.getElementById('removeRow').addEventListener('click', () => {
-        document.getElementById('secondRow').style.display = 'none';
-        document.getElementById('addRow').style.display = 'inline';
-        document.getElementById('removeRow').style.display = 'none';
-    });
     
 
 

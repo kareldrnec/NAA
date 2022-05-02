@@ -88,32 +88,67 @@ function calculate(states, activities, currentProject, arguments) {
         // PERT VALUES
         // CALCULATION
         var previousActivity = null;
-        var totalSTD = 0;
+        var totalMeanValue = lastState.ES;
+        var totalVariance = 0;
         while(lastState.name != "Start") {
             previousActivity = calculatedActivities.find(element => element.critical == true && element.toState == lastState.ID);
-            totalSTD += previousActivity.std;
+            totalVariance += previousActivity.variance;
             lastState = calculatedStates.find(element => element.ID == previousActivity.fromState);
         }
-
-
-        console.log("Activities")
-        console.log(calculatedActivities)
-        console.log("that state")
-        console.log(previousActivity)
-        console.log("ENDE")
-        console.log("TOTAL STD")
-        console.log(totalSTD)
-        console.log("ENDE")
-
-
-
+        resultPERT = calculatePERT(totalMeanValue, totalVariance, arguments);
+        result.project = {"meanValue": totalMeanValue, "totalVariance": totalVariance, "result": resultPERT};
     }
-
-
     result.states = calculatedStates;
     result.activities = calculatedActivities;
-
     sessionStorage.setItem(currentProject._id, JSON.stringify(result));
+    return result;
+}
+
+
+function calculatePERT(totalMeanValue, totalVariance, arguments) {
+    var result = [];
+    if (arguments.length == 3) {
+        var time = getPertTime(arguments[2], totalMeanValue, totalVariance);
+        result = ['T', '=', arguments[2], time];
+      //  result = ['T', arguments[1]]
+        // simple pert
+    } else if (arguments.length == 4) {
+        var probability = getPertProbability(parseFloat(arguments[2]), totalMeanValue, totalVariance);
+        if (arguments[1] == 'gt') probability = 1 - probability;
+        result = ['P', arguments[1], arguments[2], probability, arguments[3]];
+    } else {
+        var probability = null;
+        console.log("JSEM TU")
+        console.log(arguments)
+        console.log("ENDE")
+        if (arguments[1] == 'gt' && arguments[3] == 'lt') {
+            // BETWEEN > <
+            probability = getPertProbability(parseFloat(arguments[4]), totalMeanValue, totalVariance) - getPertProbability(parseFloat(arguments[2]), totalMeanValue, totalVariance);
+            result = ['P', arguments[1], arguments[2], arguments[3], arguments[4], probability, arguments[5]];
+            console.log(result)
+        } else if (arguments[1] == 'lt' && arguments[3] == 'gt') {
+            // OR < >
+            probability = 1 - (getPertProbability(parseFloat(arguments[4]), totalMeanValue, totalVariance) - getPertProbability(parseFloat(arguments[4]), totalMeanValue, totalVariance));
+            result = ['P', arguments[1], arguments[2], arguments[3], arguments[4], probability, arguments[5]];
+            console.log(result)
+        } else if (arguments[1] == 'lt' && arguments[3] == 'lt') {
+            // UNION < <
+            console.log("UNION < < TODO")
+        } else {
+            // UNION > >
+            console.log("UNION > > TODO")
+        }
+    }
+
+    return result;
+}
+
+function getPertProbability(time, totalMeanValue, totalVariance) {
+    return jStat.normal.cdf(time, totalMeanValue / 6, Math.sqrt(totalVariance) / 6);
+}
+
+function getPertTime(probability, totalMeanValue, totalVariance) {
+    return jStat.normal.inv(probability / 100, totalMeanValue / 6, Math.sqrt(totalVariance) / 6);
 }
 
 
@@ -280,13 +315,16 @@ function cpmActivities(activities) {
 // TIME UNIT DODELAT
 function pertActivities(activities) {
     var activitiesArr = [];
+    var std = null;
     for (var i = 0; i < activities.length; i++) {
+        std = parseInt(activities[i].values[2]) - parseInt(activities[i].values[0]);
         activitiesArr.push({
             ID: activities[i].ID,
             fromState: activities[i].fromState,
             toState: activities[i].toState,
             value: parseInt(activities[i].values[0]) + 4 * parseInt(activities[i].values[1]) + parseInt(activities[i].values[2]),
-            std: parseInt(activities[i].values[2]) - parseInt(activities[i].values[0]),
+            std: std,
+            variance: std * std,
             critical: false
         });
     }

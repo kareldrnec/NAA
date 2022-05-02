@@ -99,6 +99,7 @@
 	"hint": "Hint",
 	"home": "Home",
 	"hours": "Hours",
+	"hours res": "hours",
 	"information": "Information",
 	"invalid extension of file": "Invalid extension of file",
 	"it will delete projects": "This operation will also delete all your projects!",
@@ -205,6 +206,7 @@
 	"type": "Type",
 	"type of file": "Type of File",
 	"type of project": "Type of Project",
+	"unit": "Unit",
 	"update": "Update",
 	"user exists": "User already exists!",
 	"user not found": "User with this email address was not found!",
@@ -219,5 +221,6 @@
 	"8-30 chars": "8-30 characters",
 	"1 upper char": "At least 1 uppercase character",
 	"1 lower char": "At least 1 lowercase character",
-	"2 digits": "At least 2 digits"
+	"2 digits": "At least 2 digits",
+	"projectType": "projectType"
 }
