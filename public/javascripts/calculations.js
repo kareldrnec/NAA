@@ -125,21 +125,20 @@ function calculatePERT(totalMeanValue, totalVariance, arguments) {
             // BETWEEN > <
             probability = getPertProbability(parseFloat(arguments[4]), totalMeanValue, totalVariance) - getPertProbability(parseFloat(arguments[2]), totalMeanValue, totalVariance);
             result = ['P', arguments[1], arguments[2], arguments[3], arguments[4], probability, arguments[5]];
-            console.log(result)
         } else if (arguments[1] == 'lt' && arguments[3] == 'gt') {
             // OR < >
             probability = 1 - (getPertProbability(parseFloat(arguments[4]), totalMeanValue, totalVariance) - getPertProbability(parseFloat(arguments[4]), totalMeanValue, totalVariance));
             result = ['P', arguments[1], arguments[2], arguments[3], arguments[4], probability, arguments[5]];
-            console.log(result)
         } else if (arguments[1] == 'lt' && arguments[3] == 'lt') {
             // UNION < <
-            console.log("UNION < < TODO")
+            probability = getPertProbability(arguments[2], totalMeanValue, totalVariance);
+            result = ['P', arguments[1], arguments[2], arguments[3], arguments[4], probability, arguments[5]];
         } else {
             // UNION > >
-            console.log("UNION > > TODO")
+            probability = 1 - getPertProbability(arguments[4], totalMeanValue, totalVariance);
+            result = ['P', arguments[1], arguments[2], arguments[3], arguments[4], probability, arguments[5]];
         }
     }
-
     return result;
 }
 

@@ -18,6 +18,20 @@
                     <label for="numberOfIterations">{{__ "number of iterations"}}</label>
                     <input type="number" class="form-control" id="numberOfIterations" placeholder="{{__ "enter number of iterations"}}" min="10000" value="10000" step="10000">
                 </div>
+                <div class="form-group">
+                    <label></label>
+                    <select class="form-control">
+                        <option>1</option>
+                        <option>2</option>
+                        <option>4</option>
+                        <option>5</option>
+                        <option>6</option>
+                        <option>7</option>
+                        <option>8</option>
+                        <option>9</option>
+                        <option>10</option>
+                    </select>
+                </div>
                 <div class="text-center">
                     <button type="button" class="btn btn-primary" id="runSimulationButton">{{__ "run simulation"}}</button>
                     <button type="button" class="btn btn-secondary" id="backSimulationButton">{{__ "back"}}</button>
@@ -36,9 +50,6 @@
         </div>
         <div class="col-md-8 col-sm-8 col-xs-24">
             <canvas id="myChart" width="800px" height="300px"></canvas>
-            <div class="text-center">
-                <button class="btn btn-primary">{{__ "download graph"}}</button>
-            </div>
         </div>
     </div>
 </div>

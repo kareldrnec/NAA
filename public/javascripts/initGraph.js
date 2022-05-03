@@ -409,6 +409,13 @@ function editActivity(e, obj) {
     document.getElementById('editedActivityType').value = activity.activityType;
     document.getElementById('editedActivityDescription').value = activity.description;
 
+    console.log(activity)
+
+
+    console.log("ACTIVITY DESCRIPTION")
+    console.log(activity.description)
+    console.log("ENDE")
+
     if (activityValues.length == 1) {
         document.getElementById('editedActivityLength').value = activityValues[0];
     } else if (activityValues.length == 3) {
