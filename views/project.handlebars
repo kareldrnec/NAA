@@ -750,12 +750,33 @@
                         } else {
                             arguments.push('P', firstOption, firstVal.value, secondOption, secondVal.value, timeUnit);
                             var res = calculate(states.states, activities.activities, project, arguments);
+
+                            var projectRes = res.project.result;
+                            var pertText = null;
+                            if (projectRes.length == 5) {
+                                if (projectRes[1] == 'lt') {
+                                    pertText = 'P(X < ';
+                                } else {
+                                    pertText = 'P(X > ';
+                                }
+                                pertText += projectRes[2] + ")=" + (projectRes[3] * 100).toFixed(4) + "%";
+                            } else {
+                                if (projectRes[1] == 'lt') {
+                                    pertText = "P(" + projectRes[2] + ' > X > ' + projectRes[4];
+                                } else {
+                                    pertText = "P(" + projectRes[2] + ' < X < ' + projectRes[4]; 
+                                }
+                                pertText += ')=' + (res.project.result[5] * 100).toFixed(4) + "%";
+                            }
+                            console.log("RESULT JE")
+                            console.log(res)
+                            console.log("ENDE")
+
                             document.getElementById('totalMeanValue').value = res.project.meanValue + "/6";
                             document.getElementById('totalVariance').value = res.project.totalVariance + "/6";
-                            document.getElementById('pertResult').value = "P(" + firstVal.value + " " + firstSelect.options[firstSelect.selectedIndex].text + " X " + secondSelect.options[secondSelect.selectedIndex].text + " "
-                                + secondVal.value + ")=" + (res.project.result[5] * 100).toFixed(4) + "%";
+                            document.getElementById('pertResult').value = pertText;
 
-
+                            
                             document.getElementById('resultsDiv').style.display = 'inline'; 
                         }
                     } else {

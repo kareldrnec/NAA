@@ -14,10 +14,7 @@
 
 <div id="resultsContent">
     <div style="text-align: center;">
-        <div id="summaryText">
-            {{__ "analysis type"}}
-        </div>
-        <table class="table table-hover" id="table" style="display: none">
+        <table class="table table-hover" id="table">
             <thead id="tableHead" style="background-color: lightskyblue;">
             </thead>
             <tbody id="tableBody">
@@ -34,29 +31,40 @@
     var thead;
 
     document.getElementById("summaryLabel").addEventListener('click', () => {
-        console.log("CLICK NA SUMMARY")
-        document.getElementById("table").style.display = "none";
-        document.getElementById("summaryText").style.display = "block";
+        console.log("click na summary")
+        var thead = document.getElementById("tableHead");
+        var tbody = document.getElementById("tableBody");
+        thead.innerHTML = 
+            "<th colspan=2> {{__ "summary"}}</td>";
+        tbody.innerHTML = ""
+       // document.getElementById("table").style.display = "none";
+       // document.getElementById("summaryText").style.display = "block";
     });
 
     document.getElementById("statesLabel").addEventListener('click', () => {
+        console.log("klik na states")
         createHeadStates();
         createBodyStates();
-        document.getElementById("summaryText").style.display = "none";
-        document.getElementById("table").style.display = "table";
+        //document.getElementById("summaryText").style.display = "none";
+        // document.getElementById("table").style.display = "table";
     });
    
     document.getElementById("activitiesLabel").addEventListener('click', () => {
+        console.log("klik na aktivity")
         // dodelat pro cpm
         if ("{{projectType}}" == "cpm") {
             createHeadActivitiesCPM();
             createBodyActivitiesCPM();
+            // TODO
+            createBottomActivitiesCPM();
         } else {
             createHeadActivitiesPERT();
             createBodyActivitiesPERT();
+            // TODO
+            createBottomActivitiesPERT();
         }
-        document.getElementById("summaryText").style.display = "none";
-        document.getElementById("table").style.display = "table";
+        //document.getElementById("summaryText").style.display = "none";
+        //document.getElementById("table").style.display = "table";
     })
 
     function createHeadStates() {
@@ -217,25 +225,30 @@
     }
 
 
-/*
-    function createTableBottomPERT(expectedValue, standardDeviation, variance) {
+    function createBottomActivitiesCPM() {}
+
+    function createBottomActivitiesPERT() {
+        console.log("RESULTS")
+        console.log(results)
+        console.log("ENDE")
+
+
+
         var tbody = document.getElementById("tableBody");
         var row = tbody.insertRow();
-        row.innerHTML = 
-            "<tr>" + "<td>" + "{{__ "total"}}" + "</td>"
+        row.innerHTML =
+            "<tr>" + "<td>" + "Total" + "</td>"
             + "<td>" + "" + "</td>"
             + "<td>" + "" + "</td>"
             + "<td>" + "" + "</td>"
-            + "<td>" + expectedValue + "/6" + "</td>"
-            + "<td>" + standardDeviation + "/6" + "</td>"
-            + "<td>" + variance + "/36" + "</td>"
+            + "<td>" + "" + "</td>"
+            + "<td>" + "" + "</td>"
+            + "<td>" + results.project.meanValue + "/6" + "</td>"
+            + "<td>" + "" + "</td>"
+            + "<td>" + results.project.totalVariance + "/36" + "</td>"
+            + "<td>" + "{{__ "hours"}}" + "</td>"
             + "</tr>";
         row.className = "table-success";
-    // suma "&#8721;"
-    //doplnit totalMeanValue, totalvariance ...
-    
     }
-
-*/
 
 </script>

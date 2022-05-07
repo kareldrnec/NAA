@@ -132,11 +132,11 @@ function calculatePERT(totalMeanValue, totalVariance, arguments) {
         } else if (arguments[1] == 'lt' && arguments[3] == 'lt') {
             // UNION < <
             probability = getPertProbability(arguments[2], totalMeanValue, totalVariance);
-            result = ['P', arguments[1], arguments[2], arguments[3], arguments[4], probability, arguments[5]];
+            result = ['P', arguments[1], arguments[2], probability, arguments[5]];
         } else {
             // UNION > >
             probability = 1 - getPertProbability(arguments[4], totalMeanValue, totalVariance);
-            result = ['P', arguments[1], arguments[2], arguments[3], arguments[4], probability, arguments[5]];
+            result = ['P', arguments[3], arguments[4], probability, arguments[5]];
         }
     }
     return result;
