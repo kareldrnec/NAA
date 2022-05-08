@@ -90,6 +90,13 @@ function calculate(states, activities, currentProject, arguments) {
         var previousActivity = null;
         var totalMeanValue = lastState.ES;
         var totalVariance = 0;
+        var projectMin = 0;
+        var projectMax = 0;
+        console.log("Calculated Activities")
+        console.log(calculatedActivities)
+        console.log("ENDE")
+
+
         while(lastState.name != "Start") {
             previousActivity = calculatedActivities.find(element => element.critical == true && element.toState == lastState.ID);
             totalVariance += previousActivity.variance;
@@ -101,6 +108,12 @@ function calculate(states, activities, currentProject, arguments) {
     result.states = calculatedStates;
     result.activities = calculatedActivities;
     sessionStorage.setItem(currentProject._id, JSON.stringify(result));
+
+    console.log("RESULT JE")
+    console.log(result)
+    console.log("ENDE")
+
+
     return result;
 }
 

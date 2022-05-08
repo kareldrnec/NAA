@@ -14,7 +14,7 @@
 
 <div id="resultsContent">
     <div style="text-align: center;">
-        <table class="table table-hover" id="table">
+        <table class="table table-hover" id="table" style="table-layout: fixed;">
             <thead id="tableHead" style="background-color: lightskyblue;">
             </thead>
             <tbody id="tableBody">
@@ -26,27 +26,82 @@
 <script>
     var tableBody;
     var results = JSON.parse(sessionStorage.getItem("{{projectID}}"))
+    var numberOfStates = (results.states).length;
+    var numberOfActivities = (results.activities).length;
+   
+
+    summaryTable();
 
     console.log(results)
+
     var thead;
 
-    document.getElementById("summaryLabel").addEventListener('click', () => {
-        console.log("click na summary")
+    document.getElementById("summaryLabel").addEventListener('click', summaryTable);
+
+    function summaryTable() {
         var thead = document.getElementById("tableHead");
         var tbody = document.getElementById("tableBody");
+        var row = null;
+        var projectInfo = "{{projectInfo}}";
+        var criticalActivities = results.activities.filter(element => element.critical == true);
+
+        if (projectInfo == "") projectInfo = "<i>--{{__ "undefined"}}--</i>"
+
         thead.innerHTML = 
-            "<th colspan=2> {{__ "summary"}}</td>";
-        tbody.innerHTML = ""
-       // document.getElementById("table").style.display = "none";
-       // document.getElementById("summaryText").style.display = "block";
-    });
+            "<th colspan=2> {{__ "summary"}}</th>";
+        tbody.innerHTML =
+            "<tr><td>" + "{{__ "project name"}}" + "</td><td>" + "{{projectName}}" + "</td></tr>"
+            + "<tr><td>" + "{{__ "project type"}}" + "</td><td>" + "{{upper projectType}}" + "</td></tr>"
+            + "<tr><td>" + "{{__ "project info"}}" + "</td><td>" + projectInfo + "</td></tr>"
+            + "<tr><td>" + "{{__ "number of activities"}}" + "</td><td>" + numberOfActivities + "</td></tr>"
+            + "<tr><td>" + "{{__ "number of states"}}" + "</td><td>" + numberOfStates + "</td></tr>";
+        row = tbody.insertRow();
+        row.innerHTML = 
+            "<tr><td colspan=2>" + "<b>{{__ "results"}}</b>" + "</td></tr>"
+        row.className = "table-success";
+        
+        tbody.innerHTML +=
+            "<tr><td>" + "{{__ "number of critical activities"}}" + "</td><td>" + criticalActivities.length + "</td></tr>"
+            + "<tr><td>" + "{{__ "number of critical paths"}}" + "</td><td>" + 0 + "</td></tr>" // TODO
+
+        if ("{{projectType}}" == "pert") {
+            row = tbody.insertRow();
+            row.innerHTML = 
+                "<tr><td colspan=2>" + "<b>PERT</b>" + "</td></tr>";
+            row.className = "table-success";
+            tbody.innerHTML +=
+                "<tr><td>" + "&mu;" + "</td><td>" + results.project.meanValue + "/6" + "</td></tr>"
+                + "<tr><td>" + "&sigma;" + "</td><td>" + 5 + "</td></tr>" // TODO
+                + "<tr><td>" + "&sigma;"+ "<sup>2</sup>" + "</td><td>" + results.project.totalVariance + "/36" + "</td></tr>"
+                + "<tr><td colspan=2>" + getPertText(results.project.result) + "</td></tr>";
+        }
+
+    }
+
+    function getPertText(arguments) {
+        // TODO
+        var res = null;
+        if (arguments.length == 7) {
+
+        } else {
+            res = "P(X "; 
+            if (arguments[1] == 'lt') {
+                res += "< ";
+            } else {
+                res += "> ";
+            }
+            res += arguments[2] + ")=" + (arguments[3] * 100).toFixed(4) + "%";
+
+        }
+        return res;
+    }
+
+
 
     document.getElementById("statesLabel").addEventListener('click', () => {
         console.log("klik na states")
         createHeadStates();
         createBodyStates();
-        //document.getElementById("summaryText").style.display = "none";
-        // document.getElementById("table").style.display = "table";
     });
    
     document.getElementById("activitiesLabel").addEventListener('click', () => {
@@ -55,16 +110,12 @@
         if ("{{projectType}}" == "cpm") {
             createHeadActivitiesCPM();
             createBodyActivitiesCPM();
-            // TODO
             createBottomActivitiesCPM();
         } else {
             createHeadActivitiesPERT();
             createBodyActivitiesPERT();
-            // TODO
             createBottomActivitiesPERT();
         }
-        //document.getElementById("summaryText").style.display = "none";
-        //document.getElementById("table").style.display = "table";
     })
 
     function createHeadStates() {
@@ -108,7 +159,6 @@
         const states = results.states;
         var ES, LS, slack;
         var row;
-       // $("#tableBody").empty();
         tableBody = document.getElementById("tableBody");
         tableBody.innerHTML = "";
         for (var i = 0; i < states.length; i++) {
@@ -237,7 +287,7 @@
         var tbody = document.getElementById("tableBody");
         var row = tbody.insertRow();
         row.innerHTML =
-            "<tr>" + "<td>" + "Total" + "</td>"
+            "<tr>" + "<td>" + "{{__ "total"}}" + "</td>"
             + "<td>" + "" + "</td>"
             + "<td>" + "" + "</td>"
             + "<td>" + "" + "</td>"
