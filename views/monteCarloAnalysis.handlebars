@@ -61,6 +61,21 @@
     const states = JSON.parse(sessionStorage.getItem("states"));
     const ctx = document.getElementById('myChart').getContext('2d');
 
+    const result = JSON.parse(sessionStorage.getItem("{{projectID}}"))
+
+
+    console.log("RES")
+    console.log("{{projectID}}")
+    console.log(result)
+    console.log("ENDE")
+
+    const minValue = result.project.min;
+    const maxValue = result.project.max;
+
+    console.log(minValue)
+    console.log(typeof(minValue))
+    console.log(maxValue)
+
     /*
     *
     *   Chart section
@@ -78,12 +93,20 @@
             borderColor: 'rgba(255, 99, 132, 1)',
             borderWidth: 1
         }]
-    },
+        },
         options: {
             scales: {
                 y: {
-                    suggestedMin: 0,
-                    suggestedMax: 0.03
+                    min: 0,
+                    max: 0.03
+                },
+                x: {
+                    ticks: {
+                        display: true,
+                        stepSize: 1,
+                        min: minValue,
+                         max: maxValue
+                 }
                 }
             }
         }
@@ -144,8 +167,19 @@
                     dataN.push(arr[i].count / event.data.count);
                 }
 
-                myChart.data.labels = labels;
+                console.log("DATAN")
+                console.log(dataN)
+                console.log(dataN.length)
+                console.log("ENDE")
+
+
+                //myChart.data.labels = labels;
+
+                myChart.data.labels = [110, 115, 120, 130];
+
+
                 myChart.data.datasets[0].data = dataN;
+
                 myChart.data.datasets[0].label = event.data.count
                 myChart.update();
 

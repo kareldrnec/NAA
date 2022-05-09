@@ -92,18 +92,19 @@ function calculate(states, activities, currentProject, arguments) {
         var totalVariance = 0;
         var projectMin = 0;
         var projectMax = 0;
-        console.log("Calculated Activities")
-        console.log(calculatedActivities)
-        console.log("ENDE")
-
+        var tempActivity = null;
 
         while(lastState.name != "Start") {
             previousActivity = calculatedActivities.find(element => element.critical == true && element.toState == lastState.ID);
+            // hodiny ... mrknout
+            tempActivity = activities.find(element => element.ID == previousActivity.ID);
+            projectMin += parseFloat(tempActivity.values[0]);
+            projectMax += parseFloat(tempActivity.values[2]);
             totalVariance += previousActivity.variance;
             lastState = calculatedStates.find(element => element.ID == previousActivity.fromState);
         }
         resultPERT = calculatePERT(totalMeanValue, totalVariance, arguments);
-        result.project = {"meanValue": totalMeanValue, "totalVariance": totalVariance, "result": resultPERT};
+        result.project = {"meanValue": totalMeanValue, "totalVariance": totalVariance, "result": resultPERT, "min": projectMin, "max": projectMax};
     }
     result.states = calculatedStates;
     result.activities = calculatedActivities;

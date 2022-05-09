@@ -58,7 +58,7 @@
         row = tbody.insertRow();
         row.innerHTML = 
             "<tr><td colspan=2>" + "<b>{{__ "results"}}</b>" + "</td></tr>"
-        row.className = "table-success";
+        row.className = "table-primary";
         
         tbody.innerHTML +=
             "<tr><td>" + "{{__ "number of critical activities"}}" + "</td><td>" + criticalActivities.length + "</td></tr>"
@@ -68,14 +68,16 @@
             row = tbody.insertRow();
             row.innerHTML = 
                 "<tr><td colspan=2>" + "<b>PERT</b>" + "</td></tr>";
-            row.className = "table-success";
+            row.className = "table-primary";
             tbody.innerHTML +=
                 "<tr><td>" + "&mu;" + "</td><td>" + results.project.meanValue + "/6" + "</td></tr>"
                 + "<tr><td>" + "&sigma;" + "</td><td>" + 5 + "</td></tr>" // TODO
                 + "<tr><td>" + "&sigma;"+ "<sup>2</sup>" + "</td><td>" + results.project.totalVariance + "/36" + "</td></tr>"
-                + "<tr><td colspan=2>" + getPertText(results.project.result) + "</td></tr>";
+            row = tbody.insertRow();
+            row.innerHTML =
+                "<tr><td colspan=2>" + getPertText(results.project.result) + "</td></tr>";
+            row.className = "table-success";
         }
-
     }
 
     function getPertText(arguments) {

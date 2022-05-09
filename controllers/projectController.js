@@ -414,9 +414,11 @@ exports.generateProject = async (req, res, next) => {
 
 exports.monteCarlo = async(req, res, next) => {
     try {
+
         const user = await UserModel.findById(req.session.userId);
         return res.render("monteCarloAnalysis", {
             title: req.__("monte carlo analysis"),
+            projectID: req.params.id,
             username: user.userName + " " + user.userSurname,
             navColor: req.cookies.navColor
         })
