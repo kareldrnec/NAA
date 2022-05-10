@@ -99,14 +99,6 @@
                 y: {
                     min: 0,
                     max: 0.03
-                },
-                x: {
-                    ticks: {
-                        display: true,
-                        stepSize: 1,
-                        min: minValue,
-                         max: maxValue
-                 }
                 }
             }
         }
@@ -173,9 +165,9 @@
                 console.log("ENDE")
 
 
-                //myChart.data.labels = labels;
+                myChart.data.labels = labels;
 
-                myChart.data.labels = [110, 115, 120, 130];
+                //myChart.data.labels = [110, 115, 120, 130];
 
 
                 myChart.data.datasets[0].data = dataN;
