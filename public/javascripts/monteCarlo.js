@@ -12,7 +12,7 @@ self.addEventListener("message", function(event) {
     var item = null;
     var count = 0;
     for (var i = 0; i < (event.data[0] / 1000); i++) {
-        for (var j = 0; j < 10000; j++) {
+        for (var j = 0; j < 1000; j++) {
             res = simulateMonteCarlo(event.data[1], event.data[2]);
             item = resultArr.find(element => element.value == res);
             if (item == null) {
@@ -26,7 +26,7 @@ self.addEventListener("message", function(event) {
             count++;
         }
         response.resultArr = resultArr;
-        response.count = (i + 1) * 10000;  
+        response.count = (i + 1) * 1000;  
         this.postMessage(response);
     }
 });

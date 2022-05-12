@@ -110,6 +110,7 @@
 	"latest start time": "Latest Start Time",
 	"length": "Length",
 	"length of activity": "Length of Activity",
+	"length of project": "Length of Project",
 	"load": "Load",
 	"load file": "Load File",
 	"load project from file": "Load project from file.",
@@ -228,6 +229,5 @@
 	"8-30 chars": "8-30 characters",
 	"1 upper char": "At least 1 uppercase character",
 	"1 lower char": "At least 1 lowercase character",
-	"2 digits": "At least 2 digits",
-	"projectType": "projectType"
+	"2 digits": "At least 2 digits"
 }

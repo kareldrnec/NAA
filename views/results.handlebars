@@ -19,6 +19,7 @@
             </thead>
             <tbody id="tableBody">
             </tbody>
+            <tfoot id="tableFoot"></tfoot>
         </table>
     </div>
 </div>
@@ -41,10 +42,10 @@
     function summaryTable() {
         var thead = document.getElementById("tableHead");
         var tbody = document.getElementById("tableBody");
+        var tfoot = document.getElementById("tableFoot");
         var row = null;
         var projectInfo = "{{projectInfo}}";
         var criticalActivities = results.activities.filter(element => element.critical == true);
-
         if (projectInfo == "") projectInfo = "<i>--{{__ "undefined"}}--</i>"
 
         thead.innerHTML = 
@@ -76,6 +77,17 @@
             row = tbody.insertRow();
             row.innerHTML =
                 "<tr><td colspan=2>" + getPertText(results.project.result) + "</td></tr>";
+            row.className = "table-success";
+        } else {
+            row = tbody.insertRow();
+            row.innerHTML = 
+                "<tr><td colspan=2>" + "<b>CPM</b>" + "</td></tr>";
+            row.className = "table-primary";
+
+            tbody.innerHTML +=
+                "<tr><td>" + "{{__ "length of project"}}" + "</td><td>" + results.project.length + " {{__ "hours res"}}" + "</td></tr>";
+            
+            row = tbody.insertRow();
             row.className = "table-success";
         }
     }
@@ -167,18 +179,22 @@
             if (states[i].slack == 0) {
                 slack = 0;
             } else {
-                slack = states[i].slack + "/6";
+                slack = states[i].slack;
+                if ("{{projectType}}" == "pert") slack += "/6";
             }
             if (states[i].ES == 0) {
                 ES = 0;
             } else {
-                ES = states[i].ES + "/6";
+                ES = states[i].ES;
+                if ("{{projectType}}" == "pert") ES += "/6";
             }
             if (states[i].LS == 0) {
                 LS = 0;
             } else {
-                LS = states[i].LS + "/6"
+                LS = states[i].LS;
+                if ("{{projectType}}" == "pert") LS += "/6";
             }
+
             row = tableBody.insertRow();
             row.innerHTML = 
                 "<tr>" + "<td>" + (i + 1) + "</td>"

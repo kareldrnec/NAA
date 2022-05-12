@@ -14,7 +14,7 @@
                 <tr style="background-color: lightskyblue;">
                     <th scope="col">#</th>
                     <th scope="col">{{__ "project name"}}</th>
-                    <th scope="col">{{__ "type of project"}}</th>
+                    <th scope="col">{{__ "project type"}}</th>
                     <th scope="col">{{__ "created"}}</th>
                     <th scope="col">{{__ "last modified"}}</th>
                     <th scope="col">{{__ "action"}}</th>
@@ -38,23 +38,25 @@
                 {{/each}}
                 {{/each}}
             </tbody>
+            <tfoot>
+                <tr class="bg-light">
+                    <td colspan=6>
+                        <a href="/projects/new">
+                            <button type="button" class="btn btn-primary" title="{{__ "add new project"}}" style="width: 120px;">
+                                <i class="fas fa-plus-square"></i> {{__ "add"}}
+                            </button>
+                        </a>
+                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#generateProjectModal" title="{{__ "generate random project"}}" style="width: 120px;">
+                            <i class="fas fa-random"></i> {{__ "generate"}}
+                        </button>
+                        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#loadProjectModal" title="{{__ "load project from file"}}" style="width: 120px;">
+                            <i class="far fa-file-excel"></i> {{__ "load"}}
+                        </button>
+                    </td>
+                </tr>
+            </tfoot>
         </table>
-    </div>
-
-    <div class="text-center">
-        <a href="/projects/new">
-            <button type="button" class="btn btn-primary" title="{{__ "add new project"}}" style="width: 120px;">
-                <i class="fas fa-plus-square"></i> {{__ "add"}}
-            </button>
-        </a>
-        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#generateProjectModal" title="{{__ "generate random project"}}" style="width: 120px;">
-            <i class="fas fa-random"></i> {{__ "generate"}}
-        </button>
-        <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#loadProjectModal" title="{{__ "load project from file"}}" style="width: 120px;">
-            <i class="far fa-file-excel"></i> {{__ "load"}}
-        </button>
-    </div>
-    
+    </div>    
 </div>
 
 <!-- Modal Generator -->

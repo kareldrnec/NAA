@@ -20,16 +20,13 @@
                 </div>
                 <div class="form-group">
                     <label></label>
-                    <select class="form-control">
-                        <option>1</option>
-                        <option>2</option>
-                        <option>4</option>
-                        <option>5</option>
-                        <option>6</option>
-                        <option>7</option>
-                        <option>8</option>
-                        <option>9</option>
-                        <option>10</option>
+                    <select class="form-control" id="numberOfWorkers">
+                        <option value="1">1</option>
+                        <option value="2">2</option>
+                        <option value="4">4</option>
+                        <option value="5">5</option>
+                        <option value="8">8</option>
+                        <option value="10">10</option>
                     </select>
                 </div>
                 <div class="text-center">
@@ -83,7 +80,8 @@
     */
 
     var myChart = new Chart(ctx, {
-        type: 'line', 
+        // line
+        type: 'scatter', 
         data: {
         labels: [],
         datasets: [{
@@ -95,10 +93,19 @@
         }]
         },
         options: {
+            showLine: true,
             scales: {
                 y: {
                     min: 0,
-                    max: 0.03
+                   // max: 0.03
+                },
+                x: {
+                    min: 108,
+                    max: 126,
+                    ticks: {
+                       // precision: 0
+                       stepSize: 1
+                    }
                 }
             }
         }
@@ -125,12 +132,18 @@
 
     function runMonteCarlo() {
         const numberOfIterations = parseInt(document.getElementById("numberOfIterations").value);
-        
+        const numberOfWorkers = parseInt(document.getElementById("numberOfWorkers").value);
+
+        console.log("NUMBER OF WORKERS")
+        console.log(numberOfWorkers)
+        console.log("ENDE")
+
+
+
         resetTimer();
         startTimer();
 
         if (myChart.data.labels.length != 0) {
-            myChart.data.labels = [];
             myChart.data.datasets[0].data = [];
             myChart.data.datasets[0].label = 0
             myChart.update();
@@ -152,6 +165,11 @@
                 var num = 0;
                 var arr = event.data.resultArr;
 
+                console.log("ARR")
+                console.log(arr)
+                console.log("ENDE")
+
+
                 arr.sort((a, b) => a.value - b.value);
                 
                 for (var i = 0; i < arr.length; i++) {
@@ -160,14 +178,14 @@
                 }
 
                 console.log("DATAN")
-                console.log(dataN)
+               // console.log(dataN)
                 console.log(dataN.length)
                 console.log("ENDE")
 
+                console.log("POCET HODNOT")
+                console.log(labels.length)
 
                 myChart.data.labels = labels;
-
-                //myChart.data.labels = [110, 115, 120, 130];
 
 
                 myChart.data.datasets[0].data = dataN;
