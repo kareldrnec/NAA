@@ -1,11 +1,6 @@
 importScripts("./jstat.min.js", "./calculations.js");
 
 self.addEventListener("message", function(event) {
-
-    console.log("EVENT DATA")
-    console.log(event.data)
-    console.log("ENDE")
-
     var res = null;
     var response = {};
     var resultArr = [];
@@ -26,7 +21,7 @@ self.addEventListener("message", function(event) {
             count++;
         }
         response.resultArr = resultArr;
-        response.count = (i + 1) * 1000;  
+        response.count = (i + 1) * 1000;
         this.postMessage(response);
     }
 });

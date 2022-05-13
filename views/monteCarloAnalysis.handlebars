@@ -10,6 +10,18 @@
 <div class="container-fluid bg pt-5">
     <div class="row">
         <div class="col-md-4 col-sm-4 col-xs-12">
+            <div class="text-center">
+                <h3> {{__ "project data"}}</h3>
+            </div>
+            <div class="form-group">
+                <label>&mu;</label>
+                <input type="text" class="form-control" id="meanValueOfProject" title="{{__ "project mean value"}}" readonly> 
+                <label>&sigma;<sup>2</sup></label>
+                <input type="text" class="form-control" id="varianceOfProject" title="{{__ "project variance"}}" readonly> 
+            </div>
+
+            <hr class="solid">
+
             <form class="form-container" action="">
                 <div class="text-center">
                     <h3>{{__ "simulation"}}</h3>
@@ -18,20 +30,9 @@
                     <label for="numberOfIterations">{{__ "number of iterations"}}</label>
                     <input type="number" class="form-control" id="numberOfIterations" placeholder="{{__ "enter number of iterations"}}" min="1000" value="1000" step="1000">
                 </div>
-                <div class="form-group">
-                    <label></label>
-                    <select class="form-control" id="numberOfWorkers">
-                        <option value="1">1</option>
-                        <option value="2">2</option>
-                        <option value="4">4</option>
-                        <option value="5">5</option>
-                        <option value="8">8</option>
-                        <option value="10">10</option>
-                    </select>
-                </div>
                 <div class="text-center">
                     <button type="button" class="btn btn-primary" id="runSimulationButton">{{__ "run simulation"}}</button>
-                    <button type="button" class="btn btn-secondary" id="backSimulationButton">{{__ "back"}}</button>
+                    <button type="button" class="btn btn-secondary" id="stopSimulationButton">{{__ "stop simulation"}}</button>
                 </div>
                 <div class="text-center">
                     <span id="hour">00</span>:<span id="minute">00</span>:<span id="second">00</span>
@@ -44,6 +45,17 @@
                 <div id="monteCarloErrMsg" style="margin-left: 5px;">
                 </div>
             </div>
+            
+            <hr class="solid">
+
+            <!-- simulation results -->
+            <div class="text-center" id="simulationResultsDiv" style="display: none;">
+                <h3>{{__ "simulation results"}}</h3>
+            </div>
+
+
+
+
         </div>
         <div class="col-md-8 col-sm-8 col-xs-24">
             <canvas id="myChart" width="800px" height="300px"></canvas>
@@ -57,8 +69,14 @@
     const activities = JSON.parse(sessionStorage.getItem("activities"));
     const states = JSON.parse(sessionStorage.getItem("states"));
     const ctx = document.getElementById('myChart').getContext('2d');
-
     const result = JSON.parse(sessionStorage.getItem("{{projectID}}"))
+
+    var meanValueInput = document.getElementById("meanValueOfProject");
+    var varianceInput = document.getElementById("varianceOfProject");
+    var myWorker = null;
+
+    meanValueInput.value = result.project.meanValue + "/6 = " + (result.project.meanValue / 6).toFixed(2);
+    varianceInput.value = result.project.totalVariance + "/36 = " + (result.project.totalVariance / 36).toFixed(2);
 
 
     console.log("RES")
@@ -100,8 +118,8 @@
                    // max: 0.03
                 },
                 x: {
-                    min: 108,
-                    max: 126,
+                   // min: 108,
+                   // max: 126,
                     ticks: {
                        // precision: 0
                        stepSize: 1
@@ -125,20 +143,16 @@
     document.getElementById('runSimulationButton').addEventListener('click', () => {
         runMonteCarlo();
     });
-    document.getElementById('backSimulationButton').addEventListener('click', () => {
-        history.back();
-    });
 
+    document.getElementById('stopSimulationButton').addEventListener('click', () => {
+        if (myWorker != null) {
+            myWorker.terminate();
+            pauseTimer();
+        }
+    });
 
     function runMonteCarlo() {
         const numberOfIterations = parseInt(document.getElementById("numberOfIterations").value);
-        const numberOfWorkers = parseInt(document.getElementById("numberOfWorkers").value);
-
-        console.log("NUMBER OF WORKERS")
-        console.log(numberOfWorkers)
-        console.log("ENDE")
-
-
 
         resetTimer();
         startTimer();
@@ -150,7 +164,7 @@
         }
 
         if (window.Worker) {
-            var myWorker = new Worker('/javascripts/monteCarlo.js');
+            myWorker = new Worker('/javascripts/monteCarlo.js');
             var data = [];
             
             data.push(numberOfIterations)
@@ -176,14 +190,6 @@
                     labels.push(arr[i].value);
                     dataN.push(arr[i].count / event.data.count);
                 }
-
-                console.log("DATAN")
-               // console.log(dataN)
-                console.log(dataN.length)
-                console.log("ENDE")
-
-                console.log("POCET HODNOT")
-                console.log(labels.length)
 
                 myChart.data.labels = labels;
 
@@ -248,7 +254,12 @@
         }
         document.getElementById('hour').innerText = returnData(hour);
         document.getElementById('minute').innerText = returnData(minute);
-        document.getElementById('second').innerText = returnData(second);
+
+        if (second == 10) {
+            document.getElementById('second').innerText = "10";
+        } else {
+            document.getElementById('second').innerText = returnData(second);
+        }
     }
 
     function returnData(input) {

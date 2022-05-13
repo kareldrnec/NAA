@@ -127,14 +127,15 @@ function calculatePERT(totalMeanValue, totalVariance, arguments) {
       //  result = ['T', arguments[1]]
         // simple pert
     } else if (arguments.length == 4) {
+        console.log("JSEM TU")
+        console.log(arguments)
+        console.log("ENDE")
+
         var probability = getPertProbability(parseFloat(arguments[2]), totalMeanValue, totalVariance);
         if (arguments[1] == 'gt') probability = 1 - probability;
         result = ['P', arguments[1], arguments[2], probability, arguments[3]];
     } else {
         var probability = null;
-        console.log("JSEM TU")
-        console.log(arguments)
-        console.log("ENDE")
         if (arguments[1] == 'gt' && arguments[3] == 'lt') {
             // BETWEEN > <
             probability = getPertProbability(parseFloat(arguments[4]), totalMeanValue, totalVariance) - getPertProbability(parseFloat(arguments[2]), totalMeanValue, totalVariance);

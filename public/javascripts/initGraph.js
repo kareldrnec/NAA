@@ -254,10 +254,18 @@ function getLinkDataArray(activities) {
     if(result) {
         resLinks = result.activities;
     }
+    console.log("RES LINKS")
+    console.log(resLinks)
+    console.log(activitiesData)
+    console.log("ENDE")
+
+
     for (var i = 0; i < activitiesData.length; i++) {
         linkColor = "N";
         if (resLinks) {
+
             currentLink = resLinks.find(element => element.ID == activitiesData[i].ID);
+
             if (currentLink.critical == true) {
                 linkColor = "R";
             }
