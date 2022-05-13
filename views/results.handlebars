@@ -94,8 +94,28 @@
     function getPertText(arguments) {
         // TODO
         var res = null;
-        if (arguments.length == 7) {
 
+        console.log("GET PERT TEXT")
+        console.log(arguments)
+        console.log("ENDE")
+
+
+        if (arguments.length == 7) {
+            res = "P(" + arguments[2];
+            if (arguments[1] == 'gt') {
+                res += " < X";
+            } else {
+                res += " > X";
+            }
+
+            if (arguments[3] == 'lt') {
+                res += " < " + arguments[4] + ") = " + (arguments[5] * 100).toFixed(4) + "%"; 
+            } else {
+                res += " > " + arguments[4] + ") = " + (arguments[5] * 100).toFixed(4) + "%"; 
+            }
+
+        } else if(arguments.length == 4) {
+            res = "T(P = " + arguments[2] + "%) = " + arguments[3].toFixed(2) + " ({{__ "hours res"}})";
         } else {
             res = "P(X "; 
             if (arguments[1] == 'lt') {
