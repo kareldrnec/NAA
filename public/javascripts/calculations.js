@@ -70,8 +70,15 @@ function calculate(states, activities, currentProject, arguments) {
     var result = {};
     var calculatedActivities;
     var calculatedStates = arrStates(states);
+    var criticalActivities = null;
     var criticalPath = "";
     var criticalPathsArr = [];
+    var firstState = null;
+    var lastState = null;
+    var tempActivity = null;
+    var previousActivity = null;
+    var nextActivity = null;
+    var usedActivities = [];
     if (projectType == 'cpm') {
         calculatedActivities = cpmActivities(activities);
     } else if (projectType == 'pert') {
@@ -82,36 +89,26 @@ function calculate(states, activities, currentProject, arguments) {
     calculatedStates = backwardCalculation(calculatedStates, calculatedActivities);
     calculatedActivities = findCriticalActivities(calculatedStates, calculatedActivities);
 
-
-    var firstState = null;
-    var tempActivity = null;
-    var nextActivity = null;
-    var usedActivities = [];
-    var lastState = calculatedStates.find(element => element.name == "Finish");
+    lastState = calculatedStates.find(element => element.name == "Finish");
+    criticalActivities = calculatedActivities.filter(element => element.critical == true);
     if (projectType == 'cpm') {
         firstState = calculatedStates.find(element => element.name == "Start");
-
         while (firstState.name != "Finish") {
             nextActivity = calculatedActivities.find(element => element.critical == true && element.fromState == firstState.ID);
             tempActivity = activities.find(element => element.ID == nextActivity.ID);
-            usedActivities.push(previousActivity);
+            usedActivities.push(nextActivity);
             criticalPath += tempActivity.activityName + "->";
             firstState = calculatedStates.find(element => element.ID == nextActivity.toState);
         }
-
         criticalPathsArr.push(criticalPath.slice(0, criticalPath.length - 2));
-
-        // TODO IF DALSI KRITICKE CESTY
-
-
-        result.project = {"length": lastState.ES, "projectType": projectType, "calculationDate": Date.now(), "criticalPathsArr": criticalPathsArr};
+        if (criticalActivities.length != usedActivities.length) {
+            criticalPathsArr = findRemainingCriticalPaths(activities, criticalActivities, usedActivities, calculatedStates, criticalPathsArr);
+        }
+        result.project = {"length": lastState.ES, "projectType": projectType, "criticalPathsArr": criticalPathsArr};
     } else {
         // PERT VALUES
-        // CALCULATION
-        var previousActivity = null;
         var totalMeanValue = lastState.ES;
         var totalVariance = 0;
-        var numOfCritAct = 0;
 
         while(lastState.name != "Start") {
             previousActivity = calculatedActivities.find(element => element.critical == true && element.toState == lastState.ID);
@@ -121,39 +118,19 @@ function calculate(states, activities, currentProject, arguments) {
             criticalPath = criticalPath.slice(0, 0) + "->" + tempActivity.activityName + criticalPath.slice(0);
             totalVariance += previousActivity.variance;
             lastState = calculatedStates.find(element => element.ID == previousActivity.fromState);
-            numOfCritAct += 1;
         }
-
-        console.log("USED ACTIVITIES")
-        console.log(usedActivities)
-        console.log("ENDE")
 
         criticalPathsArr.push(criticalPath.slice(2));
 
-        var criticalActivities = calculatedActivities.filter(element => element.critical == true);
-
         if (criticalActivities.length != usedActivities.length) {
-            console.log("MUSIME HLEDAT DALE");
             criticalPathsArr = findRemainingCriticalPaths(activities, criticalActivities, usedActivities, calculatedStates, criticalPathsArr);
         }
-
-        // TODO VICE KRITICKYCH CEST
-
-
-
-
-
-
         resultPERT = calculatePERT(totalMeanValue, totalVariance, arguments);
         result.project = {"meanValue": totalMeanValue, "totalVariance": totalVariance, "result": resultPERT, "criticalPathsArr": criticalPathsArr};
     }
     result.states = calculatedStates;
     result.activities = calculatedActivities;
     sessionStorage.setItem(currentProject._id, JSON.stringify(result));
-
-  //  console.log("RESULT JE")
-  //  console.log(result)
-  //  console.log("ENDE")
     return result;
 }
 

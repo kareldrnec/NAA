@@ -8,11 +8,6 @@ var app = require('../app');
 //socket.io
 exports.addState = async (stateName, projectID, stateInfo) => {
     try {
-
-        console.log("STATE NAME")
-        console.log(stateName)
-        console.log("ENDE")
-
         var state = new StateModel({
             stateName: stateName,
             projectID: projectID,
