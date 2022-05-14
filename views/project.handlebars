@@ -603,9 +603,9 @@
     var socket = io();
     sessionStorage.setItem("currentProject", "{{projectID}}");
 
-    console.log("ACtivities")
-    console.log(activities)
-    console.log("ENDE")
+   // console.log("ACtivities")
+    //console.log(activities)
+    //console.log("ENDE")
 
 
 
@@ -775,9 +775,9 @@
                                 }
                                 pertText += ')=' + (res.project.result[5] * 100).toFixed(4) + "%";
                             }
-                            console.log("RESULT JE")
-                            console.log(res)
-                            console.log("ENDE")
+                          //  console.log("RESULT JE")
+                          //  console.log(res)
+                          //  console.log("ENDE")
 
                             document.getElementById('totalMeanValue').value = res.project.meanValue + "/6";
                             document.getElementById('totalVariance').value = res.project.totalVariance + "/6";

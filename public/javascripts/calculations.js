@@ -70,6 +70,8 @@ function calculate(states, activities, currentProject, arguments) {
     var result = {};
     var calculatedActivities;
     var calculatedStates = arrStates(states);
+    var criticalPath = "";
+    var criticalPathsArr = [];
     if (projectType == 'cpm') {
         calculatedActivities = cpmActivities(activities);
     } else if (projectType == 'pert') {
@@ -78,41 +80,72 @@ function calculate(states, activities, currentProject, arguments) {
 
     calculatedStates = forwardCalculation(calculatedStates, calculatedActivities);
     calculatedStates = backwardCalculation(calculatedStates, calculatedActivities);
-
     calculatedActivities = findCriticalActivities(calculatedStates, calculatedActivities);
 
+
+    var firstState = null;
+    var tempActivity = null;
+    var nextActivity = null;
     var lastState = calculatedStates.find(element => element.name == "Finish");
     if (projectType == 'cpm') {
-        result.project = {"length": lastState.ES, "projectType": projectType, "calculationDate": Date.now()};
+        firstState = calculatedStates.find(element => element.name == "Start");
+
+        while (firstState.name != "Finish") {
+            nextActivity = calculatedActivities.find(element => element.critical == true && element.fromState == firstState.ID);
+            tempActivity = activities.find(element => element.ID == nextActivity.ID);
+            criticalPath += tempActivity.activityName + "->";
+            firstState = calculatedStates.find(element => element.ID == nextActivity.toState);
+        }
+
+        criticalPathsArr.push(criticalPath.slice(0, criticalPath.length - 2));
+
+        // TODO IF DALSI KRITICKE CESTY
+
+
+        result.project = {"length": lastState.ES, "projectType": projectType, "calculationDate": Date.now(), "criticalPathsArr": criticalPathsArr};
     } else {
         // PERT VALUES
         // CALCULATION
         var previousActivity = null;
         var totalMeanValue = lastState.ES;
         var totalVariance = 0;
-        var projectMin = 0;
-        var projectMax = 0;
-        var tempActivity = null;
 
         while(lastState.name != "Start") {
             previousActivity = calculatedActivities.find(element => element.critical == true && element.toState == lastState.ID);
             // hodiny ... mrknout
             tempActivity = activities.find(element => element.ID == previousActivity.ID);
-            projectMin += parseFloat(tempActivity.values[0]);
-            projectMax += parseFloat(tempActivity.values[2]);
+
+            console.log("TEMP ACTIVITY");
+            console.log(tempActivity);
+            console.log("ENDE")
+            
+            criticalPath = criticalPath.slice(0, 0) + "->" + tempActivity.activityName + criticalPath.slice(0);
             totalVariance += previousActivity.variance;
             lastState = calculatedStates.find(element => element.ID == previousActivity.fromState);
         }
         resultPERT = calculatePERT(totalMeanValue, totalVariance, arguments);
-        result.project = {"meanValue": totalMeanValue, "totalVariance": totalVariance, "result": resultPERT, "min": projectMin, "max": projectMax};
+        
+        console.log("CRITICAL PATH JE")
+        console.log(criticalPath)
+        console.log("ENDE")
+
+        criticalPathsArr.push(criticalPath.slice(2));
+
+        console.log("CRITICAL PATHS ARR")
+        console.log(criticalPathsArr);
+        console.log("ENDE")
+
+        // TODO VICE KRITICKYCH CEST
+
+        result.project = {"meanValue": totalMeanValue, "totalVariance": totalVariance, "result": resultPERT, "criticalPathsArr": criticalPathsArr};
     }
     result.states = calculatedStates;
     result.activities = calculatedActivities;
     sessionStorage.setItem(currentProject._id, JSON.stringify(result));
 
-    console.log("RESULT JE")
-    console.log(result)
-    console.log("ENDE")
+  //  console.log("RESULT JE")
+  //  console.log(result)
+  //  console.log("ENDE")
 
 
     return result;
@@ -127,9 +160,10 @@ function calculatePERT(totalMeanValue, totalVariance, arguments) {
       //  result = ['T', arguments[1]]
         // simple pert
     } else if (arguments.length == 4) {
-        console.log("JSEM TU")
-        console.log(arguments)
-        console.log("ENDE")
+      
+      //  console.log("JSEM TU")
+      //  console.log(arguments)
+      //  console.log("ENDE")
 
         var probability = getPertProbability(parseFloat(arguments[2]), totalMeanValue, totalVariance);
         if (arguments[1] == 'gt') probability = 1 - probability;

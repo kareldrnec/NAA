@@ -267,9 +267,6 @@
             let reader = new FileReader();
             reader.onload = (e) => {
                 const file = e.target.result;
-                // dataJSON = JSON.parse(file)
-                // document.getElementById('loadedFileInput').value = JSON.stringify(dataJSON);
-                // console.log(file)
                 document.getElementById('loadedFileInput').value = file;
             };
             reader.onerror = (e) => alert(e.target.error.name);

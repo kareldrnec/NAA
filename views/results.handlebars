@@ -29,13 +29,14 @@
     var results = JSON.parse(sessionStorage.getItem("{{projectID}}"))
     var numberOfStates = (results.states).length;
     var numberOfActivities = (results.activities).length;
-   
+    var thead;
+    var tbody;
+    var tfoot;
+    var row;
+
 
     summaryTable();
 
-    console.log(results)
-
-    var thead;
 
     document.getElementById("summaryLabel").addEventListener('click', summaryTable);
 
@@ -60,10 +61,21 @@
         row.innerHTML = 
             "<tr><td colspan=2>" + "<b>{{__ "results"}}</b>" + "</td></tr>"
         row.className = "table-primary";
-        
+
         tbody.innerHTML +=
             "<tr><td>" + "{{__ "number of critical activities"}}" + "</td><td>" + criticalActivities.length + "</td></tr>"
-            + "<tr><td>" + "{{__ "number of critical paths"}}" + "</td><td>" + 0 + "</td></tr>" // TODO
+            + "<tr><td>" + "{{__ "number of critical paths"}}" + "</td><td>" + (results.project.criticalPathsArr).length + "</td></tr>" // TODO
+
+        row = tbody.insertRow();
+        row.innerHTML = 
+            "<tr><td colspan=2>" + "<b>{{__ "critical paths"}}</b>" + "</td></tr>";
+        row.className = "table-primary";
+
+        for (var i = 0; i < (results.project.criticalPathsArr).length; i++) {
+            row = tbody.insertRow();
+            row.innerHTML =
+                "<tr><td>" + (i + 1) + "</td><td>" + results.project.criticalPathsArr[i] + "</td></tr>";
+        }
 
         if ("{{projectType}}" == "pert") {
             row = tbody.insertRow();
@@ -92,14 +104,7 @@
     }
 
     function getPertText(arguments) {
-        // TODO
         var res = null;
-
-        console.log("GET PERT TEXT")
-        console.log(arguments)
-        console.log("ENDE")
-
-
         if (arguments.length == 7) {
             res = "P(" + arguments[2];
             if (arguments[1] == 'gt') {
@@ -132,14 +137,11 @@
 
 
     document.getElementById("statesLabel").addEventListener('click', () => {
-        console.log("klik na states")
         createHeadStates();
         createBodyStates();
     });
    
     document.getElementById("activitiesLabel").addEventListener('click', () => {
-        console.log("klik na aktivity")
-        // dodelat pro cpm
         if ("{{projectType}}" == "cpm") {
             createHeadActivitiesCPM();
             createBodyActivitiesCPM();
@@ -312,15 +314,18 @@
     }
 
 
-    function createBottomActivitiesCPM() {}
+    function createBottomActivitiesCPM() {
+        tbody = document.getElementById("tableBody");
+        row = tbody.insertRow();
+        row.innerHTML =
+            "<tr><td>" + "{{__ "total"}}" + "</td>"
+            + "<td colspan=2></td>"
+            + "<td>" + results.project.length + "</td>"
+            + "<td>" + "{{__ "hours"}}" + "</td></tr>";
+        row.className = "table-success";
+    }
 
     function createBottomActivitiesPERT() {
-        console.log("RESULTS")
-        console.log(results)
-        console.log("ENDE")
-
-
-
         var tbody = document.getElementById("tableBody");
         var row = tbody.insertRow();
         row.innerHTML =
