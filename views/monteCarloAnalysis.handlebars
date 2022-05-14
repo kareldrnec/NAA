@@ -34,9 +34,6 @@
                     <button type="button" class="btn btn-primary" id="runSimulationButton">{{__ "run simulation"}}</button>
                     <button type="button" class="btn btn-secondary" id="stopSimulationButton">{{__ "stop simulation"}}</button>
                 </div>
-                <div class="text-center">
-                    <span id="hour">00</span>:<span id="minute">00</span>:<span id="second">00</span>
-                </div>
             </form>
             <div style="background-color: #ffb8b8; margin-top: 10px; display: none;" id="monteCarloErrDiv">
                 <button type="button" class="close" onclick="closeMonteCarloErr()" style="margin-right: 5px;">
@@ -49,9 +46,16 @@
             <hr class="solid">
 
             <!-- simulation results -->
-            <div class="text-center" id="simulationResultsDiv" style="display: none;">
-                <h3>{{__ "simulation results"}}</h3>
+            <div id="simulationResultsDiv" style="display: none;">
+                <div class="text-center">
+                    <h3>{{__ "simulation results"}}</h3>
+                </div>
+                <div>
+                    {{__ "simulation time"}}:
+                </div>
             </div>
+
+
 
 
 
@@ -59,6 +63,9 @@
         </div>
         <div class="col-md-8 col-sm-8 col-xs-24">
             <canvas id="myChart" width="800px" height="300px"></canvas>
+            <div class="text-center">
+                <span id="hour">00</span>:<span id="minute">00</span>:<span id="second">00</span>
+            </div>
         </div>
     </div>
 </div>
@@ -75,8 +82,8 @@
     var varianceInput = document.getElementById("varianceOfProject");
     var myWorker = null;
 
-    meanValueInput.value = result.project.meanValue + "/6 = " + (result.project.meanValue / 6).toFixed(2);
-    varianceInput.value = result.project.totalVariance + "/36 = " + (result.project.totalVariance / 36).toFixed(2);
+    meanValueInput.value = result.project.meanValue + "/6 = " + (result.project.meanValue / 6).toFixed(2) + " {{__ "hours res"}}";
+    varianceInput.value = result.project.totalVariance + "/36 = " + (result.project.totalVariance / 36).toFixed(2) + " {{__ "hours res"}}";
 
 
     console.log("RES")
@@ -153,7 +160,7 @@
 
     function runMonteCarlo() {
         const numberOfIterations = parseInt(document.getElementById("numberOfIterations").value);
-
+        document.getElementById('simulationResultsDiv').style.display = 'inline';
         resetTimer();
         startTimer();
 
@@ -178,10 +185,6 @@
                 var dataN = [];
                 var num = 0;
                 var arr = event.data.resultArr;
-
-                console.log("ARR")
-                console.log(arr)
-                console.log("ENDE")
 
 
                 arr.sort((a, b) => a.value - b.value);

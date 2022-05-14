@@ -603,6 +603,12 @@
     var socket = io();
     sessionStorage.setItem("currentProject", "{{projectID}}");
 
+    console.log("ACtivities")
+    console.log(activities)
+    console.log("ENDE")
+
+
+
     // INIT GRAFU
     init(states, activities, project, "{{projectType}}", translations, "{{graphSettings}}");
 

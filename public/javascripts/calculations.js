@@ -319,7 +319,7 @@ function cpmActivities(activities) {
             ID: activities[i].ID,
             fromState: activities[i].fromState,
             toState: activities[i].toState,
-            value: parseInt(activities[i].values[0]),
+            value: parseFloat(activities[i].values[0]),
             critical: false
         });
     }
@@ -331,12 +331,12 @@ function pertActivities(activities) {
     var activitiesArr = [];
     var std = null;
     for (var i = 0; i < activities.length; i++) {
-        std = parseInt(activities[i].values[2]) - parseInt(activities[i].values[0]);
+        std = parseFloat(activities[i].values[2]) - parseFloat(activities[i].values[0]); // TODO
         activitiesArr.push({
             ID: activities[i].ID,
             fromState: activities[i].fromState,
             toState: activities[i].toState,
-            value: parseInt(activities[i].values[0]) + 4 * parseInt(activities[i].values[1]) + parseInt(activities[i].values[2]),
+            value: parseFloat(activities[i].values[0]) + 4 * parseFloat(activities[i].values[1]) + parseFloat(activities[i].values[2]),
             std: std,
             variance: std * std,
             critical: false
