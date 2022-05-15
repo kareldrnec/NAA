@@ -259,7 +259,6 @@ function getLinkDataArray(activities) {
     console.log(activitiesData)
     console.log("ENDE")
 */
-
     for (var i = 0; i < activitiesData.length; i++) {
         linkColor = "N";
         if (resLinks) {
@@ -272,12 +271,11 @@ function getLinkDataArray(activities) {
         }
 
         if (activitiesData[i].activityType == "normal") {
-            // parseLinkTextData(activitiesData[i].values)
             linkDataArray.push({
                 "id": activitiesData[i].ID,
                 "from": activitiesData[i].fromState,
                 "to": activitiesData[i].toState,
-                "text": parseLinkTextData(activitiesData[i].values),
+                "text": parseLinkTextData(activitiesData[i].values, activitiesData[i].timeUnit),
                 "color": linkColor,
                 "tooltip": parseLinkTextTooltip(activitiesData[i].activityName, activitiesData[i].activityType, activitiesData[i].values, activitiesData[i].timeUnit, "B")
             })
@@ -286,7 +284,7 @@ function getLinkDataArray(activities) {
                 "id": activitiesData[i].ID,
                 "from": activitiesData[i].fromState,
                 "to": activitiesData[i].toState,
-                "text": parseLinkTextData(activitiesData[i].values),
+                "text": parseLinkTextData(activitiesData[i].values, activitiesData[i].timeUnit),
                 "dash": [3, 4],
                 "color": linkColor,
                 "tooltip": parseLinkTextTooltip(activitiesData[i].activityName, activitiesData[i].activityType, activitiesData[i].values, activitiesData[i].timeUnit, "B")
@@ -296,13 +294,14 @@ function getLinkDataArray(activities) {
     return linkDataArray;
 }
 
-function parseLinkTextData(valuesArr) {
+function parseLinkTextData(valuesArr, timeUnit) {
     var result = "";
     if (valuesArr.length == 1) {
         result = result + " (" + valuesArr[0] + ") ";
     } else {
         result = result + " (" + valuesArr[0] + "," + valuesArr[1] + "," + valuesArr[2] + ") ";
     }
+    result += timeUnit[0];
     return result;
 }
 

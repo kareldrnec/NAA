@@ -384,19 +384,17 @@
                         {{#ifEquals projectType "pert"}}
                             <div class="form-group">
                                 <label for="optimisticValue">{{__ "optimistic value"}}</label>
-                                <input type="number" class="form-control" name="optimisticValue" id="optimisticValue" min="0" value="0" step="any">
+                                <input type="number" class="form-control" name="optimisticValue" id="optimisticValue" min="0" value="0">
                                 <label for="mostExpectedValue">{{__ "modal time"}}</label>
-                                <input type="number" class="form-control" name="mostExpectedValue" id="mostExpectedValue" min="0" value="0" step="any">
+                                <input type="number" class="form-control" name="mostExpectedValue" id="mostExpectedValue" min="0" value="0">
                                 <label for="pessimisticValue">{{__ "pessimistic value"}}</label>
-                                <input type="number" class="form-control" name="pessimisticValue" id="pessimisticValue" min="0" value="0" step="any">
+                                <input type="number" class="form-control" name="pessimisticValue" id="pessimisticValue" min="0" value="0">
                             </div>
                         {{/ifEquals}}
                         <hr class="solid">
                         <div class="form-group">
                             <label for="valueType">{{__ "time unit"}}</label>
                             <select class="form-control" id="activityTimeUnit" name="activityTimeUnit">
-                                <option value="seconds">{{__ "seconds"}}</option>
-                                <option value="minutes">{{__ "minutes"}}</option>
                                 <option value="hours" selected>{{__ "hours"}}</option>
                                 <option value="days">{{__ "days"}}</option>
                                 <option value="weeks">{{__ "weeks"}}</option>
@@ -468,13 +466,13 @@
                         {{#ifEquals projectType "pert"}}
                             <div class="form-group">
                                 <label for="editedActivityOptimistic">{{__ "optimistic value"}}</label>
-                                <input type="number" class="form-control" id="editedActivityOptimistic" name="editedActivityOptimistic" min="0" step="any"
+                                <input type="number" class="form-control" id="editedActivityOptimistic" name="editedActivityOptimistic" min="0"
                                     title="{{__ "optimistic value"}}" required>
                                 <label for="editedActivityMost">{{__ "most expected value"}}</label>
-                                <input type="number" class="form-control" id="editedActivityMost" name="editedActivityMost" min="0" step="any"
+                                <input type="number" class="form-control" id="editedActivityMost" name="editedActivityMost" min="0"
                                     title="{{__ "most expected value"}}" required>
                                 <label for="editedActivityPessimistc">{{__ "pessimistic value"}}</label>
-                                <input type="number" class="form-control" id="editedActivityPessimistic" name="editedActivityPessimistic" min="0" step="any"
+                                <input type="number" class="form-control" id="editedActivityPessimistic" name="editedActivityPessimistic" min="0"
                                     title="{{__ "pessimistic value"}}" required>
                             </div>
                         {{/ifEquals}}
@@ -482,8 +480,6 @@
                         <div class="form-group">
                             <label for="editedTimeUnit">{{__ "time unit"}}</label>
                             <select class="form-control" id="editedTimeUnit" name="editedTimeUnit">
-                                <option value="seconds">{{__ "seconds"}}</option>
-                                <option value="minutes">{{__ "minutes"}}</option>
                                 <option value="hours">{{__ "hours"}}</option>
                                 <option value="days">{{__ "days"}}</option>
                                 <option value="weeks">{{__ "weeks"}}</option>

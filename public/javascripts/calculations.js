@@ -40,9 +40,9 @@ function simulateMonteCarlo(activities, states) {
     calculatedStates = arrStates(states.states);
     calculatedActivities = monteCarloActivities(activities.activities);
     calculatedStates = forwardCalculation(calculatedStates, calculatedActivities);
-    calculatedStates = backwardCalculation(calculatedStates, calculatedActivities);
+    //calculatedStates = backwardCalculation(calculatedStates, calculatedActivities);
     finishState = calculatedStates.find(element => element.name == "Finish");
-    calculatedActivities = findCriticalActivitiesMonteCarlo(calculatedStates, calculatedActivities);
+   //calculatedActivities = findCriticalActivitiesMonteCarlo(calculatedStates, calculatedActivities);
     
     /*
     criticalActivities = calculatedActivities.filter(element => element.critical == true);
@@ -63,7 +63,7 @@ function simulateMonteCarlo(activities, states) {
         criticalPathsArr = findRemainingCriticalPaths(activities.activities, criticalActivities, usedActivities, calculatedStates, criticalPathsArr);
     }
     */
-    return { "projectLength": (finishState.ES).toFixed(2) };
+    return { "projectLength": (finishState.ES).toFixed(1) };
 }
 
 function monteCarloActivities(activities) {
@@ -84,7 +84,7 @@ function monteCarloActivities(activities) {
             ID: activities[i].ID,
             fromState: activities[i].fromState,
             toState: activities[i].toState,
-            value: Number(time.toFixed(2)),
+            value: time,
             critical: false
         })
     }
