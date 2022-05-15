@@ -433,12 +433,17 @@ function arrStates(states) {
 
 function cpmActivities(activities) {
     var activitiesArr = [];
+    var length;
     for (var i = 0; i < activities.length; i++) {
+        length = parseInt(activities[i].values[0]);
+        if (activities[i].timeUnit != "hours") {
+            length = convertToHours(length, activities[i].timeUnit);
+        }
         activitiesArr.push({
             ID: activities[i].ID,
             fromState: activities[i].fromState,
             toState: activities[i].toState,
-            value: parseFloat(activities[i].values[0]),
+            value: length,
             critical: false
         });
     }
@@ -449,17 +454,37 @@ function cpmActivities(activities) {
 function pertActivities(activities) {
     var activitiesArr = [];
     var std = null;
+    var a, m, b;
     for (var i = 0; i < activities.length; i++) {
-        std = parseFloat(activities[i].values[2]) - parseFloat(activities[i].values[0]); // TODO
+        a = parseInt(activities[i].values[0]);
+        m = parseInt(activities[i].values[1]);
+        b = parseInt(activities[i].values[2]);
+        if (activities[i].timeUnit != "hours") {
+            a = convertToHours(a, activities[i].timeUnit);
+            m = convertToHours(m, activities[i].timeUnit);
+            b = convertToHours(b, activities[i].timeUnit);
+        }
+        std = b - a;
         activitiesArr.push({
             ID: activities[i].ID,
             fromState: activities[i].fromState,
             toState: activities[i].toState,
-            value: parseFloat(activities[i].values[0]) + 4 * parseFloat(activities[i].values[1]) + parseFloat(activities[i].values[2]),
+            value: a + 4 * m + b,
             std: std,
             variance: std * std,
             critical: false
         });
     }
     return activitiesArr;
+}
+
+function convertToHours(value, timeUnit) {
+    if (timeUnit == "months") {
+        value = value * 24 * 30;
+    } else if (timeUnit == "weeks") {
+        value = value * 24 * 7;
+    } else {
+        value = value * 24;
+    }
+    return value;
 }

@@ -301,7 +301,16 @@ function parseLinkTextData(valuesArr, timeUnit) {
     } else {
         result = result + " (" + valuesArr[0] + "," + valuesArr[1] + "," + valuesArr[2] + ") ";
     }
-    result += timeUnit[0];
+
+    if (timeUnit == "hours") {
+        result += (_translationsData[18][0]).toLowerCase();
+    } else if (timeUnit == "days") {
+        result += (_translationsData[19][0]).toLowerCase();
+    } else if (timeUnit == "weeks") {
+        result += (_translationsData[20][0]).toLowerCase();
+    } else {
+        result += (_translationsData[21][0]).toLowerCase();
+    }
     return result;
 }
 
