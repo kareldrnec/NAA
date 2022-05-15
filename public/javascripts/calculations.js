@@ -28,50 +28,16 @@ function checkDiagram(states, activities) {
 }
 
 function simulateMonteCarlo(activities, states) {
-
-    var calculatedStates, calculatedActivities, criticalActivities;
+    var calculatedStates, calculatedActivities;
     var finishState = null;
-    var currentState = null;
-    var tmpActivity = null;
-    var currentActivity = null;
-    var criticalPath = "";
-    var criticalPathsArr = [];
-    var usedActivities = [];
     calculatedStates = arrStates(states.states);
     calculatedActivities = monteCarloActivities(activities.activities);
     calculatedStates = forwardCalculation(calculatedStates, calculatedActivities);
-    //calculatedStates = backwardCalculation(calculatedStates, calculatedActivities);
     finishState = calculatedStates.find(element => element.name == "Finish");
-   //calculatedActivities = findCriticalActivitiesMonteCarlo(calculatedStates, calculatedActivities);
-    
-    /*
-    criticalActivities = calculatedActivities.filter(element => element.critical == true);
-
-    currentState = (states.states).find(element => element.stateName == "Start");
-
-    while (currentState.stateName != "Finish") {
-        tmpActivity = calculatedActivities.find(element => element.critical == true && element.fromState == currentState.ID);
-        currentActivity = (activities.activities).find(element => element.ID == tmpActivity.ID);
-        criticalPath += currentActivity.activityName + "->";
-        usedActivities.push(tmpActivity);
-        currentState = (states.states).find(element => element.ID == tmpActivity.toState);
-    }
-
-    criticalPathsArr.push(criticalPath.slice(0, criticalPath.length - 2))
-    
-    if (criticalActivities.length != usedActivities.length) {
-        criticalPathsArr = findRemainingCriticalPaths(activities.activities, criticalActivities, usedActivities, calculatedStates, criticalPathsArr);
-    }
-    */
     return { "projectLength": (finishState.ES).toFixed(1) };
 }
 
 function monteCarloActivities(activities) {
-    
-    console.log("activities")
-    console.log(activities)
-    console.log("ENDE")
-    
     var min, med, max, alpha, beta, randNum, cdf, time;
     var activitiesArr = [];
     const lambda = 4;

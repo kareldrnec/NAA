@@ -21,22 +21,6 @@
             </div>
 
             <hr class="solid">
-            
-            <div class="text-center">
-                <h3>Graph Settings</h3>
-            </div>
-
-            <div class="form-group">
-                <div>
-                    <label for="volume">Y max: </label>
-                    <input type="range" class="form-control" id="rangeY" name="rangeY" min="0.01" step="0.01" max="1" value="0.03">
-                </div>          
-
-            </div>
-
-
-
-            <hr class="solid">
 
             <form class="form-container" action="">
                 <div class="text-center">
@@ -45,6 +29,25 @@
                 <div class="form-group">
                     <label for="numberOfIterations">{{__ "number of iterations"}}</label>
                     <input type="number" class="form-control" id="numberOfIterations" placeholder="{{__ "enter number of iterations"}}" min="1000" value="1000" step="1000">
+                </div>
+                <div class="form-group">
+                    <div class="row g-2">
+                        <div class="col-sm">
+                            <label>{{__ "find"}}</label>
+                            <input class="form-control" value="P" readonly>
+                        </div>
+                        <div class="col-sm">
+                            <label>{{__ "option"}}</label>  
+                            <select class="form-control" id="optionSelect">
+                                <option value="<">&lt;</option>
+                                <option value=">">&gt;</option>
+                            </select>
+                        </div>
+                        <div class="col-sm">
+                            <label>{{__ "value"}}</label>
+                            <input class="form-control" type="number" id="desiredTimeValue" min="0" value="0">
+                        </div>
+                    </div>
                 </div>
                 <div class="text-center">
                     <button type="button" class="btn btn-primary" id="runSimulationButton">{{__ "run simulation"}}</button>
@@ -62,26 +65,27 @@
             <hr class="solid">
 
             <!-- simulation results -->
-            <div id="simulationResultsDiv" style="display: none;">
+            <div id="simulationResultsDiv">
                 <div class="text-center">
-                    <h3>{{__ "simulation results"}}</h3>
+                    <h4>{{__ "simulation results"}}</h4>
                 </div>
-                <div>
-                    {{__ "simulation time"}}:
+                <div class="row g-2">
+                    <div class="col-sm"></div>
+                    <div class="col-sm">
+                        <input id="res" class="form-control" type="text" style="text-align:center;">
+                    </div>
+                    <div class="col-sm"></div>
                 </div>
             </div>
 
-
-
-
-
-
+            <hr class="solid">
         </div>
         <div class="col-md-8 col-sm-8 col-xs-24">
-            <canvas id="myChart" width="800px" height="300px"></canvas>
-            <div class="text-center">
-                <span id="hour">00</span>:<span id="minute">00</span>:<span id="second">00</span>
+            <div style="width: 200px;" class="text-center">
+                <label for="volume">{{__ "max y axis"}}</label>
+                <input type="range" id="rangeY" name="rangeY" min="0.01" step="0.01" max="1" value="0.03">
             </div>
+            <canvas id="myChart" width="800px" height="300px"></canvas>
         </div>
     </div>
 </div>
@@ -120,8 +124,8 @@
             label: '',
             data: [],
             fill: 'start',
-            backgroundColor: 'rgba(255, 99, 132, 0.2)',
-            borderColor: 'rgba(255, 99, 132, 1)',
+            backgroundColor: ['rgba(178, 206, 255, 0.8)'],
+            borderColor: 'rgba(123, 169, 249, 0.8)',
             borderWidth: 1
         }]
         },
@@ -130,9 +134,17 @@
             scales: {
                 y: {
                     min: 0,
-                    max: 0.03
+                    max: 0.03,
+                    title: {
+                        display: true,
+                        text: '{{__ "probability"}}'
+                    }
                 },
                 x: {
+                    title: {
+                        display: true,
+                        text: '{{__ "length of project"}}'
+                    },
                     ticks: {
                        stepSize: 1
                     }
@@ -167,15 +179,15 @@
     document.getElementById('stopSimulationButton').addEventListener('click', () => {
         if (myWorker != null) {
             myWorker.terminate();
-            pauseTimer();
         }
     });
 
     function runMonteCarlo() {
         const numberOfIterations = parseInt(document.getElementById("numberOfIterations").value);
-        document.getElementById('simulationResultsDiv').style.display = 'inline';
-        resetTimer();
-        startTimer();
+        const optionSelect = document.getElementById("optionSelect").value;
+        const desiredTime = parseFloat(document.getElementById("desiredTimeValue").value);
+        var x = null;
+        var sum = 0;
 
         if (myChart.data.labels.length != 0) {
             myChart.data.datasets[0].data = [];
@@ -198,7 +210,7 @@
                 var dataN = [];
                 var num = 0;
                 var arr = event.data.resultArr;
-
+                sum = 0;
 
                 arr.sort((a, b) => a.value - b.value);
                 
@@ -207,26 +219,25 @@
                     dataN.push(arr[i].count / event.data.count);
                 }
 
+                // update chart
                 myChart.data.labels = labels;
-
-
                 myChart.data.datasets[0].data = dataN;
-
                 myChart.data.datasets[0].label = event.data.count
                 myChart.update();
 
-                if (event.data.count == numberOfIterations) {
-                    pauseTimer();
-                    console.log("DATA N")
-                    console.log(dataN)
-                    console.log("LABELS")
-                    console.log(labels)
-                    console.log("ENDE")
+                // update probability
+
+                x = labels.filter(element => parseFloat(element) < desiredTime);
+                
+                for (var i = 0; i < x.length; i++) {
+                    sum += dataN[i];
                 }
+
+                if (optionSelect == '>') {
+                    sum = 1 - sum;
+                }
+                document.getElementById('res').value = "P (X " + optionSelect + " " + desiredTime + ") = " + (sum * 100).toFixed(2) + "%";
             }
-
-
-
 
         } else {
             // Web Workers API is not supported!
@@ -236,59 +247,6 @@
 
     function closeMonteCarloErr() {
         document.getElementById('monteCarloErrDiv').style.display = 'none';
-    }
-
-
-    /*
-    *
-    *   Timer section
-    *
-    */
-
-    function startTimer() {
-        pauseTimer();
-        cron = setInterval(() => {timer(); }, 10);
-    }
-
-    function pauseTimer() {
-        clearInterval(cron);
-    }
-
-    function resetTimer() {
-        hour = 0;
-        minute = 0;
-        second = 0;
-        millisecond = 0;
-        document.getElementById('hour').innerText = '00';
-        document.getElementById('minute').innerText = '00';
-        document.getElementById('second').innerText = '00';
-    }
-
-    function timer() {
-        if ((millisecond += 10) == 1000) {
-            millisecond = 0;
-            second++;
-        }
-        if (second == 60) {
-            second = 0;
-            minute++;
-        }
-        if (minute == 60) {
-            minute = 0;
-            hour++;
-        }
-        document.getElementById('hour').innerText = returnData(hour);
-        document.getElementById('minute').innerText = returnData(minute);
-
-        if (second == 10) {
-            document.getElementById('second').innerText = "10";
-        } else {
-            document.getElementById('second').innerText = returnData(second);
-        }
-    }
-
-    function returnData(input) {
-        return input > 10 ? input : `0${input}`
     }
 
 </script>
