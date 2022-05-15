@@ -206,15 +206,15 @@
                     </div>
                     {{#ifEquals projectType "cpm"}}
                     <div style="margin-left: 15px; margin-right: 15px; margin-bottom: 15px;">
-                        <label>Project Length</label>
+                        <label>{{__ "project length"}}</label>
                         <input class="form-control" id="projectLength" type="text" readonly>
                     </div>
                     {{/ifEquals}}
                     {{#ifEquals projectType "pert"}}
                     <div style="margin-left: 15px; margin-right: 15px; margin-bottom: 15px;">
-                        <label>Total Mean Value</label>
+                        <label>&mu;</label>
                         <input class="form-control" id="totalMeanValue" type="text" readonly>
-                        <label>Totat Variance</label>
+                        <label>&sigma;<sup>2</sup></label>
                         <input class="form-control" id="totalVariance" type="text" readonly>
                         <label>PERT</label>
                         <input class="form-control" id="pertResult" type="text" readonly> 

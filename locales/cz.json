@@ -168,6 +168,7 @@
 	"project exists with this name": "Projekt s tímto názvem již existuje!",
 	"project generated": " byl úspěšně vygenerován a přidán!",
 	"project info": "Informace o projektu",
+	"project length": "Délka projektu",
 	"project loaded": "Projekt byl úspěšně načten!",
 	"project mean value": "Střední hodnota délky trvání projektu",
 	"project must be pert": "Chyba! Projekt musí typu PERT pro analýzu Monte Carlo!",

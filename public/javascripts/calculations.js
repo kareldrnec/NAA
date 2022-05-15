@@ -28,17 +28,42 @@ function checkDiagram(states, activities) {
 }
 
 function simulateMonteCarlo(activities, states) {
-    // TODO
-        // TODO
-        var calculatedStates, calculatedActivities;
-        calculatedStates = arrStates(states.states);
-        calculatedActivities = monteCarloActivities(activities.activities);
-        calculatedStates = forwardCalculation(calculatedStates, calculatedActivities);
-        calculatedStates = backwardCalculation(calculatedStates, calculatedActivities);
-        var finishState = calculatedStates.find(element => element.name == "Finish");
-        // Math.round((num + Number.EPSILON) * 100) / 100
-        //return Math.round((finishState.ES + Number.EPSILON) * 100) / 100;
-        return (finishState.ES).toFixed(1);
+
+    var calculatedStates, calculatedActivities, criticalActivities;
+    var finishState = null;
+    var currentState = null;
+    var tmpActivity = null;
+    var currentActivity = null;
+    var criticalPath = "";
+    var criticalPathsArr = [];
+    var usedActivities = [];
+    calculatedStates = arrStates(states.states);
+    calculatedActivities = monteCarloActivities(activities.activities);
+    calculatedStates = forwardCalculation(calculatedStates, calculatedActivities);
+    calculatedStates = backwardCalculation(calculatedStates, calculatedActivities);
+    finishState = calculatedStates.find(element => element.name == "Finish");
+    calculatedActivities = findCriticalActivitiesMonteCarlo(calculatedStates, calculatedActivities);
+    
+    /*
+    criticalActivities = calculatedActivities.filter(element => element.critical == true);
+
+    currentState = (states.states).find(element => element.stateName == "Start");
+
+    while (currentState.stateName != "Finish") {
+        tmpActivity = calculatedActivities.find(element => element.critical == true && element.fromState == currentState.ID);
+        currentActivity = (activities.activities).find(element => element.ID == tmpActivity.ID);
+        criticalPath += currentActivity.activityName + "->";
+        usedActivities.push(tmpActivity);
+        currentState = (states.states).find(element => element.ID == tmpActivity.toState);
+    }
+
+    criticalPathsArr.push(criticalPath.slice(0, criticalPath.length - 2))
+    
+    if (criticalActivities.length != usedActivities.length) {
+        criticalPathsArr = findRemainingCriticalPaths(activities.activities, criticalActivities, usedActivities, calculatedStates, criticalPathsArr);
+    }
+    */
+    return { "projectLength": (finishState.ES).toFixed(2) };
 }
 
 function monteCarloActivities(activities) {
@@ -46,19 +71,20 @@ function monteCarloActivities(activities) {
     var activitiesArr = [];
     const lambda = 4;
     for (var i = 0; i < activities.length; i++) {
-        min = parseInt(activities[i].values[0]);
-        med = parseInt(activities[i].values[1]);
-        max = parseInt(activities[i].values[2]);
-        alpha = 1 + lambda * ((med - min) / (max - min));
-        beta = 1 + lambda * ((max - med) / (max - min));
+        min = parseFloat(activities[i].values[0]);
+        med = parseFloat(activities[i].values[1]);
+        max = parseFloat(activities[i].values[2]);
+        alpha = 1 + lambda * ((med - min) / (max - min));   // zeptat se na deleni nulou
+        beta = 1 + lambda * ((max - med) / (max - min));    // zeptat se na deleni nulou
         randNum = Math.random() * (1 - 0) + 0;
         cdf = jStat.beta.inv(randNum, alpha, beta);
         time = min + (max - min) * cdf;
+        // Number((6.688689).toFixed(1));
         activitiesArr.push({
             ID: activities[i].ID,
             fromState: activities[i].fromState,
             toState: activities[i].toState,
-            value: time,
+            value: Number(time.toFixed(2)),
             critical: false
         })
     }
@@ -237,6 +263,38 @@ function findCriticalActivities(states, activities) {
     return activities;
 }
 
+function findCriticalActivitiesMonteCarlo(calculatedStates, calculatedActivities) {
+    var fromState, toState;
+    for (var i = 0; i < calculatedActivities.length; i++) {
+        fromState = calculatedStates.find(element => element.ID == calculatedActivities[i].fromState);
+        toState = calculatedStates.find(element => element.ID == calculatedActivities[i].toState);
+
+
+        if ((fromState.slack == 0 && toState.slack == 0)) {
+            console.log("PODEZRELA CINNOST")
+            console.log(fromState.ES * 100 + calculatedActivities[i].value * 100)
+            console.log(toState.ES * 100)
+            if (Math.round(fromState.ES * 100 + calculatedActivities[i].value * 100) == Math.round(toState.ES * 100)) {
+                console.log("KRITICKA")
+                calculatedActivities[i].critical = true;
+            }
+        }
+    }
+    console.log(calculatedStates)
+    console.log("CALCULATED ACTIVITIES")
+    console.log(calculatedActivities)
+    console.log("ENDE")
+
+    /*
+    console.log("VYPIS")
+    console.log(calculatedStates)
+    console.log(calculatedActivities)
+    console.log("ENDE")
+    */
+
+    return calculatedActivities;
+}
+
 function backwardCalculation(states, activities) {
     var nextStates, activitiesFromState, min;
     var tmpStates = [];
@@ -253,7 +311,7 @@ function backwardCalculation(states, activities) {
             if (canBackward(states, activitiesFromState)) {
                 min = findMinValue(states, activitiesFromState, minValue);
                 currentState.LS = min;
-                currentState.slack = currentState.LS - currentState.ES;
+                currentState.slack = Number((currentState.LS - currentState.ES).toFixed(2));
                 tmpStates = findPreviousStates(currentState, states, activities, tmpStates);
             } else {
                 tmpStates.push(currentState);
@@ -298,7 +356,8 @@ function findMaxValue(states, activitiesToState) {
             max = currentState.ES + activitiesToState[i].value;
         }
     }
-    return max;
+   // return max;
+   return Number(max.toFixed(2));
 }
 
 function findMinValue(states, activitiesFromState, min) {
@@ -308,7 +367,8 @@ function findMinValue(states, activitiesFromState, min) {
             min = currentState.LS - activitiesFromState[i].value;
         }
     }
-    return min;
+   // return min;
+   return Number(min.toFixed(2));
 }
 
 function canForward(states, activitiesToState) {

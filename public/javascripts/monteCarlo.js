@@ -9,10 +9,10 @@ self.addEventListener("message", function(event) {
     for (var i = 0; i < (event.data[0] / 1000); i++) {
         for (var j = 0; j < 1000; j++) {
             res = simulateMonteCarlo(event.data[1], event.data[2]);
-            item = resultArr.find(element => element.value == res);
+            item = resultArr.find(element => element.value == res.projectLength);
             if (item == null) {
                 resultArr.push({
-                    "value": res,
+                    "value": res.projectLength,
                     "count": 1
                 })
             } else {

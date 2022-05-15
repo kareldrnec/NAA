@@ -168,6 +168,7 @@
 	"project exists with this name": "Project with this name already exists!",
 	"project generated": " was successfully generated and added!",
 	"project info": "Project Information",
+	"project length": "Project Length",
 	"project loaded": "Project was successfully loaded!",
 	"project mean value": "Project Mean Value",
 	"project must be pert": "Error! Project must be PERT to perform Monte Carlo Analysis!",
