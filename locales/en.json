@@ -233,6 +233,7 @@
 	"weeks": "Weeks",
 	"wrong password": "Wrong password!",
 	"yellow": "Yellow",
+	"you need to perfom analysis before monte carlo": "Firstly, you have to perform an analysis before Monte Carlo simulation!",
 	"500 response": "500 response",
 	"8-30 chars": "8-30 characters",
 	"1 upper char": "At least 1 uppercase character",

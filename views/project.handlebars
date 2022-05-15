@@ -726,7 +726,7 @@
                         arguments.push('T', '=', timeValue);
                         var res = calculate(states.states, activities.activities, project, arguments);
                         document.getElementById('totalMeanValue').value = res.project.totalVariance + "/6";
-                        document.getElementById('totalVariance').value = res.project.meanValue + "/6";
+                        document.getElementById('totalVariance').value = res.project.meanValue + "/36";
                         document.getElementById('pertResult').value = "P(T = " + timeValue + ")=" + (res.project.result[3]).toFixed(2) + " ({{__ "hours res"}})";
                         document.getElementById('resultsDiv').style.display = 'inline'; 
                     }
@@ -752,6 +752,11 @@
                             arguments.push('P', firstOption, firstVal.value, secondOption, secondVal.value, timeUnit);
                             var res = calculate(states.states, activities.activities, project, arguments);
 
+                            console.log("projectRes")
+                            console.log(projectRes)
+                            console.log("ENDE")
+
+
                             var projectRes = res.project.result;
                             var pertText = null;
                             if (projectRes.length == 5) {
@@ -774,7 +779,7 @@
                           //  console.log("ENDE")
 
                             document.getElementById('totalMeanValue').value = res.project.meanValue + "/6";
-                            document.getElementById('totalVariance').value = res.project.totalVariance + "/6";
+                            document.getElementById('totalVariance').value = res.project.totalVariance + "/36";
                             document.getElementById('pertResult').value = pertText;
 
                             
@@ -789,11 +794,11 @@
                             arguments.push('P', firstOption, firstVal.value, timeUnit);
                             var res = calculate(states.states, activities.activities, project, arguments);
                             document.getElementById('totalMeanValue').value = res.project.meanValue + "/6";
-                            document.getElementById('totalVariance').value = res.project.totalVariance + "/6";
+                            document.getElementById('totalVariance').value = res.project.totalVariance + "/36";
                             if (res.project.result[1] == 'gt') {
-                                document.getElementById('pertResult').value = "P(X > " + firstVal.value + ")=" + (res.project.result[3] * 100).toFixed(4) + "%";
+                                document.getElementById('pertResult').value = "P(X > " + res.project.result[2] + ")=" + (res.project.result[3] * 100).toFixed(4) + "%";
                             } else {
-                                document.getElementById('pertResult').value = "P(X < " + firstVal.value + ")=" + (res.project.result[3] * 100).toFixed(4) + "%";
+                                document.getElementById('pertResult').value = "P(X < " + res.project.result[2] + ")=" + (res.project.result[3] * 100).toFixed(4) + "%";
                             }
                             document.getElementById('resultsDiv').style.display = 'inline'; 
                         }

@@ -83,6 +83,8 @@
 
 <script>
 
+  var result = sessionStorage.getItem("{{projectID}}")
+
   if (!"{{navColor}}") {
     document.getElementById('navbar').style.backgroundColor = "lightsteelblue";
   }
@@ -101,18 +103,23 @@
   });
 
   document.getElementById("redirectToMonteCarlo").addEventListener('click', () => {
-    if ("{{projectType}}" == "cpm") {
-      alert("{{__ "project must be pert"}}")
+    if (result == null) {
+      alert("{{__ "you need to perfom analysis before monte carlo"}}");
     } else {
-      const errState = checkDiagram(states.states, activities.activities);
-      if (errState != "") {
-        alert("{{__ "error"}}! {{__ "check state"}}" + errState + "!");
+      if ("{{projectType}}" == "cpm") {
+        alert("{{__ "project must be pert"}}")
       } else {
-        sessionStorage.setItem("activities", JSON.stringify(activities));
-        sessionStorage.setItem("states", JSON.stringify(states));
-        window.location.href = "/projects/{{projectID}}/monteCarlo";
+        const errState = checkDiagram(states.states, activities.activities);
+        if (errState != "") {
+          alert("{{__ "error"}}! {{__ "check state"}}" + errState + "!");
+        } else {
+          sessionStorage.setItem("activities", JSON.stringify(activities));
+          sessionStorage.setItem("states", JSON.stringify(states));
+          window.location.href = "/projects/{{projectID}}/monteCarlo";
+        }
       }
     }
+
   });
 
 </script>

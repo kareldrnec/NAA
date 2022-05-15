@@ -67,13 +67,23 @@ function simulateMonteCarlo(activities, states) {
 }
 
 function monteCarloActivities(activities) {
+    
+    console.log("activities")
+    console.log(activities)
+    console.log("ENDE")
+    
     var min, med, max, alpha, beta, randNum, cdf, time;
     var activitiesArr = [];
     const lambda = 4;
     for (var i = 0; i < activities.length; i++) {
-        min = parseFloat(activities[i].values[0]);
-        med = parseFloat(activities[i].values[1]);
-        max = parseFloat(activities[i].values[2]);
+        min = parseInt(activities[i].values[0]);
+        med = parseInt(activities[i].values[1]);
+        max = parseInt(activities[i].values[2]);
+        if (activities[i].timeUnit != "hours") {
+            min = convertToHours(min, activities[i].timeUnit);
+            med = convertToHours(med, activities[i].timeUnit);
+            max = convertToHours(max, activities[i].timeUnit);
+        }
         alpha = 1 + lambda * ((med - min) / (max - min));   // zeptat se na deleni nulou
         beta = 1 + lambda * ((max - med) / (max - min));    // zeptat se na deleni nulou
         randNum = Math.random() * (1 - 0) + 0;
@@ -208,7 +218,10 @@ function findRemainingCriticalPaths(activities, criticalActivities, usedActiviti
 }
 
 function calculatePERT(totalMeanValue, totalVariance, arguments) {
+    var desiredTime;
+    var desiredTime2;
     var result = [];
+    var probability;
     if (arguments.length == 3) {
         // time
         var time = getPertTime(arguments[2], totalMeanValue, totalVariance);
@@ -216,27 +229,34 @@ function calculatePERT(totalMeanValue, totalVariance, arguments) {
         // TODO zkontrolovat zda pocita dobre
     } else if (arguments.length == 4) {
         // simple pert
-        var probability = getPertProbability(parseFloat(arguments[2]), totalMeanValue, totalVariance);
+        desiredTime = parseFloat(arguments[2]);
+        if (arguments[3] != "hours") desiredTime = convertToHours(desiredTime, arguments[3]);
+        probability = getPertProbability(desiredTime, totalMeanValue, totalVariance);
         if (arguments[1] == 'gt') probability = 1 - probability;
-        result = ['P', arguments[1], arguments[2], probability, arguments[3]];
+        result = ['P', arguments[1], desiredTime, probability, arguments[3]];
     } else {
-        var probability = null;
+        desiredTime = parseFloat(arguments[2]);
+        desiredTime2 = parseFloat(arguments[4]);
+        if(arguments[5] != "hours") {
+            desiredTime = convertToHours(desiredTime, arguments[5]);
+            desiredTime2 = convertToHours(desiredTime2, arguments[5]);
+        }
         if (arguments[1] == 'gt' && arguments[3] == 'lt') {
             // BETWEEN > <
-            probability = getPertProbability(parseFloat(arguments[4]), totalMeanValue, totalVariance) - getPertProbability(parseFloat(arguments[2]), totalMeanValue, totalVariance);
-            result = ['P', arguments[1], arguments[2], arguments[3], arguments[4], probability, arguments[5]];
+            probability = getPertProbability(desiredTime2, totalMeanValue, totalVariance) - getPertProbability(desiredTime, totalMeanValue, totalVariance);
+            result = ['P', arguments[1], desiredTime, arguments[3], desiredTime2, probability, arguments[5]];
         } else if (arguments[1] == 'lt' && arguments[3] == 'gt') {
             // OR < >
-            probability = 1 - (getPertProbability(parseFloat(arguments[4]), totalMeanValue, totalVariance) - getPertProbability(parseFloat(arguments[4]), totalMeanValue, totalVariance));
-            result = ['P', arguments[1], arguments[2], arguments[3], arguments[4], probability, arguments[5]];
+            probability = 1 - (getPertProbability(desiredTime2, totalMeanValue, totalVariance) - getPertProbability(desiredTime, totalMeanValue, totalVariance));
+            result = ['P', arguments[1], desiredTime, arguments[3], desiredTime2, probability, arguments[5]];
         } else if (arguments[1] == 'lt' && arguments[3] == 'lt') {
             // UNION < <
-            probability = getPertProbability(arguments[2], totalMeanValue, totalVariance);
-            result = ['P', arguments[1], arguments[2], probability, arguments[5]];
+            probability = getPertProbability(desiredTime, totalMeanValue, totalVariance);
+            result = ['P', arguments[1], desiredTime, probability, arguments[5]];
         } else {
             // UNION > >
-            probability = 1 - getPertProbability(arguments[4], totalMeanValue, totalVariance);
-            result = ['P', arguments[3], arguments[4], probability, arguments[5]];
+            probability = 1 - getPertProbability(desiredTime2, totalMeanValue, totalVariance);
+            result = ['P', arguments[3], desiredTime2, probability, arguments[5]];
         }
     }
     return result;

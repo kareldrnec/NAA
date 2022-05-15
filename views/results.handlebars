@@ -170,8 +170,7 @@
             "<th>" + "#" + "</th>"
             + "<th>" + "{{__ "activity name"}}" + "</th>"
             + "<th>" + "{{__ "activity type"}}" + "</th>"
-            + "<th>" + "y" + "<sub>ij</sub>" + "</th>"
-            + "<th>" + "{{__ "time unit"}}" + "</th>";
+            + "<th>" + "y" + "<sub>ij</sub>" + "</th>";
     }
 
     function createHeadActivitiesPERT() {
@@ -185,8 +184,7 @@
             + "<th>" + "b" + "<sub>ij</sub>" + "</th>"
             + "<th>" + "&mu;" + "<sub>ij</sub>" + "</th>"
             + "<th>" + "&sigma;" + "<sub>ij</sub>" + "</th>"
-            + "<th>" + "&sigma;" + "<sub>ij</sub>" + "<sup>2</sup>" + "</th>"
-            + "<th>" + "{{__ "time unit"}}" + "</th>";
+            + "<th>" + "&sigma;" + "<sub>ij</sub>" + "<sup>2</sup>" + "</th>";
     }
 
 
@@ -235,10 +233,15 @@
         var type;
         var row;
         var resultActivity;
+        var length;
         tableBody = document.getElementById("tableBody");
         tableBody.innerHTML = "";
         for (var i = 0; i < activitiesDB.length; i++) {
             resultActivity = activities.find(element => element.ID == activitiesDB[i].ID);
+            length = parseInt(activitiesDB[i].values[0]);
+            if (activitiesDB[i].timeUnit != "hours") {
+                length = convertToHours(length, activitiesDB[i].timeUnit);
+            }
             if (activitiesDB[i].type == "normal") {
                 type = "{{__ "normal"}}";
             } else {
@@ -249,8 +252,7 @@
                 "<tr>" + "<td>" + (i + 1) + "</td>"
                 + "<td>" + activitiesDB[i].name + "</td>"
                 + "<td>" + type + "</td>"
-                + "<td>" + activitiesDB[i].values[0] + "</td>"
-                + "<td>" + getTimeUnit(activitiesDB[i].timeUnit) + "</td>" + "</tr>";
+                + "<td>" + length + "</td>" + "</tr>"
             if (resultActivity.critical == true) {
                 row.className = "table-danger";
             }
@@ -260,11 +262,21 @@
     function createBodyActivitiesPERT() {
         const activitiesDB = JSON.parse("{{activitiesData}}".replace(/&quot;/g, '"'));
         const activities = results.activities;
+        var a, m, b;
         var type, resultActivity;
         tableBody = document.getElementById("tableBody");
         tableBody.innerHTML = "";
+
         for (var i = 0; i < activitiesDB.length; i++) {
             resultActivity = activities.find(element => element.ID == activitiesDB[i].ID);
+            a = parseInt(activitiesDB[i].values[0]);
+            m = parseInt(activitiesDB[i].values[1]);
+            b = parseInt(activitiesDB[i].values[2]);
+            if (activitiesDB[i].timeUnit != "hours") {
+                a = convertToHours(a, activitiesDB[i].timeUnit);
+                m = convertToHours(m, activitiesDB[i].timeUnit);
+                b = convertToHours(b, activitiesDB[i].timeUnit);
+            }
             if (activitiesDB[i].type == "normal") {
                 type = "{{__ "normal"}}";
             } else {
@@ -275,13 +287,13 @@
                 "<tr>" + "<td>" + (i + 1) + "</td>"
                 + "<td>" + activitiesDB[i].name + "</td>"
                 + "<td>" + type + "</td>"
-                + "<td>" + activitiesDB[i].values[0] + "</td>"
-                + "<td>" + activitiesDB[i].values[1] + "</td>"
-                + "<td>" + activitiesDB[i].values[2] + "</td>"
+                + "<td>" + a + "</td>"
+                + "<td>" + m + "</td>"
+                + "<td>" + b + "</td>"
                 + "<td>" + resultActivity.value + "/6" + "</td>"
-                + "<td>" + resultActivity.std + "/6" + "</td>"// doplnit std
-                + "<td>" + (resultActivity.std * resultActivity.std) + "/36" + "</td>"// doplnit std
-                + "<td>" + getTimeUnit(activitiesDB[i].timeUnit) + "</td>" + "</tr>";
+                + "<td>" + resultActivity.std + "/6" + "</td>"
+                + "<td>" + (resultActivity.std * resultActivity.std) + "/36" + "</td>"
+                + "</tr>";
             if (resultActivity.critical == true) {
                 row.className = "table-danger";
             }
@@ -291,12 +303,6 @@
     function getTimeUnit(timeUnit) {
         var time;
         switch (timeUnit) {
-            case "seconds":
-                time = "{{__ "seconds"}}";
-                break;
-            case "minutes":
-                time = "{{__ "minutes"}}";
-                break;
             case "hours":
                 time = "{{__ "hours"}}";
                 break;
@@ -320,8 +326,8 @@
         row.innerHTML =
             "<tr><td>" + "{{__ "total"}}" + "</td>"
             + "<td colspan=2></td>"
-            + "<td>" + results.project.length + "</td>"
-            + "<td>" + "{{__ "hours"}}" + "</td></tr>";
+            + "<td>" + results.project.length + " {{__ "hours res"}}" + "</td>"
+            + "</tr>";
         row.className = "table-success";
     }
 
@@ -335,12 +341,23 @@
             + "<td>" + "" + "</td>"
             + "<td>" + "" + "</td>"
             + "<td>" + "" + "</td>"
-            + "<td>" + results.project.meanValue + "/6" + "</td>"
+            + "<td>" + results.project.meanValue + "/6" + " {{__ "hours res"}}" + "</td>"
             + "<td>" + "" + "</td>"
-            + "<td>" + results.project.totalVariance + "/36" + "</td>"
-            + "<td>" + "{{__ "hours"}}" + "</td>"
+            + "<td>" + results.project.totalVariance + "/36" + " {{__ "hours res"}}" + "</td>"
             + "</tr>";
         row.className = "table-success";
     }
+
+    function convertToHours(value, timeUnit) {
+        if (timeUnit == "months") {
+            value = value * 24 * 30;
+        } else if (timeUnit == "weeks") {
+            value = value * 24 * 7;
+        } else {
+            value = value * 24;
+        }
+        return value;
+    }
+
 
 </script>
