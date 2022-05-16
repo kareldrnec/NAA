@@ -47,8 +47,8 @@ function init(states, activities, project, projectT, translations, graphSettings
     document.getElementById("exportButton").addEventListener("click", exportDiagram);
 }
 
+// init graph
 function graphInit(graphSettingsData) {
-    //init grafu
     var $ = go.GraphObject.make;
     var edgeFill, nodeFill;
     var pink = "#B71C1C";
@@ -184,22 +184,17 @@ function graphInit(graphSettingsData) {
         var e = myDiagram.lastInput;
         if (e.key == "Del") {
             const object = myDiagram.selection.first();
-            //tb
-            //TODO
-            console.log(e.key)
-            console.log(e)
-            console.log(object)
         }
     }
 }
 
+// display help modal
 function displayHelp() {
-    // display help modal
     $('#helpModal').modal('show');
 }
 
+// get node dataArray
 function getNodeDataArray(states) {
-    //dodelat
     var nodeDataArray = [];
     var statesData = states.states;
     var currentNode, criticalState;
@@ -242,9 +237,8 @@ function getNodeDataArray(states) {
     return nodeDataArray;
 }
 
-// PARSE aktivit
+// parse activities
 function getLinkDataArray(activities) {
-    // dodelat
     var linkDataArray = [];
     var activitiesData = activities.activities;
     var linkColor;
@@ -254,11 +248,6 @@ function getLinkDataArray(activities) {
     if(result) {
         resLinks = result.activities;
     }
-  /*  console.log("RES LINKS")
-    console.log(resLinks)
-    console.log(activitiesData)
-    console.log("ENDE")
-*/
     for (var i = 0; i < activitiesData.length; i++) {
         linkColor = "N";
         if (resLinks) {
@@ -294,6 +283,7 @@ function getLinkDataArray(activities) {
     return linkDataArray;
 }
 
+// parse activity text data
 function parseLinkTextData(valuesArr, timeUnit) {
     var result = "";
     if (valuesArr.length == 1) {
@@ -314,7 +304,7 @@ function parseLinkTextData(valuesArr, timeUnit) {
     return result;
 }
 
-// TODO TOOLTIP PRO AKTIVITY
+// parse tooltip for activity
 function parseLinkTextTooltip(activityName, activityType, valuesArr, timeUnit, linkColor) {
     var result = _translationsData[9] + ": " + activityName + "\n" + _translationsData[10] + ": ";
     if(activityType == "normal") {
@@ -323,7 +313,6 @@ function parseLinkTextTooltip(activityName, activityType, valuesArr, timeUnit, l
         result += result + _translationsData[12] + "\n" + _translationsData[13] + "\n";
     }
     if (projectType == "cpm") {
-        // idk jestli dát length nebo y podle teorie - uvidíme
         result += _translationsData[14] + ": " + valuesArr[0] + "\n" + _translationsData[15] + ": ";
     } else {
         result += "a: " + valuesArr[0] + "\n" + "m: " + valuesArr[1] + "\n" + "b: " + valuesArr[2] + "\n" + _translationsData[15]+ ": ";
@@ -349,10 +338,10 @@ function parseLinkTextTooltip(activityName, activityType, valuesArr, timeUnit, l
             result += _translationsData[21];
             break;
     } 
-    // Dodelat s preklady a jestli je critical nebo ne
     return result;
 }
 
+// editState
 function editState(e, obj) {
     var selectedNode = obj.part;
     var nodeData = selectedNode.data;
@@ -374,6 +363,7 @@ function editState(e, obj) {
     $('#editStateModal').modal('show');
 }
 
+// delete state
 function deleteState(e, obj) {
     var selectedNode = obj.part;
     var nodeData = selectedNode.data;
@@ -381,25 +371,20 @@ function deleteState(e, obj) {
     $('#deleteStateModal').modal('show');
 }
 
+// add activity
 function addActivity(e, obj) {
-    // TODO
     var selectedNode = obj.part;
 
-    console.log("Selected Node")
-    console.log(selectedNode.data)
-    console.log("ENDE")
-    // add Selected State 
     selectedStates.push(selectedNode.data)
 
+    // 
     if (selectedStates[0].text == "Finish") {
-        alert("TAKY NEMOHU")
         selectedStates = [];
         // Finish state nemuze byt prvnim 
     }
 
     if (selectedStates.length == 2) {
         if (selectedStates[0].text == selectedStates[1].text) {
-            alert("nemohu");
             // nemohu pojit dva stejne 
             selectedStates = [];
         } else {
@@ -411,8 +396,8 @@ function addActivity(e, obj) {
     }
 }
 
+// edit activity
 function editActivity(e, obj) {
-    // TO DO
     var selectedLink = obj.part;
     var linkData = selectedLink.data;
     var activities = _activitiesData.activities;
@@ -424,13 +409,6 @@ function editActivity(e, obj) {
     document.getElementById('editedActivityName').value = activity.activityName;
     document.getElementById('editedActivityType').value = activity.activityType;
     document.getElementById('editedActivityDescription').value = activity.description;
-
-    console.log(activity)
-
-
-    console.log("ACTIVITY DESCRIPTION")
-    console.log(activity.description)
-    console.log("ENDE")
 
     if (activityValues.length == 1) {
         document.getElementById('editedActivityLength').value = activityValues[0];
@@ -452,9 +430,9 @@ function editActivity(e, obj) {
     document.getElementById('editError').style.display = "none";
 
     $('#editActivityModal').modal('show');
-    // asi hotovo
 }
 
+// delete activity
 function deleteActivity(e, obj) {
     var selectedLink = obj.part;
     var linkData = selectedLink.data;
@@ -475,7 +453,7 @@ function addCreatedState(state) {
 }
 
 
-// projectID ?
+// edit selected state
 function editSelectedState(stateID, projectID, stateName, stateInfo) {
     var foundIndex = _statesData.states.findIndex(element => element.ID == stateID);
     _statesData.states[foundIndex].stateName = stateName;
@@ -483,6 +461,7 @@ function editSelectedState(stateID, projectID, stateName, stateInfo) {
     reload();
 }
 
+// delete selected state
 function deleteSelectedState(stateID) {
 
     var foundIndex = _statesData.states.findIndex(element => element.ID == stateID);
@@ -498,20 +477,13 @@ function deleteSelectedState(stateID) {
             foundIndex = _activitiesData.activities.findIndex(element => element.ID == activitiesToDelete[i].ID);
             _activitiesData.activities.splice(foundIndex, 1);
         }
-
         reload();
     }
-
-    // smazat activity napojene na stavy
 }
 
+// edit selected activity
 function editSelectedActivity(activityID, activityName, activityType, activityDescription, timeUnit, activityValues) {
     var foundIndex = _activitiesData.activities.findIndex(element => element.ID == activityID);
-
-    console.log("Editovana time unit")
-    console.log(timeUnit)
-    console.log("ende")
-
 
     _activitiesData.activities[foundIndex].activityName = activityName;
     _activitiesData.activities[foundIndex].activityType = activityType;
@@ -521,6 +493,7 @@ function editSelectedActivity(activityID, activityName, activityType, activityDe
     reload();
 }
 
+// delete selected activity
 function deleteSelectedActivity(activityID) {
     var activities = _activitiesData.activities;
     var foundIndex = activities.findIndex(element => element.ID == activityID);
@@ -530,10 +503,9 @@ function deleteSelectedActivity(activityID) {
     }
 }
 
+// add created activity
 function addCreatedActivity(activity) {
     // add created activity to diagram
-    // TO DO
-    // critical ?? 
     _activitiesData.activities.push({
         "ID": activity._id,
         "activityName": activity.activityName,
@@ -548,6 +520,7 @@ function addCreatedActivity(activity) {
     reload();
 }
 
+// calculation done
 function calculationDone() {
     result = JSON.parse(sessionStorage.getItem(project._id));
     statesArray = getNodeDataArray(_statesData);
@@ -555,7 +528,7 @@ function calculationDone() {
     myDiagram.model = new go.GraphLinksModel(statesArray, activitiesArray);
 }
 
-
+// reload graph
 function reload() {
     sessionStorage.removeItem(_project._id);
     result = null;

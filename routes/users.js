@@ -3,7 +3,6 @@ var router = express.Router();
 const auth = require('../auth');
 const user_controller = require('../controllers/userController');
 
-
 // GET - router Login
 router.get("/login", function(req, res) {
     res.render("login", {

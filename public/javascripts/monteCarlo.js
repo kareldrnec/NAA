@@ -1,5 +1,6 @@
 importScripts("./jstat.min.js", "./calculations.js");
 
+// Monte Carlo function for web workers
 self.addEventListener("message", function(event) {
     var res = null;
     var response = {};

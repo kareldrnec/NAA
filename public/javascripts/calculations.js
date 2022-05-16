@@ -1,4 +1,4 @@
-
+// check diagram before calculations
 function checkDiagram(states, activities) {
     var fromActivity, toActivity;
     var errState = "";
@@ -27,6 +27,7 @@ function checkDiagram(states, activities) {
     return errState;
 }
 
+// simulate monte carlo
 function simulateMonteCarlo(activities, states) {
     var calculatedStates, calculatedActivities;
     var finishState = null;
@@ -37,6 +38,7 @@ function simulateMonteCarlo(activities, states) {
     return { "projectLength": (finishState.ES).toFixed(1) };
 }
 
+// create monte carlo activities
 function monteCarloActivities(activities) {
     var min, med, max, alpha, beta, randNum, cdf, time;
     var activitiesArr = [];
@@ -55,7 +57,6 @@ function monteCarloActivities(activities) {
         randNum = Math.random() * (1 - 0) + 0;
         cdf = jStat.beta.inv(randNum, alpha, beta);
         time = min + (max - min) * cdf;
-        // Number((6.688689).toFixed(1));
         activitiesArr.push({
             ID: activities[i].ID,
             fromState: activities[i].fromState,
@@ -67,7 +68,7 @@ function monteCarloActivities(activities) {
     return activitiesArr;
 }
 
-
+// calculate CPM/PERT
 function calculate(states, activities, currentProject, arguments) {
     var result = {};
     var calculatedActivities;
@@ -114,7 +115,6 @@ function calculate(states, activities, currentProject, arguments) {
 
         while(lastState.name != "Start") {
             previousActivity = calculatedActivities.find(element => element.critical == true && element.toState == lastState.ID);
-            // hodiny ... mrknout
             tempActivity = activities.find(element => element.ID == previousActivity.ID);
             usedActivities.push(previousActivity);
             criticalPath = criticalPath.slice(0, 0) + "->" + tempActivity.activityName + criticalPath.slice(0);
@@ -137,7 +137,7 @@ function calculate(states, activities, currentProject, arguments) {
 }
 
 
-// vypsani dalsich cest...
+// find reamining critical paths
 function findRemainingCriticalPaths(activities, criticalActivities, usedActivities, calculatedStates, criticalPathsArr) {
     let difference = criticalActivities.filter(x => !usedActivities.includes(x));
     var tmpActivity = null;
@@ -183,6 +183,7 @@ function findRemainingCriticalPaths(activities, criticalActivities, usedActiviti
     return criticalPathsArr;
 }
 
+// calculate PERT
 function calculatePERT(totalMeanValue, totalVariance, arguments) {
     var desiredTime;
     var desiredTime2;
@@ -192,15 +193,15 @@ function calculatePERT(totalMeanValue, totalVariance, arguments) {
         // time
         var time = getPertTime(arguments[2], totalMeanValue, totalVariance);
         result = ['T', '=', arguments[2], time];
-        // TODO zkontrolovat zda pocita dobre
     } else if (arguments.length == 4) {
-        // simple pert
+        // simple PERT
         desiredTime = parseFloat(arguments[2]);
         if (arguments[3] != "hours") desiredTime = convertToHours(desiredTime, arguments[3]);
         probability = getPertProbability(desiredTime, totalMeanValue, totalVariance);
         if (arguments[1] == 'gt') probability = 1 - probability;
         result = ['P', arguments[1], desiredTime, probability, arguments[3]];
     } else {
+        // complex PERT
         desiredTime = parseFloat(arguments[2]);
         desiredTime2 = parseFloat(arguments[4]);
         if(arguments[5] != "hours") {
@@ -228,15 +229,17 @@ function calculatePERT(totalMeanValue, totalVariance, arguments) {
     return result;
 }
 
+// get PERT Probability (using jStat)
 function getPertProbability(time, totalMeanValue, totalVariance) {
     return jStat.normal.cdf(time, totalMeanValue / 6, Math.sqrt(totalVariance) / 6);
 }
 
+// get PERT Time (using jStat)
 function getPertTime(probability, totalMeanValue, totalVariance) {
     return jStat.normal.inv(probability / 100, totalMeanValue / 6, Math.sqrt(totalVariance) / 6);
 }
 
-
+// find critical activities
 function findCriticalActivities(states, activities) {
     var fromState, toState;
     for (var i = 0; i < activities.length; i++) {
@@ -249,38 +252,7 @@ function findCriticalActivities(states, activities) {
     return activities;
 }
 
-function findCriticalActivitiesMonteCarlo(calculatedStates, calculatedActivities) {
-    var fromState, toState;
-    for (var i = 0; i < calculatedActivities.length; i++) {
-        fromState = calculatedStates.find(element => element.ID == calculatedActivities[i].fromState);
-        toState = calculatedStates.find(element => element.ID == calculatedActivities[i].toState);
-
-
-        if ((fromState.slack == 0 && toState.slack == 0)) {
-            console.log("PODEZRELA CINNOST")
-            console.log(fromState.ES * 100 + calculatedActivities[i].value * 100)
-            console.log(toState.ES * 100)
-            if (Math.round(fromState.ES * 100 + calculatedActivities[i].value * 100) == Math.round(toState.ES * 100)) {
-                console.log("KRITICKA")
-                calculatedActivities[i].critical = true;
-            }
-        }
-    }
-    console.log(calculatedStates)
-    console.log("CALCULATED ACTIVITIES")
-    console.log(calculatedActivities)
-    console.log("ENDE")
-
-    /*
-    console.log("VYPIS")
-    console.log(calculatedStates)
-    console.log(calculatedActivities)
-    console.log("ENDE")
-    */
-
-    return calculatedActivities;
-}
-
+// backward calculation
 function backwardCalculation(states, activities) {
     var nextStates, activitiesFromState, min;
     var tmpStates = [];
@@ -309,6 +281,7 @@ function backwardCalculation(states, activities) {
     return states;
 }
 
+// forward calculation
 function forwardCalculation(states, activities) {
     var nextStates, activitiesToState, max;
     var tmpStates = [];
@@ -334,6 +307,7 @@ function forwardCalculation(states, activities) {
     return states;
 }
 
+// find max value
 function findMaxValue(states, activitiesToState) {
     var max = 0;
     for (var i = 0; i < activitiesToState.length; i++) {
@@ -342,7 +316,6 @@ function findMaxValue(states, activitiesToState) {
             max = currentState.ES + activitiesToState[i].value;
         }
     }
-   // return max;
    return Number(max.toFixed(2));
 }
 
@@ -353,10 +326,10 @@ function findMinValue(states, activitiesFromState, min) {
             min = currentState.LS - activitiesFromState[i].value;
         }
     }
-   // return min;
    return Number(min.toFixed(2));
 }
 
+// can go forward in project?
 function canForward(states, activitiesToState) {
     let can = true;
     var currentState;
@@ -370,6 +343,7 @@ function canForward(states, activitiesToState) {
     return can;
 }
 
+// can go backward in project?
 function canBackward(states, activitiesFromState) {
     let can = true;
     var currentState;
@@ -383,6 +357,7 @@ function canBackward(states, activitiesFromState) {
     return can;
 }
 
+// find next states
 function findNextStates(currentState, states, activities, resultStates) {
     var tmpState;
     var tempActivities = activities.filter(element => element.fromState == currentState.ID);
@@ -393,6 +368,7 @@ function findNextStates(currentState, states, activities, resultStates) {
     return resultStates;
 }
 
+// find previous states
 function findPreviousStates(currentState, states, activities, resultStates) {
     var tmpState;
     var tempActivities = activities.filter(element => element.toState == currentState.ID);
@@ -403,6 +379,7 @@ function findPreviousStates(currentState, states, activities, resultStates) {
     return resultStates;
 }
 
+// init array of states
 function arrStates(states) {
     var statesArr = [];
     for (var i = 0; i < states.length; i++) {
@@ -417,6 +394,7 @@ function arrStates(states) {
     return statesArr;
 }
 
+// create CPM activities
 function cpmActivities(activities) {
     var activitiesArr = [];
     var length;
@@ -436,7 +414,7 @@ function cpmActivities(activities) {
     return activitiesArr;
 }
 
-// TIME UNIT DODELAT
+// create PERT activities
 function pertActivities(activities) {
     var activitiesArr = [];
     var std = null;
@@ -464,6 +442,7 @@ function pertActivities(activities) {
     return activitiesArr;
 }
 
+// convert to hours
 function convertToHours(value, timeUnit) {
     if (timeUnit == "months") {
         value = value * 24 * 30;

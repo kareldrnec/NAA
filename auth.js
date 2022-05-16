@@ -1,5 +1,5 @@
-//authenticate input against database
 
+// authenticate input against database
 module.exports = {
     requiresLogin: function(req, res, next) {
         if (req.session && req.session.userId) {

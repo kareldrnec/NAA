@@ -9,9 +9,6 @@
 
 <div id="myDiagramDiv" style="width: 99%; height: 50vw;"></div>
 
-<!-- 50vw -->
-
-
 <!-- Modal Export -->
 <div class="modal fade" id="exportProjectModal" tabindex="-1" role="dialog" aria-labelledby="exportProjectModalLabel"
     aria-hidden="true">
@@ -597,12 +594,6 @@
     var socket = io();
     sessionStorage.setItem("currentProject", "{{projectID}}");
 
-   // console.log("ACtivities")
-    //console.log(activities)
-    //console.log("ENDE")
-
-
-
     // INIT GRAFU
     init(states, activities, project, "{{projectType}}", translations, "{{graphSettings}}");
 
@@ -611,7 +602,6 @@
         document.getElementById('stateNameInput').value = '';
         document.getElementById('stateInfoInput').value = '';
     });
-    // SNAD CAJK ?
     $('#addActivityModal').on('hidden.bs.modal', function () {
         var activityType = document.getElementById('activityTypeSelect');
         document.getElementById('activityNameInput').value = '';
@@ -751,12 +741,6 @@
                         } else {
                             arguments.push('P', firstOption, firstVal.value, secondOption, secondVal.value, timeUnit);
                             var res = calculate(states.states, activities.activities, project, arguments);
-
-                            console.log("projectRes")
-                            console.log(projectRes)
-                            console.log("ENDE")
-
-
                             var projectRes = res.project.result;
                             var pertText = null;
                             if (projectRes.length == 5) {
@@ -774,15 +758,9 @@
                                 }
                                 pertText += ')=' + (res.project.result[5] * 100).toFixed(4) + "%";
                             }
-                          //  console.log("RESULT JE")
-                          //  console.log(res)
-                          //  console.log("ENDE")
-
                             document.getElementById('totalMeanValue').value = res.project.meanValue + "/6";
                             document.getElementById('totalVariance').value = res.project.totalVariance + "/36";
                             document.getElementById('pertResult').value = pertText;
-
-                            
                             document.getElementById('resultsDiv').style.display = 'inline'; 
                         }
                     } else {
@@ -1238,18 +1216,13 @@
     })
 
 
-
-
-
-    // TODO
     function canAddActivity(e) {
         let valid = true;
-        console.log("Kontroluji form...")
+        //console.log("Kontroluji form...")
         if("{{projectType}}" == "pert") {
             var optimisticValue = document.getElementById('optimisticValue').value;
             var mostExpectedValue = document.getElementById('mostExpectedValue').value;
             var pessimisticValue = document.getElementById('pessimisticValue').value;
-            console.log(typeof(optimisticValue))
         }
         return false;
     }
@@ -1259,7 +1232,6 @@
 
         return valid;
     }
-    // END TODO?
 </script>
 
 

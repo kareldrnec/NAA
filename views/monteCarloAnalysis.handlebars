@@ -152,15 +152,8 @@
             }
         }
     });
-    var hour = 0;
-    var minute = 0;
-    var second = 0;
-    var millisecond = 0;
-    var cron;
 
     document.getElementById("rangeY").addEventListener('change', (e) => {
-      //  this.setAttribute('value',this.value);
-        console.log(e.target.value)
         myChart.options.scales.y.max = e.target.value;
         myChart.update();
     });
@@ -213,7 +206,7 @@
                 sum = 0;
 
                 arr.sort((a, b) => a.value - b.value);
-                
+
                 for (var i = 0; i < arr.length; i++) {
                     labels.push(arr[i].value);
                     dataN.push(arr[i].count / event.data.count);

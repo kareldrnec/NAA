@@ -2,7 +2,7 @@ var passwordValidator = require('password-validator');
 
 var schema = new passwordValidator();
 
-// TODO
+// PASSWORD SCHEMA
 schema
     .is().min(8)
     .is().max(30)

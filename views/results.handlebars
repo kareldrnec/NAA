@@ -34,9 +34,12 @@
     var tfoot;
     var row;
 
-
+    // display Summary table after load
     summaryTable();
 
+    /*
+        Summary Section
+    */
 
     document.getElementById("summaryLabel").addEventListener('click', summaryTable);
 
@@ -103,6 +106,9 @@
         }
     }
 
+    
+
+    // get PERT text to display in Summary
     function getPertText(arguments) {
         var res = null;
         if (arguments.length == 7) {
@@ -112,13 +118,11 @@
             } else {
                 res += " > X";
             }
-
             if (arguments[3] == 'lt') {
                 res += " < " + arguments[4] + ") = " + (arguments[5] * 100).toFixed(4) + "%"; 
             } else {
                 res += " > " + arguments[4] + ") = " + (arguments[5] * 100).toFixed(4) + "%"; 
             }
-
         } else if(arguments.length == 4) {
             res = "T(P = " + arguments[2] + "%) = " + arguments[3].toFixed(2) + " ({{__ "hours res"}})";
         } else {
@@ -129,18 +133,18 @@
                 res += "> ";
             }
             res += arguments[2] + ")=" + (arguments[3] * 100).toFixed(4) + "%";
-
         }
         return res;
     }
 
 
-
+    // click on states
     document.getElementById("statesLabel").addEventListener('click', () => {
         createHeadStates();
         createBodyStates();
     });
    
+    // click on activities
     document.getElementById("activitiesLabel").addEventListener('click', () => {
         if ("{{projectType}}" == "cpm") {
             createHeadActivitiesCPM();
@@ -153,6 +157,7 @@
         }
     })
 
+    // create head states
     function createHeadStates() {
         thead = document.getElementById("tableHead");
         thead.innerHTML = 
@@ -164,6 +169,7 @@
        // + "<th>" + "{{__ "time unit"}}" + "</th>";
     }
 
+    // create head activities CPM
     function createHeadActivitiesCPM() {
         thead = document.getElementById("tableHead");
         thead.innerHTML =
@@ -173,6 +179,7 @@
             + "<th>" + "y" + "<sub>ij</sub>" + "</th>";
     }
 
+    // create head activities PERT
     function createHeadActivitiesPERT() {
         thead = document.getElementById("tableHead");
         thead.innerHTML = 
@@ -187,7 +194,7 @@
             + "<th>" + "&sigma;" + "<sub>ij</sub>" + "<sup>2</sup>" + "</th>";
     }
 
-
+    // create body states
     function createBodyStates() {
         const states = results.states;
         var ES, LS, slack;
@@ -213,7 +220,6 @@
                 LS = states[i].LS;
                 if ("{{projectType}}" == "pert") LS += "/6";
             }
-
             row = tableBody.insertRow();
             row.innerHTML = 
                 "<tr>" + "<td>" + (i + 1) + "</td>"
@@ -227,6 +233,7 @@
         }
     }
 
+    // create body activities CPM
     function createBodyActivitiesCPM() {
         const activitiesDB = JSON.parse("{{activitiesData}}".replace(/&quot;/g, '"'));
         const activities = results.activities;
@@ -259,6 +266,7 @@
         }
     }
 
+    // create body activities PERT
     function createBodyActivitiesPERT() {
         const activitiesDB = JSON.parse("{{activitiesData}}".replace(/&quot;/g, '"'));
         const activities = results.activities;
@@ -266,7 +274,6 @@
         var type, resultActivity;
         tableBody = document.getElementById("tableBody");
         tableBody.innerHTML = "";
-
         for (var i = 0; i < activitiesDB.length; i++) {
             resultActivity = activities.find(element => element.ID == activitiesDB[i].ID);
             a = parseInt(activitiesDB[i].values[0]);
@@ -300,6 +307,7 @@
         }
     }
 
+    // get time unit
     function getTimeUnit(timeUnit) {
         var time;
         switch (timeUnit) {
@@ -319,7 +327,7 @@
         return time;
     }
 
-
+    // create bottom activities CPM
     function createBottomActivitiesCPM() {
         tbody = document.getElementById("tableBody");
         row = tbody.insertRow();
@@ -331,6 +339,7 @@
         row.className = "table-success";
     }
 
+    // create bottom activities PERT
     function createBottomActivitiesPERT() {
         var tbody = document.getElementById("tableBody");
         var row = tbody.insertRow();
@@ -348,6 +357,7 @@
         row.className = "table-success";
     }
 
+    // convert time to hours
     function convertToHours(value, timeUnit) {
         if (timeUnit == "months") {
             value = value * 24 * 30;

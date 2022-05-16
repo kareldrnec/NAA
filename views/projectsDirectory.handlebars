@@ -56,7 +56,7 @@
                 </tr>
             </tfoot>
         </table>
-    </div>    
+    </div>
 </div>
 
 <!-- Modal Generator -->
@@ -214,6 +214,11 @@
         }, 3000);
     }
     sessionStorage.setItem("tableLength", rowCount);
+
+    /*
+        Generate project section
+    */
+
     var generateButton = document.getElementById('generateButton');
     generateButton.addEventListener('click', function(){
         const projectName = document.getElementById('projectName'),
@@ -255,7 +260,13 @@
         submitButton.disabled = true;
         submitButton.title = '';
     })
-    // pripadne doresit osetreni proti chybam (nahrani projektu ze souboru)
+
+    /*
+    
+        Load File section
+
+    */
+
     let loadForm = document.getElementById('loadFileForm');
     let input = document.getElementById('myFile');
     var dataJSON;

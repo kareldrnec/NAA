@@ -4,7 +4,6 @@ const { engine } = require('express-handlebars');                           // e
 const port = process.env.PORT || 3000;                                      // port settings
 const http = require('http');                                               // http
 const dotenv = require('dotenv').config();                                  // dotenv
-// const morgan = require('morgan'); IDK TODO
 const i18n = require('i18n');                                               // i18n - translations
 var bodyParser = require('body-parser');                                    // body-parser
 const mongoSanitize = require('express-mongo-sanitize');                    // express-mongo-sanitize against NoSQL
@@ -27,7 +26,6 @@ const store = new MongoStore({
     uri: process.env.MONGO_URI,
     collection: "mySession",
     //expires: 1800000
-    // podivat se na expiraci session
 });
 
 // scriptSources for helmet
@@ -149,12 +147,8 @@ app.use('/', require('./routes/index'));                // index routing
 app.use('/users', require('./routes/users'));           // users routing
 app.use('/projects', require('./routes/projects'));     // projects routing
 
-//
-// Dodelat !! :)
+// ERROR HANDLER
 app.use((err, req, res, next) => {
-    console.log("Chyba")
-    console.log(err)
-    console.log("/////")
     if (err.code == 11000) {
         return res.redirect('back');
     }
@@ -164,7 +158,6 @@ app.use((err, req, res, next) => {
         text: req.__("500 response")
     })
 })
-
 
 
 // handle error pages 400, 500

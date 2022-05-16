@@ -1,15 +1,7 @@
 // Generator skript
 //
 
-/**
- * 
- * @param {*} statesCount 
- * @param {*} analysisType 
- * @param {*} min 
- * @param {*} max 
- * @returns 
- */
-
+// generate project
 function generateProject(statesCount, analysisType, min, max) {
     var dataJSON = {};
     const states = generateStates(statesCount);
@@ -20,12 +12,7 @@ function generateProject(statesCount, analysisType, min, max) {
     return dataJSON;
 }
 
-/**
- * 
- * @param {*} states 
- * @returns 
- */
-
+// generate states parts
 function getStatesParts(states) {
     var layers = [];
     var numberOfStates = states.length - 2;
@@ -51,16 +38,7 @@ function getStatesParts(states) {
     return layers;
 }
 
-/**
- * 
- * @param {*} layers 
- * @param {*} analysisType 
- * @param {*} min 
- * @param {*} max 
- * @returns 
- */
-
-
+// generate activities
 function createActivities(layers, analysisType, min, max) {
     var activities = [];
     var currentLayer, nextLayer, tmpActivities;
@@ -69,27 +47,13 @@ function createActivities(layers, analysisType, min, max) {
         currentLayer = layers[i];
         nextLayer = layers[i + 1];
         tmpActivities = connectLayers(idx, currentLayer, nextLayer, analysisType, min, max);
-        console.log("TMPACTIVITIES")
-        console.log(tmpActivities)
-        console.log("ENDE")
         activities = activities.concat(tmpActivities);
         idx += tmpActivities.length;
     }
-    console.log(activities)
     return activities;
 }
 
-/**
- * 
- * @param {*} idx 
- * @param {*} currentLayer 
- * @param {*} nextLayer 
- * @param {*} analysisType 
- * @param {*} minimal 
- * @param {*} maximal 
- * @returns 
- */
-
+// connect layers
 function connectLayers(idx, currentLayer, nextLayer, analysisType, minimal, maximal) {
     var index = idx;
     var activities = [];
@@ -119,19 +83,8 @@ function connectLayers(idx, currentLayer, nextLayer, analysisType, minimal, maxi
     return activities;
 }
 
-// generate activities
 
-/**
- * 
- * @param {*} idx 
- * @param {*} analysisType 
- * @param {*} fromState 
- * @param {*} toState 
- * @param {*} min 
- * @param {*} max 
- * @returns 
- */
-
+// generate activity
 function generateActivity(idx, analysisType, fromState, toState, min, max) {
     return {
         "name": "A" + (idx+1),
@@ -143,13 +96,8 @@ function generateActivity(idx, analysisType, fromState, toState, min, max) {
     };
 }
 
-// generate Start, Finish and (count - 2) other states
-/**
- * 
- * @param {*} count 
- * @returns 
- */
 
+// generate states
 function generateStates(count) {
     var states = [];
     states.push({"name": "Start"});
@@ -161,16 +109,6 @@ function generateStates(count) {
 }
 
 // generate values for activities
-
-/**
- * 
- * @param {*} analysisType 
- * @param {*} min 
- * @param {*} max 
- * @returns 
- */
-
-
 function generateValuesForActivity(analysisType, min, max) {
     // TODO 
     var values = [];
@@ -186,13 +124,7 @@ function generateValuesForActivity(analysisType, min, max) {
     return values;
 }
 
-/**
- * 
- * @param {*} min 
- * @param {*} max 
- * @returns 
- */
-
+// generate random value in range
 function generateValue(min, max) {
     return Math.floor(Math.random() * (max - min + 1)) + min;
 }
