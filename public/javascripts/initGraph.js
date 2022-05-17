@@ -380,6 +380,7 @@ function addActivity(e, obj) {
     // 
     if (selectedStates[0].text == "Finish") {
         selectedStates = [];
+        alert("Finish State cannot be first!");
         // Finish state nemuze byt prvnim 
     }
 
@@ -388,13 +389,50 @@ function addActivity(e, obj) {
             // nemohu pojit dva stejne 
             selectedStates = [];
         } else {
-            $('#addActivityForm').attr('action', selectedStates[0].key + "&" + selectedStates[1].key);
-            document.getElementById('addActError').style.display = "none";
-            selectedStates = [];
-            $('#addActivityModal').modal('show');
+            var statesToNotAdd = canAdd(selectedStates[0].key);
+
+            for (var i = 0; i < statesToNotAdd.length; i++) {
+                if (statesToNotAdd[i] == selectedStates[1].key) {
+                    selectedStates = [];
+                    break;
+                }
+            }
+            
+            if (selectedStates.length != 0) {
+                $('#addActivityForm').attr('action', selectedStates[0].key + "&" + selectedStates[1].key);
+                document.getElementById('addActError').style.display = "none";
+                selectedStates = [];
+                $('#addActivityModal').modal('show');
+            } else {
+                alert("Cannot join two states like this!");
+            }
         }
     }
 }
+
+function canAdd(state_id) {
+    var activities = _activitiesData.activities;
+    var tmpActivities = activities.filter(element => element.toState == state_id);
+    var statesToNotAdd = [];
+    var tmpActivities2 = [];
+    var newActivities = [];
+    var tmpState;
+    while (tmpActivities.length != 0) {
+        for (var i = 0; i < tmpActivities.length; i++) {
+            tmpState = tmpActivities[i].fromState;
+            if (!statesToNotAdd.includes(tmpState)) {
+                statesToNotAdd.push(tmpState);
+                newActivities = activities.filter(element => element.toState == tmpState);
+                tmpActivities2 = tmpActivities2.concat(newActivities);
+            }
+        }
+        tmpActivities = tmpActivities2;
+        tmpActivities2 = [];
+        newActivities = [];
+    }
+    return statesToNotAdd;
+}
+
 
 // edit activity
 function editActivity(e, obj) {
