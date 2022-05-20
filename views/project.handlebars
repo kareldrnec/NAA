@@ -717,7 +717,7 @@
                         var res = calculate(states.states, activities.activities, project, arguments);
                         document.getElementById('totalMeanValue').value = res.project.totalVariance + "/6";
                         document.getElementById('totalVariance').value = res.project.meanValue + "/36";
-                        document.getElementById('pertResult').value = "P(T = " + timeValue + ")=" + (res.project.result[3]).toFixed(2) + " ({{__ "hours res"}})";
+                        document.getElementById('pertResult').value = "T(P = " + timeValue + "%)=" + (res.project.result[3]).toFixed(2) + " ({{__ "hours res"}})";
                         document.getElementById('resultsDiv').style.display = 'inline'; 
                     }
                 } else {
